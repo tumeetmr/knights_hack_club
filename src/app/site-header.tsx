@@ -8,52 +8,56 @@ const links = [
   { href: "#what-we-do", label: "What We Do" },
   { href: "#events", label: "Events" },
   { href: "#team", label: "Team" },
+  { href: "#faq", label: "FAQ" },
 ];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-ink text-white">
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8">
+    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-5">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-full bg-ink/80 pl-2.5 pr-2.5 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 backdrop-blur-md sm:pl-3">
         <a href="#top" className="flex items-center gap-3" onClick={() => setOpen(false)}>
           <Image
             src="/logo.png"
             alt=""
             width={44}
             height={44}
-            className="rounded-md"
+            className="rounded-full"
             preload
           />
-          <span className="font-display text-lg font-extrabold leading-none tracking-tight">
+          <span className="headline text-xl leading-none">
             Knights Hack
-            <span className="block text-xs font-semibold tracking-normal text-white/60">
+            <span className="block font-mono text-[0.625rem] font-medium normal-case tracking-normal text-white/55 [font-variation-settings:normal]">
               An NCSAC Club
             </span>
           </span>
         </a>
 
-        <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-white/80 transition hover:text-white"
+              className="rounded-full px-4 py-2 text-sm font-medium text-white/75 transition hover:bg-white/10 hover:text-white"
             >
               {link.label}
             </a>
           ))}
           <a
             href="#join"
-            className="rounded-full bg-white px-5 py-2.5 text-sm font-bold text-ink transition hover:bg-knight-300"
+            className="roll ml-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-ink transition-colors hover:bg-knight-300"
           >
-            Join the Club
+            <span className="roll-label">
+              <span>Join the Club</span>
+              <span aria-hidden>Join the Club</span>
+            </span>
           </a>
         </nav>
 
         <button
           type="button"
-          className="grid size-11 place-items-center rounded-full border border-white/20 md:hidden"
+          className="grid size-11 place-items-center rounded-full bg-white/10 md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? "Close menu" : "Open menu"}
@@ -74,14 +78,14 @@ export function SiteHeader() {
         <nav
           id="mobile-nav"
           aria-label="Main"
-          className="border-t border-white/10 px-5 pb-6 md:hidden"
+          className="mx-auto mt-2 max-w-7xl rounded-3xl bg-ink px-6 pb-4 pt-2 text-white shadow-2xl ring-1 ring-white/10 md:hidden"
         >
           {[...links, { href: "#join", label: "Join the Club" }].map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="block border-b border-white/10 py-4 font-display text-2xl font-bold"
+              className="headline block border-b border-white/10 py-4 text-4xl last:border-b-0 last:text-knight-300"
             >
               {link.label}
             </a>

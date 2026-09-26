@@ -1,25 +1,34 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
+import { CountUp } from "./count-up";
+import { EventsSlider } from "./events-slider";
+import { Reveal } from "./reveal";
 import { SiteHeader } from "./site-header";
+import { Steps } from "./steps";
+import { Headline, RollLink, SectionBlock, SectionCounter, icons } from "./ui";
 
 const CONTACT_EMAIL = "nankhbayar1@ncstudents.niagaracollege.ca";
 const JOIN_FORM_URL = "https://forms.cloud.microsoft/r/SbHL8X9vDP";
 
 const pillars = [
   {
-    tag: "01 / Learn",
+    label: "Learn",
     title: "Code from zero.",
+    kicker: "Workshops",
     body: "Never written a line of code? Perfect. Hands-on workshops start with Scratch and build up from there. No experience needed.",
     snippet: "when flag clicked\n  say \"Hello, NC!\"",
   },
   {
-    tag: "02 / Vibe",
+    label: "Vibe",
     title: "Vibe code with AI.",
+    kicker: "AI-assisted",
     body: "Experiment with AI-assisted coding tools and turn an idea into a working personal project in a single session.",
     snippet: "> build me a campus\n  study-room finder",
   },
   {
-    tag: "03 / Build",
+    label: "Build",
     title: "Ship real projects.",
+    kicker: "Showcase & hack",
     body: "Team up to prototype solutions to real student and campus problems, then show them off at our showcases and hackathon.",
     snippet: "git commit -m \"v1 🚀\"\ngit push origin main",
   },
@@ -102,216 +111,359 @@ const team = [
   },
 ];
 
-const stats = [
-  { value: "8", label: "events this fall" },
-  { value: "0", label: "experience required" },
-  { value: "1", label: "end-of-term hackathon" },
+const tickerItems = [
+  ["Build a game", "Not just homework"],
+  ["Push to GitHub", "Not to next week"],
+  ["Pair program", "Not solo struggle"],
+  ["Vibe code", "Not boilerplate"],
+  ["Meet your crew", "Not a login screen"],
+  ["Ship a project", "Not an excuse"],
 ];
+
+const faqs = [
+  {
+    q: "Do I need any coding experience?",
+    a: "None at all. Workshops start with Scratch and build up from there, and first-timers and seasoned devs build side by side.",
+  },
+  {
+    q: "Who can join?",
+    a: "Membership is open to every Niagara College student, regardless of program, background or experience.",
+  },
+  {
+    q: "How do I become a member?",
+    a: "Fill out the registration form. It takes about 2 minutes, gets you on the member list and means you'll hear about the next event.",
+  },
+  {
+    q: "When and where do events happen?",
+    a: "Events run in the afternoon, usually between 2:00 and 3:30 PM. Exact dates and rooms are announced before each event.",
+  },
+  {
+    q: "Can I show off my own project or startup?",
+    a: "Yes, that's what our two showcases are for. Email us to pitch it and we'll save you a spot.",
+  },
+  {
+    q: "Who runs the club?",
+    a: "Knights Hack is a student club of the Niagara College Student Administrative Council (NCSAC), run by a three-person student exec team.",
+  },
+];
+
+// Events per month for the stats chart, derived from the schedule above.
+const perMonth = Object.entries(
+  events.reduce<Record<string, number>>((acc, e) => {
+    acc[e.month] = (acc[e.month] ?? 0) + 1;
+    return acc;
+  }, {}),
+);
+const maxPerMonth = Math.max(...perMonth.map(([, n]) => n));
+
+const kindCounts = [
+  ["Workshops", events.filter((e) => e.kind === "Workshop").length],
+  ["Showcases", events.filter((e) => e.kind === "Showcase").length],
+  ["Build day", events.filter((e) => e.kind === "Build").length],
+  ["Meet-and-greet", events.filter((e) => e.kind === "Social").length],
+  ["Mini hackathon", events.filter((e) => e.kind === "Hackathon").length],
+] as const;
+
+const panel = "relative scroll-mt-24 overflow-clip rounded-[2rem] lg:rounded-[2.5rem]";
 
 export default function Home() {
   return (
     <>
       <SiteHeader />
+      <Reveal />
 
-      <main id="top" className="flex-1">
+      <main id="top" className="flex flex-1 flex-col gap-3 p-3 sm:gap-4 sm:p-4">
         {/* Hero */}
-        <section className="relative overflow-hidden bg-ink text-white">
+        <section className={`${panel} bg-ink text-white`}>
           <div className="bg-grid absolute inset-0" aria-hidden />
           <div
             className="absolute -right-40 -top-40 size-[640px] rounded-full bg-knight-500/40 blur-3xl"
             aria-hidden
           />
-          <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-16 sm:px-8 md:pb-28 md:pt-24 lg:grid-cols-[1.25fr_1fr]">
-            <div>
-              <p className="font-mono text-sm text-knight-300 caret">
-                niagara_college/knights_hack
-              </p>
-              <h1 className="mt-6 font-display text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
-                Your coding crew on campus.
-              </h1>
-              <p className="mt-8 max-w-xl text-lg text-white/75 sm:text-xl">
-                Knights Hack Club is a student club at Niagara College for
-                anyone curious about code. First-timers and seasoned devs
-                build side by side.
-              </p>
-              <div className="mt-10 flex flex-wrap gap-4">
-                <a
-                  href="#join"
-                  className="rounded-full bg-white px-7 py-3.5 font-bold text-ink transition hover:bg-knight-300"
-                >
+          <div
+            className="absolute -bottom-60 -left-40 size-[520px] rounded-full bg-knight-600/30 blur-3xl"
+            aria-hidden
+          />
+
+          <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] max-w-7xl flex-col px-5 pb-6 pt-32 sm:px-8 sm:pb-8 sm:pt-36">
+            <p className="rise caret text-center font-mono text-sm text-knight-300">
+              niagara_college/knights_hack
+            </p>
+            <Headline
+              as="h1"
+              onLoad
+              lines={["Your coding crew", "on campus."]}
+              className="mt-6 text-center text-[clamp(3.75rem,11vw,9.5rem)]"
+            />
+
+            <ul
+              className="rise mx-auto mt-10 flex w-full max-w-4xl flex-wrap justify-center gap-x-8 gap-y-3 text-sm font-medium text-white/75 sm:justify-between"
+              style={{ "--d": "500ms" } as CSSProperties}
+            >
+              <li className="flex items-center gap-2">
+                <span className="text-knight-300">{icons.star}</span> Beginners welcome
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-knight-300">{icons.calendar}</span> Fall 2026 · 8 events
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-knight-300">{icons.people}</span> An NCSAC club
+              </li>
+            </ul>
+
+            <div
+              className="rise mt-12 grid gap-6 lg:mt-auto lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-end"
+              style={{ "--d": "700ms" } as CSSProperties}
+            >
+              <SectionBlock
+                tone="dark"
+                label="Knights Hack Club"
+                icon={
+                  <Image
+                    src="/logo.png"
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="rounded-md"
+                    preload
+                  />
+                }
+              >
+                <p className="text-white/75">
+                  A student club at Niagara College for anyone curious about
+                  code. First-timers and seasoned devs build side by side.
+                </p>
+              </SectionBlock>
+              <div className="flex flex-wrap gap-3 lg:justify-end">
+                <RollLink href="#join" className="bg-white text-ink hover:bg-knight-300">
                   Join the Club
-                </a>
-                <a
+                </RollLink>
+                <RollLink
                   href="#events"
-                  className="rounded-full border border-white/30 px-7 py-3.5 font-bold transition hover:border-white hover:bg-white/10"
+                  className="border border-white/30 hover:border-white hover:bg-white/10"
                 >
                   See Fall 2026 Events
-                </a>
-              </div>
-            </div>
-
-            <div className="relative mx-auto w-full max-w-md">
-              <div className="overflow-hidden rounded-3xl shadow-2xl shadow-knight-500/30 ring-1 ring-white/10">
-                <Image
-                  src="/logo.png"
-                  alt="Knights Hack Club logo: a knight's helmet next to a laptop showing a code symbol"
-                  width={800}
-                  height={788}
-                  sizes="(min-width: 1024px) 28rem, 90vw"
-                  preload
-                />
+                </RollLink>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Mission */}
-        <section id="about" className="scroll-mt-18 bg-paper">
-          <div className="mx-auto max-w-4xl px-5 py-24 text-center sm:px-8 md:py-32">
-            <h2 className="font-display text-sm font-bold uppercase tracking-[0.2em] text-knight-600">
-              Our Mission:
-            </h2>
-            <p className="mt-6 font-display text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-              A welcoming place for Niagara College students to learn to code,
-              build real projects and grow together, whatever your program or
-              skill level.
-            </p>
-            <dl className="mt-16 grid gap-8 sm:grid-cols-3">
-              {stats.map((s) => (
-                <div key={s.label} className="border-t-2 border-ink pt-6">
-                  <dt className="sr-only">{s.label}</dt>
-                  <dd className="font-display text-6xl font-black">{s.value}</dd>
-                  <dd className="mt-2 text-sm font-medium uppercase tracking-wider text-ink/60">
-                    {s.label}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </section>
-
-        {/* What we do */}
-        <section id="what-we-do" className="scroll-mt-18 bg-mist">
-          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-32">
-            <div className="flex flex-wrap items-end justify-between gap-6">
-              <h2 className="max-w-2xl font-display text-4xl font-black leading-none tracking-tight sm:text-6xl">
-                Learn it. Vibe it. Build it.
-              </h2>
-              <p className="max-w-sm text-ink/70">
-                Coding made simple and social: short sessions, friendly people,
-                real things you can show off.
+        {/* 01 Mission */}
+        <section id="about" className={`${panel} bg-paper`}>
+          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+            <SectionCounter n={1} className="text-knight-600" />
+            <div className="mt-10 grid gap-12 lg:grid-cols-[22rem_1fr] lg:gap-20">
+              <SectionBlock tone="mist" label="Our mission" icon={icons.smile} className="self-start">
+                <p className="text-ink/70">
+                  Coding made simple and social: short sessions, friendly
+                  people, real things you can show off.
+                </p>
+              </SectionBlock>
+              <p
+                data-reveal="up"
+                className="text-3xl font-semibold leading-[1.15] tracking-tight sm:text-5xl"
+              >
+                A welcoming place for Niagara College students to{" "}
+                <span className="text-knight-600">learn to code</span>,{" "}
+                <span className="text-knight-600">build real projects</span> and{" "}
+                <span className="text-knight-600">grow together</span>, whatever
+                your program or skill level.
               </p>
             </div>
+          </div>
+        </section>
 
-            <div className="mt-14 grid gap-6 md:grid-cols-3">
-              {pillars.map((p) => (
-                <article
-                  key={p.tag}
-                  className="group flex flex-col overflow-hidden rounded-3xl bg-paper shadow-sm ring-1 ring-ink/5 transition hover:-translate-y-1 hover:shadow-xl"
-                >
-                  <div className="bg-knight-gradient relative h-48 p-6">
-                    <pre className="rounded-xl bg-ink/70 p-4 font-mono text-sm leading-relaxed text-white backdrop-blur">
-                      {p.snippet}
-                    </pre>
-                  </div>
-                  <div className="flex flex-1 flex-col p-7">
-                    <p className="font-mono text-xs font-medium text-knight-600">
-                      {p.tag}
-                    </p>
-                    <h3 className="mt-3 font-display text-2xl font-extrabold tracking-tight">
-                      {p.title}
-                    </h3>
-                    <p className="mt-3 flex-1 text-ink/70">{p.body}</p>
-                    <a
-                      href="#events"
-                      className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-white transition group-hover:bg-knight-600"
-                    >
-                      Learn more <span aria-hidden>→</span>
-                    </a>
-                  </div>
-                </article>
+        {/* 02 What we do: sticky scroll steps */}
+        <section id="what-we-do" className={`${panel} bg-grid-blue text-white`}>
+          <div className="mx-auto max-w-7xl px-5 pt-24 sm:px-8 md:pt-32">
+            <SectionCounter n={2} className="text-white/70" />
+            <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
+              <Headline
+                lines={["Learn it.", "Vibe it.", "Build it."]}
+                className="text-[clamp(4rem,12vw,10rem)]"
+              />
+              <p data-reveal="up" className="max-w-sm text-lg text-white/80">
+                Three ways to get involved, whatever your starting point. Keep
+                scrolling to walk through them.
+              </p>
+            </div>
+          </div>
+          <Steps steps={pillars} />
+        </section>
+
+        {/* 03 Why join + ticker */}
+        <section className={`${panel} bg-mist text-knight-600`}>
+          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+            <SectionCounter n={3} />
+            <div className="mt-8 grid gap-12 lg:grid-cols-[1fr_24rem] lg:items-end">
+              <div>
+                <Headline
+                  lines={["Build with", "people.", "Not alone."]}
+                  className="text-[clamp(4rem,13vw,11rem)]"
+                />
+                <p data-reveal="up" className="mt-8 font-mono text-sm uppercase tracking-wider text-ink/60">
+                  Real code; real memories.
+                </p>
+              </div>
+              <SectionBlock label="100% beginner-friendly" icon={icons.code}>
+                <p className="text-ink/70">Everything you need to go from zero to shipped:</p>
+                <ul className="mt-4 space-y-2 font-medium text-ink">
+                  {["Hands-on workshops, from Scratch up", "AI-assisted vibe coding sessions", "Showcases and an end-of-term hackathon"].map(
+                    (item) => (
+                      <li key={item} className="flex gap-3">
+                        <span className="mt-0.5 shrink-0 text-knight-600 [&_svg]:size-4">{icons.star}</span>
+                        {item}
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </SectionBlock>
+            </div>
+          </div>
+
+          <div className="overflow-hidden border-t-2 border-knight-600/15 py-8" aria-hidden>
+            <div className="marquee-track flex w-max">
+              {[0, 1].map((copy) => (
+                <div key={copy} className="flex shrink-0 items-center">
+                  {tickerItems.map(([yes, no]) => (
+                    <span key={yes} className="headline flex items-center gap-6 pr-6 text-5xl sm:text-7xl">
+                      <span>{yes}</span>
+                      <span className="text-ink/30">{no}</span>
+                      <span className="[&_svg]:size-8 sm:[&_svg]:size-10">{icons.star}</span>
+                    </span>
+                  ))}
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Events */}
-        <section id="events" className="scroll-mt-18 bg-ink text-white">
-          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-32">
-            <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
-              <div className="lg:sticky lg:top-28 lg:self-start">
-                <p className="font-mono text-sm text-knight-300">
-                  {"// fall_2026.schedule"}
-                </p>
-                <h2 className="mt-4 font-display text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl">
-                  Real code; real memories.
-                </h2>
-                <p className="mt-6 max-w-sm text-white/70">
-                  Eight events this term, from your very first game to an
-                  end-of-term hackathon. Exact dates and rooms are announced
-                  before each event.
-                </p>
-              </div>
+        {/* 04 Stats */}
+        <section className={`${panel} bg-grid-blue text-white`}>
+          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-8 md:py-36 lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div>
+              <SectionCounter n={4} className="text-white/70" />
+              <Headline
+                lines={["This fall", "we're hosting:"]}
+                className="mt-8 text-[clamp(3rem,8vw,6.5rem)]"
+              />
+              <p className="headline text-[clamp(10rem,32vw,22rem)] leading-[0.8]">
+                <CountUp to={events.length} />
+                <span className="sr-only"> events</span>
+              </p>
+              <SectionBlock tone="dark" label="Events on campus" icon={icons.calendar} className="mt-6 max-w-sm">
+                <ul className="space-y-2">
+                  {kindCounts.map(([label, n]) => (
+                    <li key={label} className="flex justify-between gap-4 border-b border-white/10 pb-2 last:border-b-0 last:pb-0">
+                      <span className="text-white/75">{label}</span>
+                      <span className="font-mono font-bold">{n}</span>
+                    </li>
+                  ))}
+                </ul>
+              </SectionBlock>
+            </div>
 
-              <ol className="divide-y divide-white/10 border-y border-white/10">
-                {events.map((e) => (
-                  <li
-                    key={e.title}
-                    className="grid gap-4 py-7 transition sm:grid-cols-[8rem_1fr] sm:gap-8"
-                  >
-                    <div>
-                      <p className="font-display text-2xl font-black uppercase text-knight-300">
-                        {e.month}
-                      </p>
-                      <p className="mt-1 font-mono text-xs text-white/50">{e.time}</p>
-                    </div>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3 className="font-display text-xl font-bold sm:text-2xl">
-                          {e.title}
-                        </h3>
-                        <span className="rounded-full border border-white/20 px-3 py-0.5 text-xs font-medium text-white/70">
-                          {e.kind}
-                        </span>
-                      </div>
-                      <p className="mt-2 text-white/65">{e.body}</p>
-                    </div>
-                  </li>
+            <div data-reveal="up" className="rounded-3xl bg-paper p-7 text-ink sm:p-10">
+              <div className="flex items-start justify-between gap-6">
+                <h3 className="headline text-4xl sm:text-5xl">Zero to shipped</h3>
+                <span className="text-knight-600">{icons.chart}</span>
+              </div>
+              <p className="mt-6 font-mono text-xs uppercase tracking-wider text-knight-600">
+                Experience required:
+              </p>
+              <p className="headline text-[8rem] leading-[0.8] text-knight-600 sm:text-[10rem]">0</p>
+              <p className="mt-4 max-w-sm text-ink/70">
+                The term ramps up from a meet-and-greet to one end-of-term
+                hackathon. Here&apos;s how it builds:
+              </p>
+
+              <div className="mt-8 flex h-48 items-end gap-3 border-b-2 border-ink pb-px" role="img" aria-label={`Events per month: ${perMonth.map(([m, n]) => `${m}, ${n}`).join("; ")}`}>
+                {perMonth.map(([month, n]) => (
+                  <div key={month} className="flex flex-1 flex-col items-center justify-end gap-2 self-stretch">
+                    <span className="font-mono text-sm font-bold">{n}</span>
+                    <div
+                      className="w-full rounded-t-xl bg-knight-600"
+                      style={{ height: `${(n / maxPerMonth) * 100}%` }}
+                    />
+                  </div>
                 ))}
-              </ol>
+              </div>
+              <div className="mt-2 flex gap-3" aria-hidden>
+                {perMonth.map(([month]) => (
+                  <span key={month} className="flex-1 text-center font-mono text-xs text-ink/50">
+                    {month}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 05 Events */}
+        <section id="events" className={`${panel} bg-paper`}>
+          <div className="py-24 md:py-36">
+            <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[22rem_1fr] lg:items-end lg:gap-20">
+              <SectionBlock tone="mist" label="Fall 2026 schedule" icon={icons.calendar} className="order-last self-end lg:order-first">
+                <p className="text-ink/70">
+                  Eight events, from your very first game to an end-of-term
+                  hackathon. Exact dates and rooms are announced before each
+                  event.
+                </p>
+              </SectionBlock>
+              <div>
+                <SectionCounter n={5} className="text-knight-600" />
+                <Headline lines={["Mark your", "calendar."]} className="mt-8 text-[clamp(4rem,12vw,10rem)]" />
+              </div>
+            </div>
+            <div className="mt-14">
+              <EventsSlider events={events} />
             </div>
           </div>
         </section>
 
         {/* Showcase band */}
-        <section className="bg-knight-gradient text-white">
+        <section className={`${panel} bg-knight-gradient text-white`}>
           <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-5 py-20 sm:px-8 md:flex-row md:items-center">
-            <h2 className="max-w-2xl font-display text-4xl font-black leading-none tracking-tight sm:text-5xl">
-              Got a project or startup idea? Show it off.
-            </h2>
-            <a
+            <Headline
+              lines={["Got a project or startup idea?", "Show it off."]}
+              className="max-w-3xl text-5xl sm:text-7xl"
+            />
+            <RollLink
               href={`mailto:${CONTACT_EMAIL}?subject=Knights%20Hack%20Showcase`}
-              className="shrink-0 rounded-full bg-white px-7 py-3.5 font-bold text-ink transition hover:bg-ink hover:text-white"
+              className="shrink-0 bg-white text-ink hover:bg-ink hover:text-white"
             >
               Pitch it for the Showcase
-            </a>
+            </RollLink>
           </div>
         </section>
 
-        {/* Team */}
-        <section id="team" className="scroll-mt-18 bg-paper">
-          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-32">
-            <h2 className="font-display text-4xl font-black leading-none tracking-tight sm:text-6xl">
-              Meet the executive team.
-            </h2>
-            <div className="mt-14 grid gap-6 md:grid-cols-3">
-              {team.map((m) => (
+        {/* 06 Team */}
+        <section id="team" className={`${panel} bg-ink text-white`}>
+          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+            <div className="grid gap-10 lg:grid-cols-[1fr_22rem] lg:items-end">
+              <div>
+                <SectionCounter n={6} className="text-knight-300" />
+                <Headline lines={["Meet the", "exec team."]} className="mt-8 text-[clamp(4rem,12vw,10rem)]" />
+              </div>
+              <SectionBlock tone="dark" label="Who runs it" icon={icons.people}>
+                <p className="text-white/75">
+                  Three students who plan the events, host the sessions and
+                  keep the club connected with NCSAC.
+                </p>
+              </SectionBlock>
+            </div>
+
+            <div className="mt-16 grid gap-4 md:grid-cols-3">
+              {team.map((m, i) => (
                 <article
                   key={m.role}
-                  className="rounded-3xl border-2 border-ink p-7"
+                  data-reveal="up"
+                  style={{ "--d": `${i * 100}ms` } as CSSProperties}
+                  className="rounded-3xl bg-white/5 p-3 ring-1 ring-white/10"
                 >
                   <div
-                    className="grid size-14 place-items-center rounded-2xl bg-ink font-display text-xl font-black text-white"
+                    className="bg-knight-gradient headline grid aspect-[4/3] place-items-center rounded-2xl text-8xl"
                     aria-hidden
                   >
                     {m.name
@@ -319,115 +471,152 @@ export default function Home() {
                       .map((part) => part[0])
                       .join("")}
                   </div>
-                  <p className="mt-6 font-mono text-xs font-medium uppercase text-knight-600">
-                    {m.role}
-                  </p>
-                  <h3 className="mt-2 font-display text-2xl font-extrabold tracking-tight">
-                    {m.name}
-                  </h3>
-                  <p className="mt-3 text-ink/70">{m.body}</p>
+                  <div className="p-4 pt-6">
+                    <p className="font-mono text-xs font-medium uppercase tracking-wider text-knight-300">
+                      {m.role}
+                    </p>
+                    <h3 className="mt-2 text-2xl font-bold tracking-tight">{m.name}</h3>
+                    <p className="mt-3 text-white/65">{m.body}</p>
+                  </div>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Join */}
-        <section id="join" className="scroll-mt-18 bg-mist">
-          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-32">
-            <div className="overflow-hidden rounded-[2rem] bg-ink text-white">
-              <div className="grid gap-10 p-8 sm:p-14 lg:grid-cols-2 lg:items-center">
-                <div>
-                  <h2 className="font-display text-5xl font-black leading-[0.95] tracking-tight sm:text-6xl">
-                    Pull up a chair. Open a laptop.
-                  </h2>
-                  <p className="mt-6 max-w-md text-white/70">
-                    Membership is open to every Niagara College student,
-                    regardless of program, background or experience. Fill out
-                    the registration form to get on the member list and hear
-                    about the next event.
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  <a
-                    href={JOIN_FORM_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block rounded-2xl bg-white p-6 text-ink transition hover:bg-knight-300"
-                  >
-                    <span className="block text-sm font-medium text-ink/60">
-                      Takes about 2 minutes
+        {/* 07 FAQ */}
+        <section id="faq" className={`${panel} bg-paper text-knight-600`}>
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-80" aria-hidden>
+            <div className="absolute -bottom-40 left-[5%] size-96 rounded-full bg-knight-300/40 blur-3xl" />
+            <div className="absolute -bottom-52 left-[40%] size-[36rem] rounded-full bg-knight-500/25 blur-3xl" />
+            <div className="absolute -bottom-40 right-[-5%] size-96 rounded-full bg-knight-300/40 blur-3xl" />
+          </div>
+
+          <div className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+            <SectionCounter n={7} />
+            <Headline lines={["Frequently", "asked questions"]} className="mt-8 text-[clamp(3.5rem,10vw,9rem)]" />
+
+            <div className="faq-list mt-16 max-w-4xl lg:ml-auto">
+              {faqs.map((f) => (
+                <details
+                  key={f.q}
+                  name="faq"
+                  data-reveal="up"
+                  className="faq-item group border-t-2 border-knight-600/15 last:border-b-2"
+                >
+                  <summary className="flex cursor-pointer list-none items-center gap-5 py-6 text-xl font-bold text-ink transition hover:text-knight-600 before:w-8 before:shrink-0 before:font-mono before:text-sm before:font-medium before:text-knight-600 sm:text-2xl">
+                    <span className="flex-1">{f.q}</span>
+                    <span
+                      className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-current text-xl transition group-open:rotate-45 group-open:bg-knight-600 group-open:text-white"
+                      aria-hidden
+                    >
+                      +
                     </span>
-                    <span className="mt-1 block font-display text-2xl font-extrabold sm:text-3xl">
-                      Register as a member ↗
-                    </span>
-                  </a>
-                  <a
-                    href="https://www.yourncsac.ca/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block rounded-2xl border border-white/20 p-6 transition hover:border-white hover:bg-white/5"
-                  >
-                    <span className="block text-sm font-medium text-white/60">
-                      Explore more clubs
-                    </span>
-                    <span className="mt-1 block font-display text-lg font-bold sm:text-xl">
-                      yourncsac.ca ↗
-                    </span>
-                  </a>
-                </div>
-              </div>
+                  </summary>
+                  <p className="max-w-2xl pb-8 pl-13 text-lg leading-relaxed text-ink/70">{f.a}</p>
+                </details>
+              ))}
             </div>
+          </div>
+        </section>
+
+        {/* Join */}
+        <section id="join" className={`${panel} bg-ink text-white`}>
+          <div className="bg-grid absolute inset-0" aria-hidden />
+          <div
+            className="absolute left-1/2 top-full size-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-knight-500/40 blur-3xl"
+            aria-hidden
+          />
+          <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 py-24 text-center sm:px-8 md:py-36">
+            <p className="font-mono text-sm text-knight-300">{"> join --club knights_hack"}</p>
+            <Headline
+              lines={["Pull up a chair.", "Open a laptop."]}
+              className="mt-8 text-[clamp(3.5rem,11vw,9rem)]"
+            />
+            <p data-reveal="up" className="mt-8 max-w-xl text-lg text-white/70">
+              Membership is open to every Niagara College student, regardless
+              of program, background or experience. Register to get on the
+              member list and hear about the next event.
+            </p>
+            <div data-reveal="up" className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+              <RollLink href={JOIN_FORM_URL} external className="bg-white px-9 py-5 text-lg text-ink hover:bg-knight-300">
+                Register as a member ↗
+              </RollLink>
+              <RollLink
+                href="https://www.yourncsac.ca/"
+                external
+                className="border border-white/30 hover:border-white hover:bg-white/10"
+              >
+                Explore more clubs ↗
+              </RollLink>
+            </div>
+            <p className="mt-5 text-sm text-white/50">Takes about 2 minutes.</p>
           </div>
         </section>
       </main>
 
-      <footer className="bg-ink text-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr]">
-          <div className="flex items-start gap-4">
-            <Image
-              src="/logo.png"
-              alt=""
-              width={56}
-              height={56}
-              className="rounded-lg"
-            />
-            <div>
-              <p className="font-display text-xl font-extrabold">Knights Hack Club</p>
-              <p className="mt-1 max-w-xs text-sm text-white/60">
+      <footer className="px-3 pb-3 sm:px-4 sm:pb-4">
+        <div className="overflow-clip rounded-[2rem] bg-ink text-white lg:rounded-[2.5rem]">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-10 pt-16 sm:px-8 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1.2fr_1fr]">
+            <div className="flex items-start gap-4">
+              <Image src="/logo.png" alt="" width={56} height={56} className="rounded-xl" />
+              <p className="max-w-xs text-sm text-white/60">
                 A student club of the Niagara College Student Administrative
                 Council (NCSAC).
               </p>
             </div>
+            <nav aria-label="Footer">
+              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Club</p>
+              <ul className="mt-4 space-y-2 text-sm">
+                {[
+                  ["#about", "About"],
+                  ["#what-we-do", "What We Do"],
+                  ["#events", "Events"],
+                  ["#team", "Team"],
+                  ["#faq", "FAQ"],
+                ].map(([href, label]) => (
+                  <li key={href}>
+                    <a className="underline-offset-4 hover:text-knight-300 hover:underline" href={href}>
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Say hello</p>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="mt-4 block break-all text-sm underline-offset-4 hover:text-knight-300 hover:underline"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </div>
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Let&apos;s build</p>
+              <RollLink href="#join" className="mt-4 bg-white px-6 py-3 text-sm text-ink hover:bg-knight-300">
+                Join the Club
+              </RollLink>
+            </div>
           </div>
-          <nav aria-label="Footer">
-            <p className="text-xs font-bold uppercase tracking-widest text-white/40">
-              Club
-            </p>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li><a className="hover:text-knight-300" href="#about">About</a></li>
-              <li><a className="hover:text-knight-300" href="#events">Events</a></li>
-              <li><a className="hover:text-knight-300" href="#team">Team</a></li>
-              <li><a className="hover:text-knight-300" href="#join">Join</a></li>
-            </ul>
-          </nav>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-white/40">
-              Contact
-            </p>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="mt-4 block break-all text-sm hover:text-knight-300"
+
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <p
+              className="headline bg-knight-gradient select-none bg-clip-text pb-2 text-center text-[14.5vw] text-transparent xl:text-[13.5rem]"
+              aria-hidden
             >
-              {CONTACT_EMAIL}
-            </a>
+              Knights Hack
+            </p>
           </div>
-        </div>
-        <div className="border-t border-white/10">
-          <p className="mx-auto max-w-7xl px-5 py-6 text-xs text-white/40 sm:px-8">
-            © 2026 Knights Hack Club · Niagara College · Built by students, for
-            students.
-          </p>
+
+          <div className="border-t border-white/10">
+            <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-6 text-xs text-white/40 sm:px-8">
+              <p>© 2026 Knights Hack Club · Niagara College · Built by students, for students.</p>
+              <a href="#top" className="hover:text-white">
+                Back to top ↑
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
     </>

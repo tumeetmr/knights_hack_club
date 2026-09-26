@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Variable width axis lets headings use the condensed cut of the same family.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
-});
-
-const interTight = Inter_Tight({
-  variable: "--font-inter-tight",
-  subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
+  axes: ["wdth"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -33,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased`}
+      className={`${archivo.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

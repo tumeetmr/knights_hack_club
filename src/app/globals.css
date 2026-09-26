@@ -12,20 +12,30 @@
   --color-knight-600: #2563b8;
   --color-knight-900: #0b1f3f;
 
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-inter-tight);
+  --font-sans: var(--font-archivo);
+  --font-display: var(--font-archivo);
   --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
   background: var(--color-paper);
   color: var(--color-ink);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-archivo), system-ui, sans-serif;
+}
+
+/* Poster-style headings: Archivo squeezed to its narrowest width, all caps. */
+.headline {
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 62;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: 0.005em;
 }
 
 /* Same diagonal fade as the logo artwork. */
 .bg-knight-gradient {
-  background: linear-gradient(
+  background-image: linear-gradient(
     225deg,
     #06142b 0%,
     #1f5bb0 30%,
@@ -42,6 +52,15 @@ body {
   background-size: 48px 48px;
 }
 
+.bg-grid-blue {
+  background-color: var(--color-knight-600);
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.14) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: -32px -32px;
+}
+
 @keyframes blink {
   50% {
     opacity: 0;
@@ -54,8 +73,138 @@ body {
   animation: blink 1s steps(1) infinite;
 }
 
+/* Headline words flip up into place, one after another. */
+.headline-line {
+  display: block;
+  overflow: hidden;
+  perspective: 200vw;
+  padding-bottom: 0.04em;
+}
+
+.word {
+  display: inline-block;
+  transform-origin: 50% 75%;
+}
+
+@keyframes word-in {
+  from {
+    transform: translateY(75%) rotateX(-88deg);
+    opacity: 0;
+  }
+}
+
+.headline-load .word {
+  animation: word-in 0.8s cubic-bezier(0, 0, 0, 1) both;
+  animation-delay: calc(100ms + var(--i) * 70ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+.rise {
+  animation: rise 0.7s cubic-bezier(0, 0, 0, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Scroll reveals: reveal.tsx marks below-the-fold elements "pending", then "in". */
+[data-reveal-state] {
+  transition:
+    opacity 0.4s ease-out,
+    transform 0.6s cubic-bezier(0, 0, 0, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+[data-reveal="up"][data-reveal-state="pending"] {
+  opacity: 0;
+  transform: translateY(2rem);
+}
+
+[data-reveal="words"] .word {
+  transition:
+    transform 0.7s cubic-bezier(0, 0, 0, 1),
+    opacity 0.3s ease-out;
+  transition-delay: calc(var(--i) * 60ms);
+}
+
+[data-reveal="words"][data-reveal-state="pending"] .word {
+  transform: translateY(75%) rotateX(-88deg);
+  opacity: 0;
+}
+
+/* Endless ticker band. The track holds two copies, so -50% loops seamlessly. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+
+/* Button label rolls up to a second copy on hover. */
+.roll-label {
+  display: grid;
+  overflow: hidden;
+}
+
+.roll-label > span {
+  grid-area: 1 / 1;
+  transition: transform 0.45s cubic-bezier(0.6, 0, 0.2, 1);
+}
+
+.roll-label > span:last-child {
+  transform: translateY(110%);
+}
+
+.roll:hover .roll-label > span:first-child,
+.roll:focus-visible .roll-label > span:first-child {
+  transform: translateY(-110%);
+}
+
+.roll:hover .roll-label > span:last-child,
+.roll:focus-visible .roll-label > span:last-child {
+  transform: translateY(0);
+}
+
+/* FAQ numbering. */
+.faq-list {
+  counter-reset: faq;
+}
+
+.faq-item {
+  counter-increment: faq;
+}
+
+.faq-item summary::before {
+  content: counter(faq, decimal-leading-zero);
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .caret::after {
+  .caret::after,
+  .headline-load .word,
+  .rise,
+  .marquee-track {
     animation: none;
+  }
+
+  .roll-label > span {
+    transition: none;
   }
 }
