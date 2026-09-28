@@ -37,7 +37,7 @@ export function SiteHeader() {
             alt=""
             width={44}
             height={44}
-            className="size-10 rounded-full sm:size-11"
+            className="size-10 shrink-0 rounded-full object-cover sm:size-11"
             preload
           />
           <span className="headline text-xl leading-none">

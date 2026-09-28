@@ -93,15 +93,17 @@ const events = [
   },
 ];
 
-const team = [
+const team: { role: string; name: string; body: string; photo?: string }[] = [
   {
     role: "President",
     name: "Nomuun Ankhbayar",
+    photo: "/profiles/nomuun.png",
     body: "Plans and hosts meetings and events, and is the club's main contact with NCSAC.",
   },
   {
     role: "Vice President",
     name: "Tumenbayar Enkhbat",
+    photo: "/profiles/tumenbayar.png",
     body: "Co-hosts meetings, co-organizes events and leads club marketing.",
   },
   {
@@ -224,7 +226,7 @@ export default function Home() {
                     alt=""
                     width={32}
                     height={32}
-                    className="rounded-md"
+                    className="size-8 rounded-md object-contain"
                     preload
                   />
                 }
@@ -463,13 +465,24 @@ export default function Home() {
                   className="flex items-start gap-4 rounded-3xl bg-white/5 p-3 ring-1 ring-white/10 md:block"
                 >
                   <div
-                    className="bg-knight-gradient headline grid size-24 shrink-0 place-items-center rounded-2xl text-4xl sm:size-32 sm:text-5xl md:aspect-[4/3] md:size-auto md:text-8xl"
-                    aria-hidden
+                    className="bg-knight-gradient headline relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl text-4xl sm:size-32 sm:text-5xl md:aspect-[4/3] md:size-auto md:text-8xl"
+                    aria-hidden={!m.photo}
                   >
-                    {m.name
-                      .split(" ")
-                      .map((part) => part[0])
-                      .join("")}
+                    {m.photo ? (
+                      <Image
+                        src={m.photo}
+                        alt={m.name}
+                        fill
+                        sizes="(min-width: 768px) 33vw, 128px"
+                        loading="eager"
+                        className="object-cover object-top"
+                      />
+                    ) : (
+                      m.name
+                        .split(" ")
+                        .map((part) => part[0])
+                        .join("")
+                    )}
                   </div>
                   <div className="min-w-0 py-1 pr-2 md:p-4 md:pt-6">
                     <p className="font-mono text-xs font-medium uppercase tracking-wider text-knight-300">
@@ -559,7 +572,7 @@ export default function Home() {
         <div className="overflow-clip rounded-[2rem] bg-ink text-white lg:rounded-[2.5rem]">
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-5 pb-10 pt-12 sm:px-8 sm:pt-16 md:gap-10 lg:grid-cols-[1.5fr_1fr_1.2fr_1fr]">
             <div className="col-span-2 flex items-start gap-4 md:col-span-1">
-              <Image src="/logo.png" alt="" width={56} height={56} className="rounded-xl" />
+              <Image src="/logo.png" alt="" width={56} height={56} className="size-14 shrink-0 rounded-xl object-contain" />
               <p className="max-w-xs text-sm text-white/60">
                 A student club of the Niagara College Student Administrative
                 Council (NCSAC).
