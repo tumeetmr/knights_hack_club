@@ -109,6 +109,7 @@ const team: { role: string; name: string; body: string; photo?: string }[] = [
   {
     role: "Secretary / Treasurer",
     name: "Jack Torrance",
+    photo: "/profiles/jack.png",
     body: "Runs agendas, attendance and minutes, and keeps members updated on the budget.",
   },
 ];
