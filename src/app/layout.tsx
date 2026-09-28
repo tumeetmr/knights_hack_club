@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -25,11 +25,15 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased`}
+      className={`${archivo.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased motion-reduce:scroll-auto`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

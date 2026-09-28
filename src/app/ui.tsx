@@ -102,7 +102,7 @@ export function RollLink({
   return (
     <a
       href={href}
-      className={`roll inline-flex items-center justify-center rounded-full px-7 py-4 font-bold transition-colors ${className}`}
+      className={`roll inline-flex items-center justify-center rounded-full px-7 py-4 font-bold transition-[color,background-color,border-color,scale] active:scale-[0.98] ${className}`}
       {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
     >
       <span className="roll-label">

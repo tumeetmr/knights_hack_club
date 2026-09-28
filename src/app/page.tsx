@@ -177,27 +177,27 @@ export default function Home() {
         <section className={`${panel} bg-ink text-white`}>
           <div className="bg-grid absolute inset-0" aria-hidden />
           <div
-            className="absolute -right-40 -top-40 size-[640px] rounded-full bg-knight-500/40 blur-3xl"
+            className="absolute -right-32 -top-32 size-[360px] rounded-full bg-knight-500/40 blur-3xl sm:-right-40 sm:-top-40 sm:size-[640px]"
             aria-hidden
           />
           <div
-            className="absolute -bottom-60 -left-40 size-[520px] rounded-full bg-knight-600/30 blur-3xl"
+            className="absolute -bottom-40 -left-32 size-[320px] rounded-full bg-knight-600/30 blur-3xl sm:-bottom-60 sm:-left-40 sm:size-[520px]"
             aria-hidden
           />
 
-          <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] max-w-7xl flex-col px-5 pb-6 pt-32 sm:px-8 sm:pb-8 sm:pt-36">
-            <p className="rise caret text-center font-mono text-sm text-knight-300">
+          <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] max-w-7xl flex-col px-5 pb-5 pt-28 sm:min-h-[calc(100dvh-2rem)] sm:px-8 sm:pb-8 sm:pt-36">
+            <p className="rise caret text-center font-mono text-xs text-knight-300 sm:text-sm">
               niagara_college/knights_hack
             </p>
             <Headline
               as="h1"
               onLoad
               lines={["Your coding crew", "on campus."]}
-              className="mt-6 text-center text-[clamp(3.75rem,11vw,9.5rem)]"
+              className="mt-5 text-center text-[clamp(3.5rem,11vw,9.5rem)] sm:mt-6"
             />
 
             <ul
-              className="rise mx-auto mt-10 flex w-full max-w-4xl flex-wrap justify-center gap-x-8 gap-y-3 text-sm font-medium text-white/75 sm:justify-between"
+              className="rise mx-auto mt-8 flex w-full max-w-4xl flex-wrap justify-center gap-x-5 gap-y-2.5 text-sm font-medium text-white/75 sm:mt-10 sm:justify-between sm:gap-x-8"
               style={{ "--d": "500ms" } as CSSProperties}
             >
               <li className="flex items-center gap-2">
@@ -212,7 +212,7 @@ export default function Home() {
             </ul>
 
             <div
-              className="rise mt-12 grid gap-6 lg:mt-auto lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-end"
+              className="rise mt-10 grid gap-5 sm:mt-12 sm:gap-6 lg:mt-auto lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-end"
               style={{ "--d": "700ms" } as CSSProperties}
             >
               <SectionBlock
@@ -234,13 +234,13 @@ export default function Home() {
                   code. First-timers and seasoned devs build side by side.
                 </p>
               </SectionBlock>
-              <div className="flex flex-wrap gap-3 lg:justify-end">
+              <div className="grid gap-3 sm:flex sm:flex-wrap lg:justify-end">
                 <RollLink href="#join" className="bg-white text-ink hover:bg-knight-300">
                   Join the Club
                 </RollLink>
                 <RollLink
                   href="#events"
-                  className="border border-white/30 hover:border-white hover:bg-white/10"
+                  className="border border-white/30 hover:border-white hover:bg-white/10 active:bg-white/10"
                 >
                   See Fall 2026 Events
                 </RollLink>
@@ -251,7 +251,7 @@ export default function Home() {
 
         {/* 01 Mission */}
         <section id="about" className={`${panel} bg-paper`}>
-          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-24 sm:px-8 md:py-36">
             <SectionCounter n={1} className="text-knight-600" />
             <div className="mt-10 grid gap-12 lg:grid-cols-[22rem_1fr] lg:gap-20">
               <SectionBlock tone="mist" label="Our mission" icon={icons.smile} className="self-start">
@@ -276,7 +276,7 @@ export default function Home() {
 
         {/* 02 What we do: sticky scroll steps */}
         <section id="what-we-do" className={`${panel} bg-grid-blue text-white`}>
-          <div className="mx-auto max-w-7xl px-5 pt-24 sm:px-8 md:pt-32">
+          <div className="mx-auto max-w-7xl px-5 pt-20 sm:px-8 sm:pt-24 md:pt-32">
             <SectionCounter n={2} className="text-white/70" />
             <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
               <Headline
@@ -294,7 +294,7 @@ export default function Home() {
 
         {/* 03 Why join + ticker */}
         <section className={`${panel} bg-mist text-knight-600`}>
-          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-24 sm:px-8 md:py-36">
             <SectionCounter n={3} />
             <div className="mt-8 grid gap-12 lg:grid-cols-[1fr_24rem] lg:items-end">
               <div>
@@ -341,7 +341,7 @@ export default function Home() {
 
         {/* 04 Stats */}
         <section className={`${panel} bg-grid-blue text-white`}>
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-8 md:py-36 lg:grid-cols-2 lg:items-center lg:gap-16">
+          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:py-24 sm:px-8 md:py-36 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div>
               <SectionCounter n={4} className="text-white/70" />
               <Headline
@@ -364,7 +364,7 @@ export default function Home() {
               </SectionBlock>
             </div>
 
-            <div data-reveal="up" className="rounded-3xl bg-paper p-7 text-ink sm:p-10">
+            <div data-reveal="up" className="rounded-3xl bg-paper p-6 text-ink sm:p-10">
               <div className="flex items-start justify-between gap-6">
                 <h3 className="headline text-4xl sm:text-5xl">Zero to shipped</h3>
                 <span className="text-knight-600">{icons.chart}</span>
@@ -378,7 +378,7 @@ export default function Home() {
                 hackathon. Here&apos;s how it builds:
               </p>
 
-              <div className="mt-8 flex h-48 items-end gap-3 border-b-2 border-ink pb-px" role="img" aria-label={`Events per month: ${perMonth.map(([m, n]) => `${m}, ${n}`).join("; ")}`}>
+              <div className="mt-8 flex h-40 items-end gap-2 border-b-2 border-ink pb-px sm:h-48 sm:gap-3" role="img" aria-label={`Events per month: ${perMonth.map(([m, n]) => `${m}, ${n}`).join("; ")}`}>
                 {perMonth.map(([month, n]) => (
                   <div key={month} className="flex flex-1 flex-col items-center justify-end gap-2 self-stretch">
                     <span className="font-mono text-sm font-bold">{n}</span>
@@ -389,9 +389,9 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <div className="mt-2 flex gap-3" aria-hidden>
+              <div className="mt-2 flex gap-2 sm:gap-3" aria-hidden>
                 {perMonth.map(([month]) => (
-                  <span key={month} className="flex-1 text-center font-mono text-xs text-ink/50">
+                  <span key={month} className="flex-1 text-center font-mono text-[0.6875rem] leading-tight text-ink/50 sm:text-xs">
                     {month}
                   </span>
                 ))}
@@ -402,7 +402,7 @@ export default function Home() {
 
         {/* 05 Events */}
         <section id="events" className={`${panel} bg-paper`}>
-          <div className="py-24 md:py-36">
+          <div className="py-20 sm:py-24 md:py-36">
             <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[22rem_1fr] lg:items-end lg:gap-20">
               <SectionBlock tone="mist" label="Fall 2026 schedule" icon={icons.calendar} className="order-last self-end lg:order-first">
                 <p className="text-ink/70">
@@ -424,14 +424,14 @@ export default function Home() {
 
         {/* Showcase band */}
         <section className={`${panel} bg-knight-gradient text-white`}>
-          <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-5 py-20 sm:px-8 md:flex-row md:items-center">
+          <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-5 py-16 sm:px-8 sm:py-20 md:flex-row md:items-center">
             <Headline
               lines={["Got a project or startup idea?", "Show it off."]}
-              className="max-w-3xl text-5xl sm:text-7xl"
+              className="max-w-3xl text-[clamp(2.75rem,9vw,4.5rem)]"
             />
             <RollLink
               href={`mailto:${CONTACT_EMAIL}?subject=Knights%20Hack%20Showcase`}
-              className="shrink-0 bg-white text-ink hover:bg-ink hover:text-white"
+              className="w-full shrink-0 bg-white text-ink hover:bg-ink hover:text-white sm:w-auto"
             >
               Pitch it for the Showcase
             </RollLink>
@@ -440,7 +440,7 @@ export default function Home() {
 
         {/* 06 Team */}
         <section id="team" className={`${panel} bg-ink text-white`}>
-          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-24 sm:px-8 md:py-36">
             <div className="grid gap-10 lg:grid-cols-[1fr_22rem] lg:items-end">
               <div>
                 <SectionCounter n={6} className="text-knight-300" />
@@ -454,16 +454,16 @@ export default function Home() {
               </SectionBlock>
             </div>
 
-            <div className="mt-16 grid gap-4 md:grid-cols-3">
+            <div className="mt-12 grid gap-3 sm:mt-16 sm:gap-4 md:grid-cols-3">
               {team.map((m, i) => (
                 <article
                   key={m.role}
                   data-reveal="up"
                   style={{ "--d": `${i * 100}ms` } as CSSProperties}
-                  className="rounded-3xl bg-white/5 p-3 ring-1 ring-white/10"
+                  className="flex items-start gap-4 rounded-3xl bg-white/5 p-3 ring-1 ring-white/10 md:block"
                 >
                   <div
-                    className="bg-knight-gradient headline grid aspect-[4/3] place-items-center rounded-2xl text-8xl"
+                    className="bg-knight-gradient headline grid size-24 shrink-0 place-items-center rounded-2xl text-4xl sm:size-32 sm:text-5xl md:aspect-[4/3] md:size-auto md:text-8xl"
                     aria-hidden
                   >
                     {m.name
@@ -471,12 +471,12 @@ export default function Home() {
                       .map((part) => part[0])
                       .join("")}
                   </div>
-                  <div className="p-4 pt-6">
+                  <div className="min-w-0 py-1 pr-2 md:p-4 md:pt-6">
                     <p className="font-mono text-xs font-medium uppercase tracking-wider text-knight-300">
                       {m.role}
                     </p>
-                    <h3 className="mt-2 text-2xl font-bold tracking-tight">{m.name}</h3>
-                    <p className="mt-3 text-white/65">{m.body}</p>
+                    <h3 className="mt-1.5 text-xl font-bold tracking-tight sm:text-2xl md:mt-2">{m.name}</h3>
+                    <p className="mt-2 text-sm text-white/65 sm:text-base md:mt-3">{m.body}</p>
                   </div>
                 </article>
               ))}
@@ -492,11 +492,11 @@ export default function Home() {
             <div className="absolute -bottom-40 right-[-5%] size-96 rounded-full bg-knight-300/40 blur-3xl" />
           </div>
 
-          <div className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 md:py-36">
+          <div className="relative mx-auto max-w-7xl px-5 py-20 sm:py-24 sm:px-8 md:py-36">
             <SectionCounter n={7} />
             <Headline lines={["Frequently", "asked questions"]} className="mt-8 text-[clamp(3.5rem,10vw,9rem)]" />
 
-            <div className="faq-list mt-16 max-w-4xl lg:ml-auto">
+            <div className="faq-list mt-10 max-w-4xl sm:mt-16 lg:ml-auto">
               {faqs.map((f) => (
                 <details
                   key={f.q}
@@ -504,16 +504,16 @@ export default function Home() {
                   data-reveal="up"
                   className="faq-item group border-t-2 border-knight-600/15 last:border-b-2"
                 >
-                  <summary className="flex cursor-pointer list-none items-center gap-5 py-6 text-xl font-bold text-ink transition hover:text-knight-600 before:w-8 before:shrink-0 before:font-mono before:text-sm before:font-medium before:text-knight-600 sm:text-2xl">
+                  <summary className="flex cursor-pointer list-none items-center gap-4 py-5 text-lg font-bold leading-snug text-ink transition hover:text-knight-600 before:w-8 before:shrink-0 before:font-mono before:text-sm before:font-medium before:text-knight-600 sm:gap-5 sm:py-6 sm:text-2xl">
                     <span className="flex-1">{f.q}</span>
                     <span
-                      className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-current text-xl transition group-open:rotate-45 group-open:bg-knight-600 group-open:text-white"
+                      className="grid size-9 shrink-0 place-items-center rounded-full border-2 border-current text-xl transition group-open:rotate-45 group-open:bg-knight-600 group-open:text-white sm:size-10"
                       aria-hidden
                     >
                       +
                     </span>
                   </summary>
-                  <p className="max-w-2xl pb-8 pl-13 text-lg leading-relaxed text-ink/70">{f.a}</p>
+                  <p className="max-w-2xl pb-6 pl-12 pr-2 leading-relaxed text-ink/70 sm:pb-8 sm:pl-13 sm:text-lg">{f.a}</p>
                 </details>
               ))}
             </div>
@@ -524,22 +524,22 @@ export default function Home() {
         <section id="join" className={`${panel} bg-ink text-white`}>
           <div className="bg-grid absolute inset-0" aria-hidden />
           <div
-            className="absolute left-1/2 top-full size-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-knight-500/40 blur-3xl"
+            className="absolute left-1/2 top-full size-[420px] -translate-x-1/2 sm:size-[720px] -translate-y-1/2 rounded-full bg-knight-500/40 blur-3xl"
             aria-hidden
           />
-          <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 py-24 text-center sm:px-8 md:py-36">
+          <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 py-20 sm:py-24 text-center sm:px-8 md:py-36">
             <p className="font-mono text-sm text-knight-300">{"> join --club knights_hack"}</p>
             <Headline
               lines={["Pull up a chair.", "Open a laptop."]}
               className="mt-8 text-[clamp(3.5rem,11vw,9rem)]"
             />
-            <p data-reveal="up" className="mt-8 max-w-xl text-lg text-white/70">
+            <p data-reveal="up" className="mt-6 max-w-xl text-white/70 sm:mt-8 sm:text-lg">
               Membership is open to every Niagara College student, regardless
               of program, background or experience. Register to get on the
               member list and hear about the next event.
             </p>
-            <div data-reveal="up" className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-              <RollLink href={JOIN_FORM_URL} external className="bg-white px-9 py-5 text-lg text-ink hover:bg-knight-300">
+            <div data-reveal="up" className="mt-8 grid w-full gap-3 sm:mt-10 sm:flex sm:w-auto sm:items-center sm:gap-4">
+              <RollLink href={JOIN_FORM_URL} external className="bg-white py-5 text-lg text-ink hover:bg-knight-300 sm:px-9">
                 Register as a member ↗
               </RollLink>
               <RollLink
@@ -557,8 +557,8 @@ export default function Home() {
 
       <footer className="px-3 pb-3 sm:px-4 sm:pb-4">
         <div className="overflow-clip rounded-[2rem] bg-ink text-white lg:rounded-[2.5rem]">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-10 pt-16 sm:px-8 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1.2fr_1fr]">
-            <div className="flex items-start gap-4">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-5 pb-10 pt-12 sm:px-8 sm:pt-16 md:gap-10 lg:grid-cols-[1.5fr_1fr_1.2fr_1fr]">
+            <div className="col-span-2 flex items-start gap-4 md:col-span-1">
               <Image src="/logo.png" alt="" width={56} height={56} className="rounded-xl" />
               <p className="max-w-xs text-sm text-white/60">
                 A student club of the Niagara College Student Administrative
@@ -583,7 +583,7 @@ export default function Home() {
                 ))}
               </ul>
             </nav>
-            <div>
+            <div className="col-span-2 row-start-3 md:col-span-1 md:row-start-auto">
               <p className="font-mono text-xs uppercase tracking-widest text-white/40">Say hello</p>
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
@@ -610,7 +610,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-white/10">
-            <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-6 text-xs text-white/40 sm:px-8">
+            <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-x-4 gap-y-3 px-5 py-6 text-xs text-white/40 sm:px-8">
               <p>© 2026 Knights Hack Club · Niagara College · Built by students, for students.</p>
               <a href="#top" className="hover:text-white">
                 Back to top ↑

@@ -17,7 +17,15 @@
   --font-mono: var(--font-jetbrains-mono);
 }
 
+/* Sticky scroll scenes only when the screen is wide AND tall enough to hold them. */
+@custom-variant pinned (@media (width >= 64rem) and (height >= 40rem));
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
+  overflow-x: clip;
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-archivo), system-ui, sans-serif;
@@ -188,6 +196,25 @@ body {
   display: none;
 }
 
+/* Answers slide open where the browser can animate to height: auto. */
+@supports (interpolate-size: allow-keywords) {
+  .faq-item {
+    interpolate-size: allow-keywords;
+  }
+
+  .faq-item::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size 0.4s cubic-bezier(0.2, 0, 0, 1),
+      content-visibility 0.4s allow-discrete;
+  }
+
+  .faq-item[open]::details-content {
+    block-size: auto;
+  }
+}
+
 .no-scrollbar {
   scrollbar-width: none;
 }
@@ -204,7 +231,8 @@ body {
     animation: none;
   }
 
-  .roll-label > span {
+  .roll-label > span,
+  .faq-item::details-content {
     transition: none;
   }
 }

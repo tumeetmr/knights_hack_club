@@ -28,11 +28,12 @@ export function EventsSlider({ events }: { events: Event[] }) {
     const card = el?.firstElementChild as HTMLElement | null;
     if (!el || !card) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollBy({ left: dir * (card.offsetWidth + 16), behavior: reduce ? "auto" : "smooth" });
+    const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+    el.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: reduce ? "auto" : "smooth" });
   };
 
   const arrow =
-    "grid size-14 place-items-center rounded-full border-2 border-ink text-xl transition hover:bg-ink hover:text-white disabled:pointer-events-none disabled:opacity-25";
+    "grid size-12 place-items-center rounded-full border-2 border-ink text-lg transition active:scale-95 sm:size-14 sm:text-xl hover:bg-ink hover:text-white disabled:pointer-events-none disabled:opacity-25";
 
   return (
     <div>
@@ -50,12 +51,12 @@ export function EventsSlider({ events }: { events: Event[] }) {
         onScroll={onScroll}
         tabIndex={0}
         aria-label="Fall 2026 events"
-        className="no-scrollbar mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 outline-none [--gutter:1.25rem] [padding-inline:max(var(--gutter),calc((100%_-_80rem)/2_+_var(--gutter)))] [scroll-padding-inline:max(var(--gutter),calc((100%_-_80rem)/2_+_var(--gutter)))] sm:[--gutter:2rem]"
+        className="no-scrollbar mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-2 outline-none sm:mt-8 sm:gap-4 [--gutter:1.25rem] [padding-inline:max(var(--gutter),calc((100%_-_80rem)/2_+_var(--gutter)))] [scroll-padding-inline:max(var(--gutter),calc((100%_-_80rem)/2_+_var(--gutter)))] sm:[--gutter:2rem]"
       >
         {events.map((e, i) => (
           <li
             key={e.title}
-            className="flex w-[82vw] max-w-[23rem] shrink-0 snap-start flex-col rounded-3xl bg-mist p-7 transition hover:bg-knight-50"
+            className="flex w-[80vw] max-w-[23rem] shrink-0 snap-start flex-col rounded-3xl bg-mist p-6 transition hover:bg-knight-50 sm:p-7"
           >
             <div className="flex items-center justify-between">
               <span className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">
@@ -65,9 +66,9 @@ export function EventsSlider({ events }: { events: Event[] }) {
                 {String(i + 1).padStart(2, "0")} / {String(events.length).padStart(2, "0")}
               </span>
             </div>
-            <p className="headline mt-10 text-6xl text-knight-600">{e.month}</p>
+            <p className="headline mt-8 text-5xl text-knight-600 sm:mt-10 sm:text-6xl">{e.month}</p>
             <p className="mt-2 font-mono text-xs text-ink/50">{e.time}</p>
-            <h3 className="mt-6 text-2xl font-bold leading-tight tracking-tight">{e.title}</h3>
+            <h3 className="mt-5 text-xl font-bold sm:mt-6 sm:text-2xl leading-tight tracking-tight">{e.title}</h3>
             <p className="mt-3 text-ink/70">{e.body}</p>
           </li>
         ))}
