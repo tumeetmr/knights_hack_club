@@ -188,7 +188,7 @@ export default function Home() {
             aria-hidden
           />
 
-          <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] max-w-7xl flex-col px-5 pb-5 pt-28 sm:min-h-[calc(100dvh-2rem)] sm:px-8 sm:pb-8 sm:pt-36">
+          <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] max-w-7xl flex-col justify-center px-5 pb-10 pt-28 sm:min-h-[calc(100dvh-2rem)] sm:px-8 sm:pb-16 sm:pt-32">
             <p className="rise caret text-center font-mono text-xs text-knight-300 sm:text-sm">
               niagara_college/knights_hack
             </p>
@@ -215,7 +215,7 @@ export default function Home() {
             </ul>
 
             <div
-              className="rise mt-10 grid gap-5 sm:mt-12 sm:gap-6 lg:mt-auto lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-end"
+              className="rise mx-auto mt-10 grid w-full max-w-md gap-5 sm:mt-12 sm:gap-6"
               style={{ "--d": "700ms" } as CSSProperties}
             >
               <SectionBlock
@@ -237,7 +237,7 @@ export default function Home() {
                   code. First-timers and seasoned devs build side by side.
                 </p>
               </SectionBlock>
-              <div className="grid gap-3 sm:flex sm:flex-wrap lg:justify-end">
+              <div className="grid gap-3 sm:flex sm:flex-wrap sm:justify-center">
                 <RollLink href="#join" className="bg-white text-ink hover:bg-knight-300">
                   Join the Club
                 </RollLink>
@@ -457,16 +457,16 @@ export default function Home() {
               </SectionBlock>
             </div>
 
-            <div className="mt-12 grid gap-3 sm:mt-16 sm:gap-4 md:grid-cols-3">
+            <div className="mt-12 grid gap-3 sm:mt-16 sm:grid-cols-3 sm:gap-4">
               {team.map((m, i) => (
                 <article
                   key={m.role}
                   data-reveal="up"
                   style={{ "--d": `${i * 100}ms` } as CSSProperties}
-                  className="flex items-start gap-4 rounded-3xl bg-white/5 p-3 ring-1 ring-white/10 md:block"
+                  className="rounded-3xl bg-white/5 p-3 ring-1 ring-white/10"
                 >
                   <div
-                    className="bg-knight-gradient headline relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl text-4xl sm:size-32 sm:text-5xl md:aspect-[4/3] md:size-auto md:text-8xl"
+                    className="bg-knight-gradient headline relative grid aspect-square place-items-center overflow-hidden rounded-2xl text-8xl sm:aspect-[4/5]"
                     aria-hidden={!m.photo}
                   >
                     {m.photo ? (
@@ -474,7 +474,7 @@ export default function Home() {
                         src={m.photo}
                         alt={m.name}
                         fill
-                        sizes="(min-width: 768px) 33vw, 128px"
+                        sizes="(min-width: 640px) 33vw, 100vw"
                         loading="eager"
                         className="object-cover object-top"
                       />
@@ -485,12 +485,12 @@ export default function Home() {
                         .join("")
                     )}
                   </div>
-                  <div className="min-w-0 py-1 pr-2 md:p-4 md:pt-6">
+                  <div className="p-3 pt-5 md:p-4 md:pt-6">
                     <p className="font-mono text-xs font-medium uppercase tracking-wider text-knight-300">
                       {m.role}
                     </p>
-                    <h3 className="mt-1.5 text-xl font-bold tracking-tight sm:text-2xl md:mt-2">{m.name}</h3>
-                    <p className="mt-2 text-sm text-white/65 sm:text-base md:mt-3">{m.body}</p>
+                    <h3 className="mt-2 text-2xl font-bold tracking-tight">{m.name}</h3>
+                    <p className="mt-3 text-white/65">{m.body}</p>
                   </div>
                 </article>
               ))}
@@ -500,11 +500,7 @@ export default function Home() {
 
         {/* 07 FAQ */}
         <section id="faq" className={`${panel} bg-paper text-knight-600`}>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-80" aria-hidden>
-            <div className="absolute -bottom-40 left-[5%] size-96 rounded-full bg-knight-300/40 blur-3xl" />
-            <div className="absolute -bottom-52 left-[40%] size-[36rem] rounded-full bg-knight-500/25 blur-3xl" />
-            <div className="absolute -bottom-40 right-[-5%] size-96 rounded-full bg-knight-300/40 blur-3xl" />
-          </div>
+          <div className="faq-glow pointer-events-none absolute inset-x-0 bottom-0 h-80" aria-hidden />
 
           <div className="relative mx-auto max-w-7xl px-5 py-20 sm:py-24 sm:px-8 md:py-36">
             <SectionCounter n={7} />

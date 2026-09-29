@@ -11,9 +11,9 @@ type Step = {
 };
 
 /**
- * On large, tall-enough screens the section is three viewports tall and the card sticks
- * while scroll progress picks the active step. On small screens the steps
- * (and short landscape ones) the steps simply stack.
+ * On large, tall-enough screens the section is 4.5 viewports tall and the card sticks
+ * while scroll progress picks the active step. On small (and short landscape) screens
+ * the steps simply stack.
  */
 export function Steps({ steps }: { steps: Step[] }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -50,7 +50,7 @@ export function Steps({ steps }: { steps: Step[] }) {
   }, [steps.length]);
 
   return (
-    <div ref={ref} className="relative pinned:h-[300vh]">
+    <div ref={ref} className="relative pinned:h-[450vh]">
       <div className="px-3 pb-3 pt-12 sm:px-6 sm:py-20 pinned:sticky pinned:top-0 pinned:flex pinned:h-dvh pinned:items-center pinned:py-0">
         <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-3xl bg-paper text-ink shadow-2xl shadow-knight-900/30">
           <div className="flex h-14 items-stretch justify-between border-b border-ink/10">

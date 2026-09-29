@@ -179,6 +179,15 @@ body {
   transform: translateY(0);
 }
 
+/* Soft glow along the FAQ's bottom edge. Gradients instead of blur filters:
+   mobile browsers repaint big blurs every frame while answers animate open, which flickers. */
+.faq-glow {
+  background:
+    radial-gradient(26rem 18rem at 12% 110%, rgb(125 184 238 / 0.4), transparent 70%),
+    radial-gradient(40rem 22rem at 55% 125%, rgb(47 120 212 / 0.25), transparent 70%),
+    radial-gradient(26rem 18rem at 95% 110%, rgb(125 184 238 / 0.4), transparent 70%);
+}
+
 /* FAQ numbering. */
 .faq-list {
   counter-reset: faq;
