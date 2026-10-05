@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { DISCORD_URL, JOIN_FORM_URL } from "./links";
+import { icons } from "./ui";
 
 const links = [
   { href: "#about", label: "About" },
@@ -59,12 +61,24 @@ export function SiteHeader() {
             </a>
           ))}
           <a
-            href="#join"
-            className="roll ml-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-ink transition-colors hover:bg-knight-300"
+            href={DISCORD_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Join our Discord"
+            title="Join our Discord"
+            className="ml-2 hidden size-11 place-items-center rounded-full bg-white/10 lg:grid transition hover:bg-[#5865F2] [&_svg]:size-5"
+          >
+            {icons.discord}
+          </a>
+          <a
+            href={JOIN_FORM_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="roll ml-1 rounded-full bg-white px-5 py-3 text-sm font-bold text-ink transition-colors hover:bg-knight-300"
           >
             <span className="roll-label">
-              <span>Join the Club</span>
-              <span aria-hidden>Join the Club</span>
+              <span>Join the Club ↗</span>
+              <span aria-hidden>Join the Club ↗</span>
             </span>
           </a>
         </nav>
@@ -100,16 +114,36 @@ export function SiteHeader() {
             inert={!open}
             className="mt-2 max-h-[calc(100dvh-5.5rem)] overflow-y-auto overscroll-contain rounded-3xl bg-ink px-6 pb-3 pt-1 text-white shadow-2xl ring-1 ring-white/10"
           >
-            {[...links, { href: "#join", label: "Join the Club" }].map((link) => (
+            {links.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="headline block border-b border-white/10 py-3.5 text-[2.25rem] transition-colors last:border-b-0 last:text-knight-300 active:text-knight-300"
+                className="headline block border-b border-white/10 py-3.5 text-[2.25rem] transition-colors active:text-knight-300"
               >
                 {link.label}
               </a>
             ))}
+            <div className="grid gap-2 pb-2 pt-4">
+              <a
+                href={JOIN_FORM_URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setOpen(false)}
+                className="rounded-full bg-white py-3.5 text-center font-bold text-ink transition active:scale-[0.98]"
+              >
+                Join the Club ↗
+              </a>
+              <a
+                href={DISCORD_URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-full bg-[#5865F2] py-3.5 font-bold text-white transition active:scale-[0.98] [&_svg]:size-5"
+              >
+                {icons.discord} Join our Discord ↗
+              </a>
+            </div>
           </nav>
         </div>
       </div>

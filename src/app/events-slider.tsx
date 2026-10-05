@@ -1,16 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { type ClubEvent, googleCalendarUrl } from "./events";
+import { icons } from "./ui";
 
-type Event = {
-  month: string;
-  time: string;
-  title: string;
-  body: string;
-  kind: string;
-};
+const calButton =
+  "inline-flex items-center gap-1.5 rounded-full border-2 border-ink/15 px-3 py-1.5 text-xs font-semibold transition hover:border-ink hover:bg-ink hover:text-white active:scale-95";
 
-export function EventsSlider({ events }: { events: Event[] }) {
+export function EventsSlider({ events }: { events: ClubEvent[] }) {
   const track = useRef<HTMLOListElement>(null);
   const [edge, setEdge] = useState({ start: true, end: false });
 
@@ -37,7 +34,18 @@ export function EventsSlider({ events }: { events: Event[] }) {
 
   return (
     <div>
-      <div className="mx-auto flex max-w-7xl justify-end gap-3 px-5 sm:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-5 sm:px-8">
+        <a
+          href="/calendar.ics"
+          // Prefer a live subscription so newly confirmed events show up on their own.
+          onClick={(ev) => {
+            ev.preventDefault();
+            window.location.href = `webcal://${window.location.host}/calendar.ics`;
+          }}
+          className="mr-auto inline-flex items-center gap-2 text-sm font-semibold underline-offset-4 hover:text-knight-600 hover:underline [&_svg]:size-5"
+        >
+          {icons.calendar} Subscribe to the club calendar
+        </a>
         <button type="button" className={arrow} onClick={() => step(-1)} disabled={edge.start} aria-label="Previous events">
           <span aria-hidden>←</span>
         </button>
@@ -59,17 +67,42 @@ export function EventsSlider({ events }: { events: Event[] }) {
             className="flex w-[80vw] max-w-[23rem] shrink-0 snap-start flex-col rounded-3xl bg-mist p-6 transition hover:bg-knight-50 sm:p-7"
           >
             <div className="flex items-center justify-between">
-              <span className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">
-                {e.kind}
+              <span className="flex gap-2">
+                <span className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">
+                  {e.kind}
+                </span>
+                {e.date && (
+                  <span className="rounded-full bg-knight-600 px-3 py-1 text-xs font-semibold text-white">
+                    Confirmed
+                  </span>
+                )}
               </span>
               <span className="font-mono text-xs text-ink/40">
                 {String(i + 1).padStart(2, "0")} / {String(events.length).padStart(2, "0")}
               </span>
             </div>
-            <p className="headline mt-8 text-5xl text-knight-600 sm:mt-10 sm:text-6xl">{e.month}</p>
+            <p className="headline mt-8 text-5xl text-knight-600 sm:mt-10 sm:text-6xl">{e.date ?? e.month}</p>
             <p className="mt-2 font-mono text-xs text-ink/50">{e.time}</p>
+            <p className="mt-1 flex items-center gap-1 font-mono text-xs text-ink/50 [&_svg]:size-3.5">
+              {icons.pin} {e.place ?? "Welland Campus · room TBA"}
+            </p>
             <h3 className="mt-5 text-xl font-bold sm:mt-6 sm:text-2xl leading-tight tracking-tight">{e.title}</h3>
             <p className="mt-3 text-ink/70">{e.body}</p>
+            {e.start && e.end && (
+              <div className="mt-auto flex flex-wrap gap-2 pt-6">
+                <a
+                  href={googleCalendarUrl({ ...e, start: e.start, end: e.end })}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={calButton}
+                >
+                  + Google Calendar
+                </a>
+                <a href="/calendar.ics" download className={calButton}>
+                  + Apple / Outlook
+                </a>
+              </div>
+            )}
           </li>
         ))}
       </ol>

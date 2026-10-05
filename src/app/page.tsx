@@ -2,13 +2,12 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { CountUp } from "./count-up";
 import { EventsSlider } from "./events-slider";
+import { CAMPUS, events } from "./events";
 import { Reveal } from "./reveal";
 import { SiteHeader } from "./site-header";
 import { Steps } from "./steps";
+import { CONTACT_EMAIL, DISCORD_URL, JOIN_FORM_URL } from "./links";
 import { Headline, RollLink, SectionBlock, SectionCounter, icons } from "./ui";
-
-const CONTACT_EMAIL = "nankhbayar1@ncstudents.niagaracollege.ca";
-const JOIN_FORM_URL = "https://forms.cloud.microsoft/r/SbHL8X9vDP";
 
 const pillars = [
   {
@@ -31,65 +30,6 @@ const pillars = [
     kicker: "Showcase & hack",
     body: "Team up to prototype solutions to real student and campus problems, then show them off at our showcases and hackathon.",
     snippet: "git commit -m \"v1 🚀\"\ngit push origin main",
-  },
-];
-
-const events = [
-  {
-    month: "Sep / Oct",
-    time: "2:00 – 3:00 PM",
-    title: "Club Launch & Meet-and-Greet",
-    body: "Meet students into coding and tech, pitch ideas for future activities and find your people. Members and non-members welcome.",
-    kind: "Social",
-  },
-  {
-    month: "Oct",
-    time: "2:00 – 3:30 PM",
-    title: "Scratch: Make Your First Game",
-    body: "A beginner-friendly, hands-on intro to programming concepts. Walk out with a game you built yourself.",
-    kind: "Workshop",
-  },
-  {
-    month: "Oct",
-    time: "2:00 – 3:30 PM",
-    title: "Vibe Coding",
-    body: "Try AI-assisted coding in a relaxed setting and build a small personal project from scratch.",
-    kind: "Workshop",
-  },
-  {
-    month: "Nov",
-    time: "2:00 – 3:30 PM",
-    title: "Student Project & Startup Showcase",
-    body: "Present your project, startup or idea and get questions and feedback from fellow students.",
-    kind: "Showcase",
-  },
-  {
-    month: "Nov",
-    time: "2:00 – 3:30 PM",
-    title: "Build Something for Campus",
-    body: "Brainstorm and prototype a small solution to a real student or campus problem, together.",
-    kind: "Build",
-  },
-  {
-    month: "Dec",
-    time: "2:00 – 3:00 PM",
-    title: "GitHub & Portfolio Workshop",
-    body: "Learn how to present your code and build an online portfolio that supports school and career goals.",
-    kind: "Workshop",
-  },
-  {
-    month: "Dec",
-    time: "2:00 – 3:00 PM",
-    title: "Project & Startup Showcase #2",
-    body: "Round two: share what you've built and connect with students who have different skills.",
-    kind: "Showcase",
-  },
-  {
-    month: "Dec",
-    time: "2:00 – 3:00 PM",
-    title: "Mini Hackathon: End of Term",
-    body: "Form a team, apply everything you learned and ship a small project against the clock.",
-    kind: "Hackathon",
   },
 ];
 
@@ -137,8 +77,12 @@ const faqs = [
     a: "Fill out the registration form. It takes about 2 minutes, gets you on the member list and means you'll hear about the next event.",
   },
   {
+    q: "Where can I chat with other members?",
+    a: "On our Discord. Hop in to ask questions, find teammates and get event reminders. You don't need to be registered to join.",
+  },
+  {
     q: "When and where do events happen?",
-    a: "Events run in the afternoon, usually between 2:00 and 3:30 PM. Exact dates and rooms are announced before each event.",
+    a: `Every event is at the ${CAMPUS}, Our first one, the Club Launch, is Thursday, Oct 8 from 2:00 to 3:50 PM, outside the Core. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
   },
   {
     q: "Can I show off my own project or startup?",
@@ -210,7 +154,7 @@ export default function Home() {
                 <span className="text-knight-300">{icons.calendar}</span> Fall 2026 · 8 events
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-knight-300">{icons.people}</span> An NCSAC club
+                <span className="text-knight-300">{icons.pin}</span> Welland Campus
               </li>
             </ul>
 
@@ -238,16 +182,23 @@ export default function Home() {
                 </p>
               </SectionBlock>
               <div className="grid gap-3 sm:flex sm:flex-wrap sm:justify-center">
-                <RollLink href="#join" className="bg-white text-ink hover:bg-knight-300">
-                  Join the Club
+                <RollLink href={JOIN_FORM_URL} external className="bg-white text-ink hover:bg-knight-300">
+                  Join the Club ↗
                 </RollLink>
                 <RollLink
-                  href="#events"
-                  className="border border-white/30 hover:border-white hover:bg-white/10 active:bg-white/10"
+                  href={DISCORD_URL}
+                  external
+                  className="border border-white/30 hover:border-[#5865F2] hover:bg-[#5865F2] active:bg-[#5865F2]"
                 >
-                  See Fall 2026 Events
+                  Join our Discord ↗
                 </RollLink>
               </div>
+              <a
+                href="#events"
+                className="-mt-1 justify-self-center text-center text-sm font-medium text-white/60 underline-offset-4 hover:text-white hover:underline"
+              >
+                <span className="text-knight-300">Next up:</span> Club Launch · Thu, Oct 8 · 2:00 PM · Outside the Core ↓
+              </a>
             </div>
           </div>
         </section>
@@ -409,9 +360,9 @@ export default function Home() {
             <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[22rem_1fr] lg:items-end lg:gap-20">
               <SectionBlock tone="mist" label="Fall 2026 schedule" icon={icons.calendar} className="order-last self-end lg:order-first">
                 <p className="text-ink/70">
-                  Eight events, from your very first game to an end-of-term
-                  hackathon. Exact dates and rooms are announced before each
-                  event.
+                  Eight events at the Welland Campus, from your very first
+                  game to an end-of-term hackathon. Kicking off Thursday,
+                  Oct 8. Dates, times and rooms go up a week before each event.
                 </p>
               </SectionBlock>
               <div>
@@ -553,14 +504,24 @@ export default function Home() {
                 Register as a member ↗
               </RollLink>
               <RollLink
-                href="https://www.yourncsac.ca/"
+                href={DISCORD_URL}
                 external
-                className="border border-white/30 hover:border-white hover:bg-white/10"
+                className="bg-[#5865F2] py-5 text-lg text-white hover:bg-[#4752C4] sm:px-9"
               >
-                Explore more clubs ↗
+                Join our Discord ↗
               </RollLink>
             </div>
-            <p className="mt-5 text-sm text-white/50">Takes about 2 minutes.</p>
+            <p className="mt-5 text-sm text-white/50">
+              Registering takes about 2 minutes.{" "}
+              <a
+                href="https://www.yourncsac.ca/"
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-4 hover:text-white"
+              >
+                Explore more NCSAC clubs ↗
+              </a>
+            </p>
           </div>
         </section>
       </main>
@@ -601,11 +562,19 @@ export default function Home() {
               >
                 {CONTACT_EMAIL}
               </a>
+              <a
+                href={DISCORD_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 inline-flex items-center gap-2 text-sm underline-offset-4 hover:text-knight-300 hover:underline [&_svg]:size-4"
+              >
+                {icons.discord} Join our Discord ↗
+              </a>
             </div>
             <div>
               <p className="font-mono text-xs uppercase tracking-widest text-white/40">Let&apos;s build</p>
-              <RollLink href="#join" className="mt-4 bg-white px-6 py-3 text-sm text-ink hover:bg-knight-300">
-                Join the Club
+              <RollLink href={JOIN_FORM_URL} external className="mt-4 bg-white px-6 py-3 text-sm text-ink hover:bg-knight-300">
+                Join the Club ↗
               </RollLink>
             </div>
           </div>
