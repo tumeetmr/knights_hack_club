@@ -3,7 +3,7 @@
 import { useActionState, useRef, useState } from "react";
 import { submitFlagAction, type SubmitState } from "@/lib/ctf/player-actions";
 
-export function FlagForm({ id, solved, canSubmit }: { id: number; solved: boolean; canSubmit: boolean }) {
+export function FlagForm({ id, solved, canSubmit, points }: { id: number; solved: boolean; canSubmit: boolean; points: number }) {
   const [state, action, pending] = useActionState<SubmitState, FormData>(submitFlagAction, {});
   const [value, setValue] = useState("");
   const [pasteNote, setPasteNote] = useState("");
@@ -12,9 +12,10 @@ export function FlagForm({ id, solved, canSubmit }: { id: number; solved: boolea
 
   if (done) {
     return (
-      <p role="status" className="inline-block rounded-xl bg-knight-600 px-4 py-3 text-sm font-bold text-white">
-        {state.ok ?? "✓ You solved this one."}
-      </p>
+      <div role="status" className="rounded-2xl bg-knight-600 px-5 py-4 text-white">
+        <p className="text-lg font-bold">🎉 {state.ok ?? "You solved this one!"}</p>
+        <p className="mt-1 text-sm text-white/75">{points} points are on your score.</p>
+      </div>
     );
   }
 
@@ -34,6 +35,9 @@ export function FlagForm({ id, solved, canSubmit }: { id: number; solved: boolea
   return (
     <form action={action}>
       <input type="hidden" name="id" value={id} />
+      <p className="mb-3 text-ink/70">
+        Paste the flag you found. It looks like <span className="font-mono font-bold text-ink">KH{"{...}"}</span>.
+      </p>
       <div className="flex flex-col gap-2 sm:flex-row">
         <label htmlFor="flag" className="sr-only">Flag</label>
         <div className="relative min-w-0 flex-1">
