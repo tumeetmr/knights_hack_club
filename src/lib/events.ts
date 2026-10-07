@@ -1,4 +1,4 @@
-import { DISCORD_URL, JOIN_FORM_URL } from "./links";
+import { DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
 
 export const CAMPUS = "Niagara College Welland Campus";
 export const CAMPUS_ADDRESS = "300 Woodlawn Rd, Welland, ON L3C 7L3";

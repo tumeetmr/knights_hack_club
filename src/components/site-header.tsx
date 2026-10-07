@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { DISCORD_URL, JOIN_FORM_URL } from "./links";
+import { DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
 import { icons } from "./ui";
 
 const links = [

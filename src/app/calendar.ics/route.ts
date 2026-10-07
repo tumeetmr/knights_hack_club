@@ -1,4 +1,4 @@
-import { calStamp, eventLocation, scheduled } from "../events";
+import { calStamp, eventLocation, scheduled } from "@/lib/events";
 
 export const dynamic = "force-static";
 

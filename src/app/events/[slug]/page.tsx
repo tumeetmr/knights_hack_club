@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CAMPUS, CAMPUS_ADDRESS, events, googleCalendarUrl } from "../../events";
-import { Reveal } from "../../reveal";
-import { SiteHeader } from "../../site-header";
-import { Headline, RollLink, SectionBlock, icons } from "../../ui";
+import { CAMPUS, CAMPUS_ADDRESS, events, googleCalendarUrl } from "@/lib/events";
+import { Reveal } from "@/components/reveal";
+import { SiteHeader } from "@/components/site-header";
+import { Headline, RollLink, SectionBlock, icons } from "@/components/ui";
 
 // Only events with a slug get a page; anything else is a 404.
 export const dynamicParams = false;

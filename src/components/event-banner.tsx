@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
-import type { ClubEvent } from "./events";
+import type { ClubEvent } from "@/lib/events";
 
 const DAY = 86_400_000;
 

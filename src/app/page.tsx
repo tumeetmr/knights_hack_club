@@ -1,15 +1,15 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { CountUp } from "./count-up";
-import { CtfTeaser } from "./ctf-teaser";
-import { EventBanner } from "./event-banner";
-import { EventsSlider } from "./events-slider";
-import { CAMPUS, eventPath, events, upcomingEvent } from "./events";
-import { Reveal } from "./reveal";
-import { SiteHeader } from "./site-header";
-import { Steps } from "./steps";
-import { CONTACT_EMAIL, DISCORD_URL, JOIN_FORM_URL } from "./links";
-import { Headline, RollLink, SectionBlock, SectionCounter, icons } from "./ui";
+import { CountUp } from "@/components/count-up";
+import { CtfTeaser } from "@/components/ctf-teaser";
+import { EventBanner } from "@/components/event-banner";
+import { EventsSlider } from "@/components/events-slider";
+import { CAMPUS, eventPath, events, upcomingEvent } from "@/lib/events";
+import { Reveal } from "@/components/reveal";
+import { SiteHeader } from "@/components/site-header";
+import { Steps } from "@/components/steps";
+import { CONTACT_EMAIL, DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
+import { Headline, RollLink, SectionBlock, SectionCounter, icons } from "@/components/ui";
 
 const pillars = [
   {

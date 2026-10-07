@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { type ClubEvent, eventPath, googleCalendarUrl } from "./events";
+import { type ClubEvent, eventPath, googleCalendarUrl } from "@/lib/events";
 import { icons } from "./ui";
 
 const calButton =
