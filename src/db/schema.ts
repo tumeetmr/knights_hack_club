@@ -22,6 +22,8 @@ export const challenges = pgTable(
     category: text("category").notNull().default("Misc"),
     description: text("description").notNull().default(""),
     hint: text("hint").notNull().default(""),
+    /** Where students go to hunt for the flag: a site path ("/about") or an https:// link. */
+    url: text("url").notNull().default(""),
     points: integer("points").notNull().default(100),
     flag: text("flag").notNull(),
     /** Admin-only note: where the flag is hidden on the site. */

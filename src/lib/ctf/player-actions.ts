@@ -82,7 +82,11 @@ export type SubmitState = {
 export async function submitFlagAction(_prev: SubmitState, fd: FormData): Promise<SubmitState> {
   const player = await requirePlayer();
   const id = toId(fd.get("id"));
-  const guess = String(fd.get("flag") ?? "").trim();
+  // Phones add invisible characters and smart quotes when copying; strip them before comparing.
+  const guess = String(fd.get("flag") ?? "")
+    .replace(/[\u200b-\u200d\u2060\ufeff]/g, "")
+    .trim()
+    .replace(/^["'`\u2018\u2019\u201c\u201d]+|["'`\u2018\u2019\u201c\u201d]+$/g, "");
   if (!id) return { error: "Unknown challenge." };
   if (!guess) return { id, error: "Enter a flag first." };
 

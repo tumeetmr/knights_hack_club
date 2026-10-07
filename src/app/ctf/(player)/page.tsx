@@ -14,7 +14,7 @@ const statusChip = {
   ended: ["Ended", "bg-white text-ink"],
 } as const;
 
-export default async function ProblemsPage() {
+export default async function ChallengesPage() {
   const player = await getPlayer();
   if (!player) redirect("/ctf/register");
 
@@ -48,7 +48,7 @@ export default async function ProblemsPage() {
         <div className="absolute -right-32 -top-32 size-[320px] rounded-full bg-knight-500/40 blur-3xl sm:size-[520px]" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-36">
           <div className="flex flex-wrap items-center gap-3">
-            <p className="font-mono text-xs text-knight-300 sm:text-sm">{"> ctf --problems"}</p>
+            <p className="font-mono text-xs text-knight-300 sm:text-sm">{"> ctf --challenges"}</p>
             <span className={`rounded-full px-3 py-1 font-mono text-[0.6875rem] font-bold uppercase tracking-wider ${chipClass}`}>
               {status === "live" && <span className="mr-1.5 inline-block size-1.5 animate-pulse rounded-full bg-ink align-middle" aria-hidden />}
               {chipLabel}
@@ -79,29 +79,26 @@ export default async function ProblemsPage() {
             list.length ? (
               <>
                 <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-                  <h2 className="headline text-5xl sm:text-6xl">Problems</h2>
+                  <h2 className="headline text-5xl sm:text-6xl">Challenges</h2>
                   <p className="font-mono text-sm text-ink/60">
                     {list.length} challenges · {totalPoints} points
                     {status === "ended" && " · CTF over"}
                   </p>
                 </div>
-                <ChallengeBoard
-                  challenges={list.map((c) => ({ ...c, solved: solvedIds.has(c.id) }))}
-                  canSubmit={status === "live"}
-                />
+                <ChallengeBoard challenges={list.map((c) => ({ ...c, solved: solvedIds.has(c.id) }))} />
               </>
             ) : (
-              <Locked title="No problems yet." body="Challenges haven't been published. Check back soon." />
+              <Locked title="No challenges yet." body="Challenges haven't been published. Check back soon." />
             )
           ) : status === "upcoming" && contest.startAt ? (
             <div className="grid justify-items-center gap-8 py-6 text-center">
-              <Locked title="Problems unlock at the start." body="Get your tools ready. The challenges appear here the moment the contest begins." />
+              <Locked title="Challenges unlock at the start." body="Get your tools ready. The challenges appear here the moment the contest begins." />
               <div className="rounded-3xl bg-ink p-5 text-white">
                 <Countdown to={contest.startAt.toISOString()} />
               </div>
             </div>
           ) : (
-            <Locked title="CTF closed." body="The organizers have closed the CTF for now. Problems will be back soon." />
+            <Locked title="CTF closed." body="The organizers have closed the CTF for now. Challenges will be back soon." />
           )}
         </div>
       </section>

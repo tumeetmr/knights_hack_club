@@ -43,7 +43,7 @@ export const getPlayer = cache(async () => {
     if (payload.role !== "player" || !id) return null;
     const db = await getDb();
     const [row] = await db
-      .select({ id: players.id, name: players.name, email: players.email })
+      .select({ id: players.id, name: players.name })
       .from(players)
       .where(eq(players.id, id));
     return row ?? null;

@@ -45,7 +45,7 @@ export function ContestForm({
         />
         <span>
           <span className="block font-medium">Close the CTF</span>
-          <span className="block text-sm text-ink/60">Players can't see problems or submit flags until you untick this. With no dates set, the CTF is always open.</span>
+          <span className="block text-sm text-ink/60">Players can't see challenges or submit flags until you untick this. With no dates set, the CTF is always open.</span>
         </span>
       </label>
       <FormMessage state={state} />

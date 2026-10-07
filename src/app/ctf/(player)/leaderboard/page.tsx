@@ -67,7 +67,7 @@ export default async function LeaderboardPage() {
               <p className="headline text-5xl sm:text-6xl">No scores yet.</p>
               <p className="mt-4 text-ink/65">Be the first to capture a flag.</p>
               <Link href="/ctf" className="mt-6 inline-flex min-h-12 items-center rounded-full bg-ink px-7 font-bold text-white transition hover:bg-knight-600">
-                {player ? "Go to problems" : "Register to play"}
+                {player ? "Go to challenges" : "Register to play"}
               </Link>
             </div>
           ) : rest.length > 0 ? (

@@ -1,5 +1,5 @@
 import "server-only";
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { challenges, contest, players, solves } from "@/db/schema";
 
@@ -22,7 +22,7 @@ export async function getChallenge(id: number) {
 
 // --- Player side -----------------------------------------------------------
 
-/** Published challenges without flag or admin notes, safe to send to the browser. */
+/** Published challenge list for the board: no flag, description or admin notes. */
 export async function listPublicChallenges() {
   const db = await getDb();
   return db
@@ -30,14 +30,42 @@ export async function listPublicChallenges() {
       id: challenges.id,
       title: challenges.title,
       category: challenges.category,
-      description: challenges.description,
-      hint: challenges.hint,
       points: challenges.points,
       solveCount: sql<number>`(select count(*)::int from ${solves} where ${solves.challengeId} = ${challenges.id})`,
     })
     .from(challenges)
     .where(eq(challenges.published, true))
     .orderBy(asc(challenges.position), asc(challenges.id));
+}
+
+/** One published challenge for its detail page, without flag or admin notes. */
+export async function getPublicChallenge(id: number) {
+  const db = await getDb();
+  const [row] = await db
+    .select({
+      id: challenges.id,
+      title: challenges.title,
+      category: challenges.category,
+      description: challenges.description,
+      hint: challenges.hint,
+      url: challenges.url,
+      points: challenges.points,
+    })
+    .from(challenges)
+    .where(and(eq(challenges.id, id), eq(challenges.published, true)));
+  return row;
+}
+
+/** Everyone who solved a challenge, earliest first. */
+export async function listSolvers(challengeId: number, limit = 200) {
+  const db = await getDb();
+  return db
+    .select({ playerId: players.id, name: players.name, solvedAt: solves.solvedAt })
+    .from(solves)
+    .innerJoin(players, eq(players.id, solves.playerId))
+    .where(eq(solves.challengeId, challengeId))
+    .orderBy(asc(solves.solvedAt), asc(solves.id))
+    .limit(limit);
 }
 
 export async function listPlayerSolves(playerId: number) {

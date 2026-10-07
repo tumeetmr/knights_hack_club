@@ -9,6 +9,7 @@ const schema = z.object({
   category: text(30, "Category").transform((v) => v || "Misc"),
   description: text(2000, "Description"),
   hint: text(500, "Hint"),
+  url: text(300, "Link").refine((v) => v === "" || /^(\/(?!\/)|https?:\/\/)\S*$/.test(v), "Link must start with / or https://"),
   location: text(500, "Hiding-spot note"),
   points: z.coerce
     .number("Points must be a number")

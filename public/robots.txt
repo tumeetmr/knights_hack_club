@@ -1,0 +1,2 @@
+User-agent: *
+Disallow: /ctf-lab/vault-9x.html

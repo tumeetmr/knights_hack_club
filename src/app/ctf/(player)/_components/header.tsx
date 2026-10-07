@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { logoutPlayerAction } from "@/lib/ctf/player-actions";
 
 const links = [
-  { href: "/ctf", label: "Problems" },
+  { href: "/ctf", label: "Challenges" },
   { href: "/ctf/leaderboard", label: "Leaderboard" },
 ];
 
