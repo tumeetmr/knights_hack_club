@@ -2,8 +2,9 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { CountUp } from "./count-up";
 import { CtfTeaser } from "./ctf-teaser";
+import { EventBanner } from "./event-banner";
 import { EventsSlider } from "./events-slider";
-import { CAMPUS, events } from "./events";
+import { CAMPUS, eventPath, events, upcomingEvent } from "./events";
 import { Reveal } from "./reveal";
 import { SiteHeader } from "./site-header";
 import { Steps } from "./steps";
@@ -119,6 +120,9 @@ const kindCounts = [
 const panel = "relative scroll-mt-24 overflow-clip rounded-[2rem] lg:rounded-[2.5rem]";
 
 export default function Home() {
+  const next = upcomingEvent();
+  const nextHref = next && eventPath(next);
+
   return (
     <>
       <SiteHeader />
@@ -137,7 +141,12 @@ export default function Home() {
             aria-hidden
           />
 
-          <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] max-w-7xl flex-col justify-center px-5 pb-10 pt-28 sm:min-h-[calc(100svh-2rem)] sm:px-8 sm:pb-16 sm:pt-32">
+          <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] max-w-7xl flex-col justify-center px-5 pb-10 pt-24 sm:min-h-[calc(100svh-2rem)] sm:px-8 sm:pb-16 sm:pt-28">
+            {next && nextHref && (
+              <div className="mb-8 flex justify-center sm:mb-10">
+                <EventBanner event={next} href={nextHref} />
+              </div>
+            )}
             <p className="rise caret text-center font-mono text-xs text-knight-300 sm:text-sm">
               niagara_college/knights_hack
             </p>
@@ -167,25 +176,6 @@ export default function Home() {
               className="rise mx-auto mt-10 grid w-full max-w-md gap-5 sm:mt-12 sm:gap-6"
               style={{ "--d": "700ms" } as CSSProperties}
             >
-              <SectionBlock
-                tone="dark"
-                label="Knights Hack Club"
-                icon={
-                  <Image
-                    src="/logo.png"
-                    alt=""
-                    width={32}
-                    height={32}
-                    className="size-8 rounded-md object-contain"
-                    preload
-                  />
-                }
-              >
-                <p className="text-white/75">
-                  A student club at Niagara College for anyone curious about
-                  code. First-timers and seasoned devs build side by side.
-                </p>
-              </SectionBlock>
               <div className="grid gap-3 sm:flex sm:flex-wrap sm:justify-center">
                 <RollLink href={JOIN_FORM_URL} external className="bg-white text-ink hover:bg-knight-300">
                   Join the Club ↗
@@ -203,12 +193,6 @@ export default function Home() {
                 className="-mt-1 justify-self-center text-center font-mono text-sm font-medium text-knight-300 underline-offset-4 hover:text-white hover:underline"
               >
                 {"> play the CTF →"}
-              </a>
-              <a
-                href="#events"
-                className="-mt-1 justify-self-center text-center text-sm font-medium text-white/60 underline-offset-4 hover:text-white hover:underline"
-              >
-                <span className="text-knight-300">Next up:</span> Club Launch · Thu, Oct 8 · 2:00 PM · Outside the Core ↓
               </a>
             </div>
           </div>

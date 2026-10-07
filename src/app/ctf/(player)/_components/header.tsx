@@ -16,9 +16,9 @@ export function CtfHeader({ player }: { player: { name: string } | null }) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-5">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 rounded-full bg-ink/95 pl-2 pr-2 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 sm:h-16 sm:pl-2.5 sm:pr-2.5">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 rounded-full bg-ink/95 pl-4 pr-2 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 sm:h-16 sm:pl-5 sm:pr-2.5">
         <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="Knights Hack home">
-          <Image src="/logo.png" alt="" width={44} height={44} className="size-10 rounded-full object-cover sm:size-11" preload />
+          <Image src="/logo.png" alt="" width={48} height={45} className="h-9 w-auto shrink-0 sm:h-10" preload />
           <span className="headline hidden text-xl leading-none min-[420px]:block">
             Knights Hack
             <span className="block font-mono text-[0.625rem] font-medium normal-case tracking-normal text-knight-300 [font-variation-settings:normal]">
