@@ -16,7 +16,7 @@ export default async function ImportPage() {
         <p className="mb-5 text-ink/60">
           Paste a JSON list to add many at once, or restore a backup from Export. Only{" "}
           <span className="font-mono">title</span> is required. Missing flags are generated, points default to 100
-          and challenges stay drafts unless <span className="font-mono">"published": true</span>.
+          and challenges stay drafts unless <span className="font-mono">&quot;published&quot;: true</span>.
         </p>
         <ImportForm />
       </section>

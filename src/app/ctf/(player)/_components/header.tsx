@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 import { logoutPlayerAction } from "@/lib/ctf/player-actions";
 
 const links = [
-  { href: "/ctf", label: "Challenges" },
-  { href: "/ctf/leaderboard", label: "Leaderboard" },
+  // Short labels keep the bar on one line on 360px phones.
+  { href: "/ctf", label: "Challenges", short: "Play" },
+  { href: "/ctf/leaderboard", label: "Leaderboard", short: "Ranks" },
 ];
 
 export function CtfHeader({ player }: { player: { name: string } | null }) {
@@ -15,7 +16,7 @@ export function CtfHeader({ player }: { player: { name: string } | null }) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-5">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 rounded-full bg-ink/85 pl-2 pr-2 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 backdrop-blur-md sm:h-16 sm:pl-2.5 sm:pr-2.5">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 rounded-full bg-ink/95 pl-2 pr-2 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 sm:h-16 sm:pl-2.5 sm:pr-2.5">
         <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="Knights Hack home">
           <Image src="/logo.png" alt="" width={44} height={44} className="size-10 rounded-full object-cover sm:size-11" preload />
           <span className="headline hidden text-xl leading-none min-[420px]:block">
@@ -26,19 +27,22 @@ export function CtfHeader({ player }: { player: { name: string } | null }) {
           </span>
         </Link>
 
-        <nav aria-label="CTF" className="flex items-center gap-1">
+        <nav aria-label="CTF" className="flex min-w-0 items-center gap-1">
           {links.map((l) => {
-            const active = l.href === "/ctf" ? path === "/ctf" : path.startsWith(l.href);
+            const active =
+              l.href === "/ctf" ? path === "/ctf" || path.startsWith("/ctf/challenges/") : path.startsWith(l.href);
             return (
               <Link
                 key={l.href}
                 href={l.href}
+                aria-label={l.label}
                 aria-current={active ? "page" : undefined}
                 className={`rounded-full px-3 py-2 text-sm font-medium transition sm:px-4 ${
                   active ? "bg-white text-ink" : "text-white/75 hover:bg-white/10 hover:text-white"
                 }`}
               >
-                {l.label}
+                <span className="sm:hidden">{l.short}</span>
+                <span className="hidden sm:inline">{l.label}</span>
               </Link>
             );
           })}

@@ -11,7 +11,7 @@ export function PlayerLoginForm() {
     <form action={action} className="grid gap-4">
       <div>
         <label htmlFor="email" className={fieldLabel}>Email</label>
-        <input id="email" name="email" type="email" required autoComplete="email" autoFocus defaultValue={state.values?.email} className={fieldInput} />
+        <input id="email" name="email" type="email" required autoComplete="email" defaultValue={state.values?.email} className={fieldInput} />
       </div>
       <div>
         <label htmlFor="password" className={fieldLabel}>Password</label>

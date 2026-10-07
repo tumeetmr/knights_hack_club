@@ -45,7 +45,7 @@ export default async function ChallengesPage() {
 
       <section className="relative overflow-clip rounded-[2rem] bg-ink text-white lg:rounded-[2.5rem]">
         <div className="bg-grid absolute inset-0" aria-hidden />
-        <div className="absolute -right-32 -top-32 size-[320px] rounded-full bg-knight-500/40 blur-3xl sm:size-[520px]" aria-hidden />
+        <div className="absolute -right-32 -top-32 size-[320px] glow sm:size-[520px]" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-36">
           <div className="flex flex-wrap items-center gap-3">
             <p className="font-mono text-xs text-knight-300 sm:text-sm">{"> ctf --challenges"}</p>

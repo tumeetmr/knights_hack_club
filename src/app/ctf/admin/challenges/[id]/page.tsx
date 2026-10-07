@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { toId } from "@/lib/ctf/form";
 import { getChallenge, listChallenges } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
 import { ChallengeForm } from "../../_components/challenge-form";
@@ -8,9 +9,8 @@ import { btnGhost, btnSmall, card } from "../../_components/styles";
 
 export default async function EditChallengePage({ params }: PageProps<"/ctf/admin/challenges/[id]">) {
   await requireAdmin();
-  const { id } = await params;
-  const challengeId = Number(id);
-  if (!Number.isInteger(challengeId)) notFound();
+  const challengeId = toId((await params).id);
+  if (!challengeId) notFound();
 
   const [challenge, list] = await Promise.all([getChallenge(challengeId), listChallenges()]);
   if (!challenge) notFound();

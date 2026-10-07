@@ -35,7 +35,7 @@ export function CtfTeaser() {
   const data = snap && snap !== "error" ? snap : null;
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/15 backdrop-blur" data-reveal="up">
+    <div className="overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/15" data-reveal="up">
       <div className="flex items-center gap-2 border-b border-white/10 px-5 py-3.5">
         <span className="size-2.5 rounded-full bg-white/25" />
         <span className="size-2.5 rounded-full bg-white/25" />

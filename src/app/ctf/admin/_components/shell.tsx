@@ -11,7 +11,7 @@ export async function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-mist">
-      <header className="sticky top-0 z-10 border-b border-ink/10 bg-paper/90 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-ink/10 bg-paper/95">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between gap-3 px-4">
           <Link href="/ctf/admin" className="flex items-center gap-2.5">
             <Image src="/logo.png" alt="" width={40} height={40} className="size-10 rounded-full" />

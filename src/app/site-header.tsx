@@ -33,7 +33,7 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-5">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between rounded-full bg-ink/80 pl-2 pr-2 sm:h-16 sm:pl-2.5 sm:pr-2.5 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 backdrop-blur-md md:pl-3">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between rounded-full bg-ink/95 pl-2 pr-2 sm:h-16 sm:pl-2.5 sm:pr-2.5 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 md:pl-3">
         <a href="#top" className="flex items-center gap-2.5 sm:gap-3" onClick={() => setOpen(false)}>
           <Image
             src="/logo.png"

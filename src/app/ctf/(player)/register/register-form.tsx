@@ -11,7 +11,7 @@ export function RegisterForm() {
     <form action={action} className="grid gap-4">
       <div>
         <label htmlFor="name" className={fieldLabel}>Display name</label>
-        <input id="name" name="name" required minLength={2} maxLength={40} autoComplete="name" autoFocus defaultValue={state.values?.name} placeholder="Shown on the leaderboard" className={fieldInput} />
+        <input id="name" name="name" required minLength={2} maxLength={40} autoComplete="name" defaultValue={state.values?.name} placeholder="Shown on the leaderboard" className={fieldInput} />
       </div>
       <div>
         <label htmlFor="email" className={fieldLabel}>Email</label>

@@ -11,7 +11,7 @@ import { rawValues, toId, type FormState } from "./form";
 import { hashPassword, verifyPassword } from "./password";
 import { createPlayerSession, deletePlayerSession, requirePlayer } from "./player-session";
 import { getContest } from "./queries";
-import { clientIp, tooMany } from "./rate-limit";
+import { clearAttempts, clientIp, tooMany } from "./rate-limit";
 
 // --- Register / sign in / out ----------------------------------------------
 
@@ -25,7 +25,8 @@ export async function registerAction(_prev: FormState, fd: FormData): Promise<Fo
   const values = rawValues(fd);
   const safe = { name: values.name ?? "", email: values.email ?? "" };
 
-  if (tooMany(`register:${await clientIp()}`, 10, 3_600_000)) {
+  // A whole room on campus Wi-Fi shares one IP, so this only stops scripted sign-up floods.
+  if (tooMany(`register:${await clientIp()}`, 150, 3_600_000)) {
     return { error: "Too many sign-ups from this network. Try again later.", values: safe };
   }
   const parsed = registerSchema.safeParse(values);
@@ -51,7 +52,12 @@ export async function loginPlayerAction(_prev: FormState, fd: FormData): Promise
   const email = String(fd.get("email") ?? "").trim().toLowerCase();
   const password = String(fd.get("password") ?? "");
 
-  if (tooMany(`login:${await clientIp()}`, 10, 600_000)) {
+  // Brute-force guard is per account, from any network: 10 tries per email per 10 minutes.
+  // The per-IP cap is high enough for a shared campus IP but stops one machine spraying many accounts.
+  const accountKey = `login:${email}`;
+  const tooManyForAccount = tooMany(accountKey, 10, 600_000);
+  const tooManyForIp = tooMany(`login-ip:${await clientIp()}`, 150, 600_000);
+  if (tooManyForAccount || tooManyForIp) {
     return { error: "Too many attempts. Try again in a few minutes.", values: { email } };
   }
 
@@ -61,6 +67,7 @@ export async function loginPlayerAction(_prev: FormState, fd: FormData): Promise
   const ok = await verifyPassword(password, row?.passwordHash ?? "00:00");
   if (!row || !ok) return { error: "Wrong email or password.", values: { email } };
 
+  clearAttempts(accountKey);
   await createPlayerSession(row.id);
   redirect("/ctf");
 }

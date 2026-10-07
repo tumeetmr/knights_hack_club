@@ -33,6 +33,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      // Lets Next.js jump (not glide) to the top on page changes; anchor links still scroll smoothly.
+      data-scroll-behavior="smooth"
       className={`${archivo.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased motion-reduce:scroll-auto`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

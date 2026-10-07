@@ -171,7 +171,7 @@ export function ChallengeForm({
       </div>
 
       <div>
-        <label htmlFor="location" className={label}>Where it's hidden (admin note)</label>
+        <label htmlFor="location" className={label}>Where it&apos;s hidden (admin note)</label>
         <input
           id="location"
           name="location"
