@@ -14,7 +14,6 @@ import { AdminShell } from "./_components/shell";
 import { btnDanger, btnGhost, btnPrimary, btnSmall, card } from "./_components/styles";
 
 const statusStyle: Record<ContestStatus, { label: string; className: string }> = {
-  unscheduled: { label: "Not scheduled", className: "bg-ink/10 text-ink" },
   upcoming: { label: "Upcoming", className: "bg-knight-50 text-knight-900" },
   live: { label: "Live now", className: "bg-green-100 text-green-900" },
   paused: { label: "Paused", className: "bg-amber-100 text-amber-900" },
@@ -60,7 +59,7 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/ctf/a
         </dl>
         <ContestForm
           // Remount when saved elsewhere so the fields show the stored values.
-          key={contest.updatedAt.getTime()}
+          key={`${contest.title}|${contest.startAt?.getTime()}|${contest.endAt?.getTime()}|${contest.paused}`}
           title={contest.title}
           start={toLocalInput(contest.startAt)}
           end={toLocalInput(contest.endAt)}

@@ -1,4 +1,4 @@
-import type { FormState } from "@/lib/ctf/actions";
+import type { FormState } from "@/lib/ctf/form";
 
 export function FormMessage({ state }: { state: FormState }) {
   if (state.error) {

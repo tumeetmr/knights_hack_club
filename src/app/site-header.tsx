@@ -10,6 +10,7 @@ const links = [
   { href: "#what-we-do", label: "What We Do" },
   { href: "#events", label: "Events" },
   { href: "#team", label: "Team" },
+  { href: "#ctf", label: "CTF" },
   { href: "#faq", label: "FAQ" },
 ];
 

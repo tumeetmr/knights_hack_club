@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { saveContestAction, type FormState } from "@/lib/ctf/actions";
+import { saveContestAction } from "@/lib/ctf/actions";
+import type { FormState } from "@/lib/ctf/form";
 import { FormMessage } from "./form-message";
 import { btnPrimary, input, label } from "./styles";
 
@@ -27,11 +28,11 @@ export function ContestForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="start" className={label}>Starts (Niagara time)</label>
+          <label htmlFor="start" className={label}>Opens (optional, Niagara time)</label>
           <input id="start" name="start" type="datetime-local" defaultValue={v?.start ?? start} className={input} />
         </div>
         <div>
-          <label htmlFor="end" className={label}>Ends (Niagara time)</label>
+          <label htmlFor="end" className={label}>Closes (optional, Niagara time)</label>
           <input id="end" name="end" type="datetime-local" defaultValue={v?.end ?? end} className={input} />
         </div>
       </div>
@@ -43,8 +44,8 @@ export function ContestForm({
           className="size-5 accent-knight-600"
         />
         <span>
-          <span className="block font-medium">Pause the contest</span>
-          <span className="block text-sm text-ink/60">Stops submissions right away without changing the dates.</span>
+          <span className="block font-medium">Close the CTF</span>
+          <span className="block text-sm text-ink/60">Players can't see problems or submit flags until you untick this. With no dates set, the CTF is always open.</span>
         </span>
       </label>
       <FormMessage state={state} />

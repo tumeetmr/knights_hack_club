@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { saveChallengeAction, type FormState } from "@/lib/ctf/actions";
+import { saveChallengeAction } from "@/lib/ctf/actions";
+import type { FormState } from "@/lib/ctf/form";
 import { generateFlag } from "@/lib/ctf/flag";
 import { FormMessage } from "./form-message";
 import { btnGhost, btnPrimary, btnSmall, input, label } from "./styles";

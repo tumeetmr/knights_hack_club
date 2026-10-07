@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 
-export const TOTAL_SECTIONS = 7;
+export const TOTAL_SECTIONS = 8;
 
 /** Condensed all-caps heading whose words flip in, either on load or on scroll. */
 export function Headline({

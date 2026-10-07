@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { CountUp } from "./count-up";
+import { CtfTeaser } from "./ctf-teaser";
 import { EventsSlider } from "./events-slider";
 import { CAMPUS, events } from "./events";
 import { Reveal } from "./reveal";
@@ -83,6 +84,10 @@ const faqs = [
   {
     q: "When and where do events happen?",
     a: `Every event is at the ${CAMPUS}, Our first one, the Club Launch, is Thursday, Oct 8 from 2:00 to 3:50 PM, outside the Core. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
+  },
+  {
+    q: "What's the CTF?",
+    a: "A capture-the-flag contest for members. Register on the CTF page, solve challenges to find hidden flags, and climb the live leaderboard. No experience needed, and every challenge is beginner-friendly.",
   },
   {
     q: "Can I show off my own project or startup?",
@@ -193,6 +198,12 @@ export default function Home() {
                   Join our Discord ↗
                 </RollLink>
               </div>
+              <a
+                href="/ctf"
+                className="-mt-1 justify-self-center text-center font-mono text-sm font-medium text-knight-300 underline-offset-4 hover:text-white hover:underline"
+              >
+                {"> play the CTF →"}
+              </a>
               <a
                 href="#events"
                 className="-mt-1 justify-self-center text-center text-sm font-medium text-white/60 underline-offset-4 hover:text-white hover:underline"
@@ -481,6 +492,41 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 08 CTF */}
+        <section id="ctf" className={`${panel} bg-ink text-white`}>
+          <div className="bg-grid absolute inset-0" aria-hidden />
+          <div
+            className="absolute -left-32 top-0 size-[320px] rounded-full bg-knight-500/40 blur-3xl sm:size-[560px]"
+            aria-hidden
+          />
+          <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 sm:py-24 md:py-36 lg:grid-cols-[1fr_26rem] lg:items-end lg:gap-20">
+            <div>
+              <SectionCounter n={8} className="text-knight-300" />
+              <Headline lines={["Capture", "the flag."]} className="mt-8 text-[clamp(4rem,12vw,10rem)]" />
+              <p data-reveal="up" className="mt-8 max-w-xl text-white/70 sm:text-lg">
+                Hunt for hidden flags, crack beginner-friendly puzzles and race
+                your fellow members up the live leaderboard. Register once,
+                then play.
+              </p>
+              <div data-reveal="up" className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+                <RollLink href="/ctf/register" className="bg-white text-ink hover:bg-knight-300">
+                  Register for the CTF
+                </RollLink>
+                <RollLink href="/ctf/leaderboard" className="border border-white/30 hover:border-white hover:bg-white hover:text-ink">
+                  View leaderboard
+                </RollLink>
+              </div>
+              <p data-reveal="up" className="mt-5 text-sm text-white/50">
+                Already registered?{" "}
+                <a href="/ctf/login" className="underline underline-offset-4 hover:text-white">
+                  Sign in
+                </a>
+              </p>
+            </div>
+            <CtfTeaser />
+          </div>
+        </section>
+
         {/* Join */}
         <section id="join" className={`${panel} bg-ink text-white`}>
           <div className="bg-grid absolute inset-0" aria-hidden />
@@ -544,6 +590,7 @@ export default function Home() {
                   ["#what-we-do", "What We Do"],
                   ["#events", "Events"],
                   ["#team", "Team"],
+                  ["/ctf", "CTF"],
                   ["#faq", "FAQ"],
                 ].map(([href, label]) => (
                   <li key={href}>
