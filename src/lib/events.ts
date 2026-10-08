@@ -35,7 +35,7 @@ export const events: ClubEvent[] = [
     end: "2026-10-08T15:50:00-04:00",
     place: "Outside the Core",
     title: "Club Launch & Meet-and-Greet",
-    body: "Meet students into coding and tech, pitch ideas for future activities and find your people. Members and non-members welcome.",
+    body: "Meet students into coding and tech, play coding games and find your people. Members and non-members welcome.",
     kind: "Social",
     slug: "club-launch",
     agenda: [
@@ -61,8 +61,8 @@ export const events: ClubEvent[] = [
       },
       {
         time: "3:25 PM",
-        title: "Idea board",
-        body: "Pitch workshops, projects and events you want to see this term.",
+        title: "Fun games",
+        body: "Scan the QR code and play Vault Crackers with your phone. Team up with someone new and crack code puzzles together, no experience needed.",
       },
       {
         time: "3:40 PM",
@@ -72,6 +72,7 @@ export const events: ClubEvent[] = [
     ],
     links: [
       { label: "Play the CTF", href: "/ctf", note: "Challenges, flags and the live leaderboard" },
+      { label: "Play Vault Crackers", href: "/games", note: "Team up on your phone and crack code puzzles" },
       { label: "Register for the CTF", href: "/ctf/register", note: "Takes a minute, do it before you arrive" },
       { label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
       { label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
