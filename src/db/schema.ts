@@ -50,7 +50,10 @@ export const players = pgTable(
   ],
 );
 
-/** One row per correct submission. Points are copied so later edits don't rewrite history. */
+/**
+ * One row per correct submission. `points` records what the challenge was worth right after
+ * this solve, for the record only: scores use the challenge's current value (lib/ctf/scoring).
+ */
 export const solves = pgTable(
   "solves",
   {

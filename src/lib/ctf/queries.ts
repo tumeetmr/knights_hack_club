@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { challenges, contest, players, solves } from "@/db/schema";
+import { challengeValue } from "./scoring";
 
 export async function getContest() {
   const db = await getDb();
@@ -25,6 +26,7 @@ export async function listChallengesWithSolves() {
       title: challenges.title,
       category: challenges.category,
       points: challenges.points,
+      value: challengeValue,
       location: challenges.location,
       published: challenges.published,
       solveCount,
@@ -41,7 +43,7 @@ export async function getChallenge(id: number) {
 
 // --- Player side -----------------------------------------------------------
 
-/** Published challenge list for the board: no flag, description or admin notes. */
+/** Published challenge list for the board: no flag, description or admin notes. `points` is the current value. */
 export async function listPublicChallenges() {
   const db = await getDb();
   return db
@@ -49,7 +51,8 @@ export async function listPublicChallenges() {
       id: challenges.id,
       title: challenges.title,
       category: challenges.category,
-      points: challenges.points,
+      points: challengeValue,
+      basePoints: challenges.points,
       solveCount,
     })
     .from(challenges)
@@ -57,7 +60,7 @@ export async function listPublicChallenges() {
     .orderBy(asc(challenges.position), asc(challenges.id));
 }
 
-/** One published challenge for its detail page, without flag or admin notes. */
+/** One published challenge for its detail page, without flag or admin notes. `points` is the current value. */
 export async function getPublicChallenge(id: number) {
   const db = await getDb();
   const [row] = await db
@@ -68,7 +71,8 @@ export async function getPublicChallenge(id: number) {
       description: challenges.description,
       hint: challenges.hint,
       url: challenges.url,
-      points: challenges.points,
+      points: challengeValue,
+      basePoints: challenges.points,
     })
     .from(challenges)
     .where(and(eq(challenges.id, id), eq(challenges.published, true)));
@@ -87,11 +91,13 @@ export async function listSolvers(challengeId: number, limit = 200) {
     .limit(limit);
 }
 
+/** A player's solves with what each is worth now. */
 export async function listPlayerSolves(playerId: number) {
   const db = await getDb();
   return db
-    .select({ challengeId: solves.challengeId, points: solves.points })
+    .select({ challengeId: solves.challengeId, points: challengeValue })
     .from(solves)
+    .innerJoin(challenges, eq(challenges.id, solves.challengeId))
     .where(eq(solves.playerId, playerId));
 }
 
@@ -103,10 +109,10 @@ export type LeaderboardRow = {
   lastSolveAt: Date;
 };
 
-/** Ranked by score, then by who reached it first. Players with no solves are left off. */
+/** Ranked by current score, then by who reached it first. Players with no solves are left off. */
 export async function getLeaderboard(limit = 100): Promise<LeaderboardRow[]> {
   const db = await getDb();
-  const score = sql<number>`sum(${solves.points})::int`;
+  const score = sql<number>`sum(${challengeValue})::int`;
   const last = sql<Date>`max(${solves.solvedAt})`.mapWith((v) => new Date(v));
   return db
     .select({
@@ -118,6 +124,7 @@ export async function getLeaderboard(limit = 100): Promise<LeaderboardRow[]> {
     })
     .from(solves)
     .innerJoin(players, eq(players.id, solves.playerId))
+    .innerJoin(challenges, eq(challenges.id, solves.challengeId))
     .groupBy(players.id, players.name)
     .orderBy(desc(score), asc(last), asc(players.id))
     .limit(limit);
@@ -128,8 +135,9 @@ export async function getPlayerRank(playerId: number): Promise<number | null> {
   const db = await getDb();
   const rows = await db.execute<{ rank: number }>(sql`
     with t as (
-      select player_id, sum(points) as score, max(solved_at) as last
-      from solves group by player_id
+      select ${solves.playerId} as player_id, sum(${challengeValue}) as score, max(${solves.solvedAt}) as last
+      from ${solves} join ${challenges} on ${challenges.id} = ${solves.challengeId}
+      group by ${solves.playerId}
     )
     select (
       select count(*)::int from t o
@@ -155,7 +163,7 @@ export async function countSolves() {
   return row.n;
 }
 
-/** Latest correct flags, newest first, for the admin activity feed. */
+/** Latest correct flags, newest first, for the admin activity feed. `points` is the current value. */
 export async function listRecentSolves(limit = 8) {
   const db = await getDb();
   return db
@@ -163,7 +171,7 @@ export async function listRecentSolves(limit = 8) {
       id: solves.id,
       player: players.name,
       challenge: challenges.title,
-      points: solves.points,
+      points: challengeValue,
       solvedAt: solves.solvedAt,
     })
     .from(solves)
@@ -176,7 +184,8 @@ export async function listRecentSolves(limit = 8) {
 /** Registered players with their score, highest first. `search` matches name or email. */
 export async function listPlayersForAdmin(search = "") {
   const db = await getDb();
-  const score = sql<number>`coalesce(sum(${solves.points}), 0)::int`;
+  // A player with no solves has no challenge row joined; the value expression is null there.
+  const score = sql<number>`coalesce(sum(case when ${challenges.id} is null then null else ${challengeValue} end), 0)::int`;
   const term = `%${search.replace(/[\\%_]/g, "\\$&")}%`;
   return db
     .select({
@@ -189,6 +198,7 @@ export async function listPlayersForAdmin(search = "") {
     })
     .from(players)
     .leftJoin(solves, eq(solves.playerId, players.id))
+    .leftJoin(challenges, eq(challenges.id, solves.challengeId))
     .where(search ? or(ilike(players.name, term), ilike(players.email, term)) : undefined)
     .groupBy(players.id)
     .orderBy(desc(score), asc(players.createdAt))

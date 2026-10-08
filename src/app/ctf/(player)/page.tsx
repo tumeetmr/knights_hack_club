@@ -4,6 +4,7 @@ import { contestStatus, formatContestTime } from "@/lib/ctf/contest";
 import { registerHref } from "@/lib/auth/next";
 import { getStudent } from "@/lib/auth/session";
 import { getContest, getPlayerRank, listPlayerSolves, listPublicChallenges } from "@/lib/ctf/queries";
+import { MIN_PERCENT } from "@/lib/ctf/scoring";
 import { AutoRefresh } from "./_components/auto-refresh";
 import { ChallengeBoard } from "./_components/challenge-board";
 import { Countdown } from "./_components/countdown";
@@ -86,6 +87,10 @@ export default async function ChallengesPage() {
                     {status === "ended" && " · CTF over"}
                   </p>
                 </div>
+                <p className="mb-5 max-w-2xl text-sm text-ink/60">
+                  Points drop as more people solve a challenge (never below {MIN_PERCENT}% of the start), and your
+                  score updates with them. Rare solves count the most; on a tie, whoever got there first ranks higher.
+                </p>
                 <ChallengeBoard challenges={list.map((c) => ({ ...c, solved: solvedIds.has(c.id) }))} />
               </>
             ) : (

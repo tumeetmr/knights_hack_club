@@ -14,7 +14,7 @@ export function FlagForm({ id, solved, canSubmit, points }: { id: number; solved
     return (
       <div role="status" className="rounded-2xl bg-knight-600 px-5 py-4 text-white">
         <p className="text-lg font-bold">🎉 {state.ok ?? "You solved this one!"}</p>
-        <p className="mt-1 text-sm text-white/75">{points} points are on your score.</p>
+        <p className="mt-1 text-sm text-white/75">It&apos;s worth {points} points right now.</p>
       </div>
     );
   }

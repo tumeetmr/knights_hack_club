@@ -100,11 +100,14 @@ export default async function ChallengesAdminPage({ searchParams }: PageProps<"/
                       </p>
                       {/* Phones get the numbers here instead of in columns. */}
                       <p className="mt-1 font-mono text-xs text-ink/50 md:hidden">
-                        {c.points} pts · {c.solveCount} solve{c.solveCount === 1 ? "" : "s"}
+                        {c.value}{c.value < c.points && `/${c.points}`} pts · {c.solveCount} solve{c.solveCount === 1 ? "" : "s"}
                       </p>
                     </div>
 
-                    <span className="hidden text-right font-mono font-bold tabular-nums md:block">{c.points}</span>
+                    <span className="hidden text-right font-mono font-bold tabular-nums md:block" title={`Starts at ${c.points}`}>
+                      {c.value}
+                      {c.value < c.points && <span className="block text-xs font-normal text-ink/45">of {c.points}</span>}
+                    </span>
                     <span className="hidden text-right font-mono tabular-nums text-ink/70 md:block">{c.solveCount}</span>
 
                     <form action={togglePublishedAction} className="col-start-2 row-start-2 md:col-start-auto md:row-start-auto">

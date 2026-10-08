@@ -9,6 +9,7 @@ import { toId } from "@/lib/form";
 import { tooMany } from "@/lib/rate-limit";
 import { contestStatus } from "./contest";
 import { getContest } from "./queries";
+import { challengeValue } from "./scoring";
 
 export type SubmitState = {
   /** Which challenge this result belongs to, so only its card shows it. */
@@ -57,7 +58,12 @@ export async function submitFlagAction(_prev: SubmitState, fd: FormData): Promis
     .values({ playerId: player.id, challengeId: id, points: challenge.points })
     .onConflictDoNothing()
     .returning({ id: solves.id });
+  if (!row) return { id, ok: "You already solved this one." };
+
+  // Worth is counted after this solve, so it matches what the board now shows.
+  const [{ value }] = await db.select({ value: challengeValue }).from(challenges).where(eq(challenges.id, id));
+  await db.update(solves).set({ points: value }).where(eq(solves.id, row.id));
 
   revalidatePath("/ctf", "layout");
-  return { id, ok: row ? `Correct! +${challenge.points} points.` : "You already solved this one." };
+  return { id, ok: `Correct! +${value} points.` };
 }

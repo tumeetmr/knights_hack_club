@@ -73,7 +73,7 @@ export function ChallengeForm({
             </datalist>
           </div>
           <div>
-            <label htmlFor="points" className={label}>Points</label>
+            <label htmlFor="points" className={label}>Starting points</label>
             <input
               id="points"
               name="points"

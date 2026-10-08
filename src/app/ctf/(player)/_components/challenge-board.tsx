@@ -7,7 +7,9 @@ export type BoardChallenge = {
   id: number;
   title: string;
   category: string;
+  /** Current value; drops as more people solve it. */
   points: number;
+  basePoints: number;
   solveCount: number;
   solved: boolean;
 };
@@ -63,6 +65,12 @@ export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] })
               </span>
               <span className="flex shrink-0 flex-col items-end gap-2">
                 <span className="headline text-4xl tabular-nums">{c.points}</span>
+                {c.points < c.basePoints && (
+                  <span className={`-mt-2 font-mono text-xs line-through ${c.solved ? "text-white/50" : "text-ink/40"}`}>
+                    <span className="sr-only">was </span>
+                    {c.basePoints}
+                  </span>
+                )}
                 {c.id === startId && (
                   <span className="rounded-full bg-knight-500 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-wider text-white">
                     Start here
