@@ -3,15 +3,10 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { secret } from "@/lib/auth/secret";
 
 export const ADMIN_COOKIE = "kh_admin";
 const SESSION_HOURS = 12;
-
-export const secret = () => {
-  const value = process.env.SESSION_SECRET;
-  if (!value) throw new Error("SESSION_SECRET is not set");
-  return new TextEncoder().encode(value);
-};
 
 export async function createAdminSession() {
   const expires = new Date(Date.now() + SESSION_HOURS * 3_600_000);

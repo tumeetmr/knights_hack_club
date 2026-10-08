@@ -1,6 +1,6 @@
 import { listChallenges } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
-import { FormMessage } from "../../../_components/form-ui";
+import { FormMessage } from "@/components/form-ui";
 import { ChallengeForm } from "../../_components/challenge-form";
 import { AdminShell, PageHeader } from "../../_components/shell";
 

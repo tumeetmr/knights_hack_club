@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { deleteChallengeAction, duplicateChallengeAction } from "@/lib/ctf/actions";
-import { toId } from "@/lib/ctf/form";
+import { toId } from "@/lib/form";
 import { getChallenge, listChallenges, listSolvers } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
 import { ChallengeForm } from "../../_components/challenge-form";

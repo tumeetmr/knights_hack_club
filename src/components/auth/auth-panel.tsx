@@ -10,7 +10,7 @@ export function AuthPanel({
 }: {
   eyebrow: string;
   title: string;
-  /** Optional context between the title and the form, e.g. what the CTF is. */
+  /** Optional context between the title and the form, e.g. what the account is for. */
   intro?: ReactNode;
   children: ReactNode;
   footer: ReactNode;

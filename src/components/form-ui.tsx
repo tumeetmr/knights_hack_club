@@ -1,4 +1,4 @@
-import type { FormState } from "@/lib/ctf/form";
+import type { FormState } from "@/lib/form";
 
 // Shared by the player and admin forms.
 export const label = "mb-1.5 block font-mono text-xs font-medium uppercase tracking-wider text-ink/60";

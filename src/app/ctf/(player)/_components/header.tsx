@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { logoutPlayerAction } from "@/lib/ctf/player-actions";
+import { logoutAction } from "@/lib/auth/actions";
+import { registerHref } from "@/lib/auth/next";
 
 const links = [
   // Short labels keep the bar on one line on 360px phones.
@@ -52,7 +53,8 @@ export function CtfHeader({ player }: { player: { name: string } | null }) {
           {player ? (
             <>
               <span className="hidden max-w-32 truncate px-2 text-sm font-medium text-white/75 md:block">{player.name}</span>
-              <form action={logoutPlayerAction}>
+              <form action={logoutAction}>
+                <input type="hidden" name="next" value="/ctf" />
                 <button
                   type="submit"
                   className="rounded-full bg-white/10 px-4 py-2.5 text-sm font-bold transition hover:bg-white/20 active:scale-95"
@@ -63,7 +65,7 @@ export function CtfHeader({ player }: { player: { name: string } | null }) {
             </>
           ) : (
             <Link
-              href="/ctf/register"
+              href={registerHref("/ctf")}
               className="rounded-full bg-white px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-knight-300 active:scale-95 sm:px-5"
             >
               Register

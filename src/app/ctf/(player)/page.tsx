@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react";
 import { redirect } from "next/navigation";
 import { contestStatus, formatContestTime } from "@/lib/ctf/contest";
-import { getPlayer } from "@/lib/ctf/player-session";
+import { registerHref } from "@/lib/auth/next";
+import { getStudent } from "@/lib/auth/session";
 import { getContest, getPlayerRank, listPlayerSolves, listPublicChallenges } from "@/lib/ctf/queries";
 import { AutoRefresh } from "./_components/auto-refresh";
 import { ChallengeBoard } from "./_components/challenge-board";
@@ -15,8 +16,8 @@ const statusChip = {
 } as const;
 
 export default async function ChallengesPage() {
-  const player = await getPlayer();
-  if (!player) redirect("/ctf/register");
+  const player = await getStudent();
+  if (!player) redirect(registerHref("/ctf"));
 
   const [contest, list, mine, rank] = await Promise.all([
     getContest(),

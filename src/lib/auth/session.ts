@@ -6,21 +6,24 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/db";
 import { players } from "@/db/schema";
-import { secret } from "./session";
+import { loginHref } from "./next";
+import { secret } from "./secret";
 
-export const PLAYER_COOKIE = "kh_player";
+// One student account works across the site (CTF, Pixel Wall, ...). The cookie name and
+// "player" role predate that and are kept so existing sign-ins stay valid.
+export const STUDENT_COOKIE = "kh_player";
 const SESSION_DAYS = 14;
 
-export async function createPlayerSession(playerId: number) {
+export async function createStudentSession(studentId: number) {
   const expires = new Date(Date.now() + SESSION_DAYS * 86_400_000);
   const token = await new SignJWT({ role: "player" })
-    .setSubject(String(playerId))
+    .setSubject(String(studentId))
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(expires)
     .sign(secret());
 
-  (await cookies()).set(PLAYER_COOKIE, token, {
+  (await cookies()).set(STUDENT_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -29,13 +32,13 @@ export async function createPlayerSession(playerId: number) {
   });
 }
 
-export async function deletePlayerSession() {
-  (await cookies()).delete({ name: PLAYER_COOKIE, path: "/" });
+export async function deleteStudentSession() {
+  (await cookies()).delete({ name: STUDENT_COOKIE, path: "/" });
 }
 
-/** The signed-in player, or null. Cached per request. */
-export const getPlayer = cache(async () => {
-  const token = (await cookies()).get(PLAYER_COOKIE)?.value;
+/** The signed-in student, or null. Cached per request. */
+export const getStudent = cache(async () => {
+  const token = (await cookies()).get(STUDENT_COOKIE)?.value;
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, secret(), { algorithms: ["HS256"] });
@@ -52,9 +55,12 @@ export const getPlayer = cache(async () => {
   }
 });
 
-/** Call first in every player-only page and server action; actions are public endpoints. */
-export async function requirePlayer() {
-  const player = await getPlayer();
-  if (!player) redirect("/ctf/login");
-  return player;
+/**
+ * Call first in every student-only page and server action; actions are public endpoints.
+ * `next` is where to come back to after signing in.
+ */
+export async function requireStudent(next = "/") {
+  const student = await getStudent();
+  if (!student) redirect(loginHref(next));
+  return student;
 }

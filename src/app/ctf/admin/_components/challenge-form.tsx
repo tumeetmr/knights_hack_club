@@ -2,9 +2,9 @@
 
 import { useActionState, useState, type ReactNode } from "react";
 import { saveChallengeAction } from "@/lib/ctf/actions";
-import type { FormState } from "@/lib/ctf/form";
+import type { FormState } from "@/lib/form";
 import { generateFlag } from "@/lib/ctf/flag";
-import { FormMessage, input, label } from "../../_components/form-ui";
+import { FormMessage, input, label } from "@/components/form-ui";
 import { btnGhost, btnPrimary, btnSmall, card } from "./styles";
 
 type Initial = {

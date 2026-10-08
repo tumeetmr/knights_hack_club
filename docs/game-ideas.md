@@ -29,17 +29,21 @@ a "you just learned" card. The projector is a live, room-wide data dashboard (no
 first-try rate per topic, cracks over the last hour, average crack time by crew size, and
 auto-written plain-English takeaways, plus the "just cracked" feed.
 
-## 1. Pixel Wall (planned, replaces the homepage "Idea board" section)
+## 1. Pixel Wall (built, homepage section `#pixel-wall`)
 
-A shared grid like Reddit's r/place. Anyone picks a color and places one pixel every
-30 seconds. Over the term people team up to draw logos and fight over territory.
+A shared 64×64 grid like Reddit's r/place. Signed-in students pick a color and place one pixel
+every 30 seconds; anyone can watch. Over the term people team up to draw logos and fight over territory.
 
 - **Why:** no rooms, lobbies or rules. Open the homepage and click. It's always on, it
   keeps growing, and an end-of-term screenshot makes good social content.
-- **Data:** one Postgres table `pixels (x, y, color, nickname, placed_at)`, grid ~64×64
-- **API:** route to place a pixel; the client fetches changes every ~2s
-- **Abuse:** cooldown per player/IP, reuse the pattern in `src/lib/ctf/rate-limit.ts`
-- **Effort:** small
+- **Accounts:** uses the universal student login (`/login`, `/register`, `src/lib/auth/`), the
+  same account as the CTF
+- **Data:** `pixels (id, x, y, color, player_id, placed_at)` is an append-only log; the newest
+  row per cell wins. That gives the cooldown check, the poll cursor and a timelapse for free.
+- **API:** `GET /api/pixels` (whole wall) and `?since=<id>` (changes only, polled every 2s while
+  on screen); `GET /api/pixels/me`; placing is the `placePixelAction` server action
+- **Abuse:** 30s cooldown per student enforced in Postgres (row lock, so double clicks can't
+  sneak through), plus a per-IP cap via `src/lib/rate-limit.ts`
 
 ## 2. Code the Knight (main game)
 

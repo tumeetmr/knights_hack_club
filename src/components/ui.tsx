@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 
-export const TOTAL_SECTIONS = 8;
+export const TOTAL_SECTIONS = 9;
 
 /** Rounded full-width card that every landing-style page section sits in. */
 export const panel = "relative scroll-mt-24 overflow-clip rounded-[2rem] lg:rounded-[2.5rem]";

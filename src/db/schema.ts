@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, check, index, integer, pgTable, serial, smallint, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /** One row (id = 1) holding the contest window and kill switch. */
 export const contest = pgTable(
@@ -67,5 +67,27 @@ export const solves = pgTable(
   (t) => [
     uniqueIndex("solves_player_challenge_idx").on(t.playerId, t.challengeId),
     index("solves_challenge_idx").on(t.challengeId),
+  ],
+);
+
+/**
+ * Pixel Wall log: one row per placed pixel, newest wins. Keeping every placement gives the
+ * cooldown check, the "changes since" poll cursor (id) and an end-of-term timelapse.
+ */
+export const pixels = pgTable(
+  "pixels",
+  {
+    id: serial("id").primaryKey(),
+    x: smallint("x").notNull(),
+    y: smallint("y").notNull(),
+    /** "#rrggbb", one of PIXEL_COLORS. */
+    color: text("color").notNull(),
+    playerId: integer("player_id").references(() => players.id, { onDelete: "set null" }),
+    placedAt: timestamp("placed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("pixels_cell_idx").on(t.x, t.y, t.id),
+    index("pixels_player_idx").on(t.playerId, t.id),
+    check("pixels_in_grid", sql`${t.x} >= 0 and ${t.y} >= 0 and ${t.x} < 64 and ${t.y} < 64`),
   ],
 );

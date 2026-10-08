@@ -5,6 +5,7 @@ import { CountUp } from "@/components/count-up";
 import { CtfTeaser } from "@/components/ctf-teaser";
 import { EventBanner } from "@/components/event-banner";
 import { EventsSlider } from "@/components/events-slider";
+import { PixelWall } from "@/components/pixel-wall";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -404,7 +405,7 @@ export default function Home() {
                 then play.
               </p>
               <div data-reveal="up" className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
-                <RollLink href="/ctf/register" className="bg-white text-ink hover:bg-knight-300">
+                <RollLink href="/register?next=/ctf" className="bg-white text-ink hover:bg-knight-300">
                   Register for the CTF
                 </RollLink>
                 <RollLink href="/ctf/leaderboard" className="border border-white/30 hover:border-white hover:bg-white hover:text-ink">
@@ -413,12 +414,32 @@ export default function Home() {
               </div>
               <p data-reveal="up" className="mt-5 text-sm text-white/50">
                 Already registered?{" "}
-                <Link href="/ctf/login" className="underline underline-offset-4 hover:text-white">
+                <Link href="/login?next=/ctf" className="underline underline-offset-4 hover:text-white">
                   Sign in
                 </Link>
               </p>
             </div>
             <CtfTeaser />
+          </div>
+        </section>
+
+        {/* 09 Pixel Wall */}
+        <section id="pixel-wall" className={`${panel} bg-ink text-white`}>
+          <div className="bg-grid absolute inset-0" aria-hidden />
+          <div className="absolute -right-32 -top-32 size-[320px] glow sm:size-[520px]" aria-hidden />
+          <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 sm:py-24 md:py-32">
+            <div className="grid gap-6 lg:grid-cols-[1fr_24rem] lg:items-end lg:gap-20">
+              <div>
+                <SectionCounter n={9} className="text-knight-300" />
+                <Headline lines={["The pixel", "wall."]} className="mt-8 text-[clamp(4rem,12vw,10rem)]" />
+              </div>
+              <p data-reveal="up" className="text-white/70 sm:text-lg">
+                One shared canvas for the whole club. Pick a color, place a pixel,
+                wait 30 seconds, repeat. Team up to draw logos, or defend your
+                corner. What it looks like by the end of term is up to you.
+              </p>
+            </div>
+            <PixelWall />
           </div>
         </section>
 

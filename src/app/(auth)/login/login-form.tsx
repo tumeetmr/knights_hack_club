@@ -1,14 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginPlayerAction } from "@/lib/ctf/player-actions";
-import type { FormState } from "@/lib/ctf/form";
-import { FormMessage, input, label } from "../../_components/form-ui";
-import { submitBtn } from "../_components/auth-card";
-import { PasswordInput } from "../_components/password-input";
+import type { FormState } from "@/lib/form";
+import { FormMessage, input, label } from "@/components/form-ui";
+import { submitBtn } from "@/components/auth/auth-panel";
+import { PasswordInput } from "@/components/auth/password-input";
+import { loginAction } from "@/lib/auth/actions";
 
-export function PlayerLoginForm({ next }: { next: string }) {
-  const [state, action, pending] = useActionState<FormState, FormData>(loginPlayerAction, {});
+export function LoginForm({ next }: { next: string }) {
+  const [state, action, pending] = useActionState<FormState, FormData>(loginAction, {});
   return (
     <form action={action} className="grid gap-4">
       <input type="hidden" name="next" value={next} />

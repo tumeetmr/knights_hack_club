@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ComponentProps } from "react";
-import { input } from "../../_components/form-ui";
+import { input } from "@/components/form-ui";
 
 /** Password field with a Show/Hide toggle, so typos on a phone keyboard are easy to spot. */
 export function PasswordInput(props: Omit<ComponentProps<"input">, "type" | "className">) {

@@ -1,6 +1,6 @@
 import { listPlayersForAdmin } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
-import { input } from "../../_components/form-ui";
+import { input } from "@/components/form-ui";
 import { shortDate } from "../_components/format";
 import { ResetPassword } from "../_components/reset-password-form";
 import { AdminShell, PageHeader } from "../_components/shell";

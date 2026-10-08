@@ -3,9 +3,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { contestStatus } from "@/lib/ctf/contest";
-import { toId } from "@/lib/ctf/form";
+import { toId } from "@/lib/form";
 import { TIME_ZONE } from "@/lib/time-zone";
-import { getPlayer } from "@/lib/ctf/player-session";
+import { registerHref } from "@/lib/auth/next";
+import { getStudent } from "@/lib/auth/session";
 import { getContest, getPublicChallenge, listSolvers } from "@/lib/ctf/queries";
 import { AutoRefresh } from "../../_components/auto-refresh";
 import { Description } from "../../_components/description";
@@ -19,9 +20,9 @@ const solvedAt = (d: Date) =>
 
 export default async function ChallengePage({ params }: PageProps<"/ctf/challenges/[id]">) {
   const rawId = (await params).id;
-  const player = await getPlayer();
+  const player = await getStudent();
   // Keep the challenge as the destination, so a shared link or QR code lands here after sign-up.
-  if (!player) redirect(`/ctf/register?next=${encodeURIComponent(`/ctf/challenges/${rawId}`)}`);
+  if (!player) redirect(registerHref(`/ctf/challenges/${rawId}`));
 
   const id = toId(rawId);
   if (!id) notFound();

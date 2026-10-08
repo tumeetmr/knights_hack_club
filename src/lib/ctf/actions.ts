@@ -9,9 +9,9 @@ import { challenges, contest, players } from "@/db/schema";
 import { parseChallenge, type ChallengeInput } from "./challenge-input";
 import { fromLocalInput } from "./contest";
 import { generateFlag } from "./flag";
-import { hashPassword } from "./password";
-import { rawValues, toId, type FormState } from "./form";
-import { clearAttempts, clientIp, tooMany } from "./rate-limit";
+import { hashPassword } from "@/lib/auth/password";
+import { rawValues, toId, type FormState } from "@/lib/form";
+import { clearAttempts, clientIp, tooMany } from "@/lib/rate-limit";
 import { createAdminSession, deleteAdminSession, requireAdmin } from "./session";
 
 // Every admin tab shows contest and challenge data, so refresh them all.

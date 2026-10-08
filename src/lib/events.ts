@@ -73,7 +73,7 @@ export const events: ClubEvent[] = [
     links: [
       { label: "Play the CTF", href: "/ctf", note: "Challenges, flags and the live leaderboard" },
       { label: "Play Vault Crackers", href: "/games", note: "Team up on your phone and crack code puzzles" },
-      { label: "Register for the CTF", href: "/ctf/register", note: "Takes a minute, do it before you arrive" },
+      { label: "Register for the CTF", href: "/register?next=/ctf", note: "Takes a minute, do it before you arrive" },
       { label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
       { label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
     ],

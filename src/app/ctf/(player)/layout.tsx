@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { getPlayer } from "@/lib/ctf/player-session";
+import { getStudent } from "@/lib/auth/session";
 import { CtfHeader } from "./_components/header";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PlayerLayout({ children }: { children: ReactNode }) {
-  const player = await getPlayer();
+  const player = await getStudent();
   return (
     <>
       <CtfHeader player={player ? { name: player.name } : null} />

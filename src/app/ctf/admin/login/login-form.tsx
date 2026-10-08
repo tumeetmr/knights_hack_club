@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 import { loginAction } from "@/lib/ctf/actions";
-import type { FormState } from "@/lib/ctf/form";
-import { FormMessage, input, label } from "../../_components/form-ui";
+import type { FormState } from "@/lib/form";
+import { FormMessage, input, label } from "@/components/form-ui";
 import { btnPrimary } from "../_components/styles";
 
 export function LoginForm() {

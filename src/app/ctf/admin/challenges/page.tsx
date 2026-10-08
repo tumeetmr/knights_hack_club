@@ -2,7 +2,7 @@ import Link from "next/link";
 import { togglePublishedAction } from "@/lib/ctf/actions";
 import { listChallengesWithSolves } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
-import { FormMessage } from "../../_components/form-ui";
+import { FormMessage } from "@/components/form-ui";
 import { RowMenu } from "../_components/row-menu";
 import { AdminShell, PageHeader } from "../_components/shell";
 import { btnGhost, btnPrimary, btnSmall, card } from "../_components/styles";

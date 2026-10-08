@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { contestStatus } from "@/lib/ctf/contest";
-import { getPlayer } from "@/lib/ctf/player-session";
+import { getStudent } from "@/lib/auth/session";
 import { countPlayers, getContest, getLeaderboard } from "@/lib/ctf/queries";
 import { AutoRefresh } from "../_components/auto-refresh";
 
@@ -12,7 +12,7 @@ const medal = ["bg-[#f5c542] text-ink", "bg-[#cfd6df] text-ink", "bg-[#d99a63] t
 
 export default async function LeaderboardPage() {
   const [player, contest, rows, registered] = await Promise.all([
-    getPlayer(),
+    getStudent(),
     getContest(),
     getLeaderboard(100),
     countPlayers(),

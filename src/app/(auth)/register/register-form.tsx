@@ -1,11 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
-import { registerAction } from "@/lib/ctf/player-actions";
-import type { FormState } from "@/lib/ctf/form";
-import { FormMessage, input, label } from "../../_components/form-ui";
-import { submitBtn } from "../_components/auth-card";
-import { PasswordInput } from "../_components/password-input";
+import type { FormState } from "@/lib/form";
+import { FormMessage, input, label } from "@/components/form-ui";
+import { submitBtn } from "@/components/auth/auth-panel";
+import { PasswordInput } from "@/components/auth/password-input";
+import { registerAction } from "@/lib/auth/actions";
 
 export function RegisterForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(registerAction, {});
@@ -14,7 +14,7 @@ export function RegisterForm({ next }: { next: string }) {
       <input type="hidden" name="next" value={next} />
       <div>
         <label htmlFor="name" className={label}>Display name</label>
-        <input id="name" name="name" required minLength={2} maxLength={40} autoComplete="name" defaultValue={state.values?.name} placeholder="Shown on the leaderboard" className={input} />
+        <input id="name" name="name" required minLength={2} maxLength={40} autoComplete="name" defaultValue={state.values?.name} placeholder="Shown on leaderboards and the Pixel Wall" className={input} />
       </div>
       <div>
         <label htmlFor="email" className={label}>Email</label>
@@ -26,7 +26,7 @@ export function RegisterForm({ next }: { next: string }) {
       </div>
       <FormMessage state={state} />
       <button type="submit" disabled={pending} className={submitBtn}>
-        {pending ? "Creating account…" : "Register for the CTF"}
+        {pending ? "Creating account…" : "Create account"}
       </button>
     </form>
   );
