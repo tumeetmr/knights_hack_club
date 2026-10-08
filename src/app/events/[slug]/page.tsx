@@ -4,8 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CAMPUS, CAMPUS_ADDRESS, events, googleCalendarUrl } from "@/lib/events";
 import { Reveal } from "@/components/reveal";
+import { COPYRIGHT } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { Headline, RollLink, SectionBlock, icons } from "@/components/ui";
+import { Headline, RollLink, SectionBlock, icons, panel } from "@/components/ui";
 
 // Only events with a slug get a page; anything else is a 404.
 export const dynamicParams = false;
@@ -22,8 +23,6 @@ export async function generateMetadata({ params }: PageProps<"/events/[slug]">):
   const title = `${event.title} | Knights Hack Club`;
   return { title, description: event.body, openGraph: { title, description: event.body } };
 }
-
-const panel = "relative scroll-mt-24 overflow-clip rounded-[2rem] lg:rounded-[2.5rem]";
 
 const calButton =
   "inline-flex items-center gap-1.5 rounded-full border-2 border-white/25 px-4 py-2 text-sm font-semibold transition hover:border-white hover:bg-white hover:text-ink active:scale-95";
@@ -204,7 +203,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
 
       <footer className="px-3 pb-3 sm:px-4 sm:pb-4">
         <div className="mx-auto flex flex-wrap justify-between gap-x-4 gap-y-3 rounded-[2rem] bg-ink px-5 py-6 text-xs text-white/40 sm:px-8 lg:rounded-[2.5rem]">
-          <p>© 2026 Knights Hack Club · Niagara College · Built by students, for students.</p>
+          <p>{COPYRIGHT}</p>
           <a href="#top" className="hover:text-white">
             Back to top ↑
           </a>

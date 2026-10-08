@@ -28,13 +28,16 @@ src/
     calendar.ics/       iCal feed
     ctf/(player)/       CTF player area (board, challenges, leaderboard, auth)
     ctf/admin/          CTF admin area
+    ctf/_components/    Form UI shared by the player and admin areas
     ctf/status/         CTF status endpoint
     ctf-lab/            Dynamic CTF challenge endpoints
     games/              Games hub; each game has /games/<slug> (phone) and /<slug>/screen (projector)
-  components/         Shared site UI (header, banners, sliders, animations)
+  components/         Shared site UI (header, footer, banners, sliders, animations)
   db/                 Drizzle client + schema
   lib/
     events.ts           Club events data + helpers
+    home-content.ts     Landing page copy (pillars, team, FAQ)
+    time-zone.ts        The club's time zone, used for every displayed date
     links.ts            External links / contact info
     ctf/                CTF server logic (actions, sessions, queries, flags)
     games/              Game catalog + useGameSocket hook

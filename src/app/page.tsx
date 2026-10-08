@@ -1,106 +1,20 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { CountUp } from "@/components/count-up";
 import { CtfTeaser } from "@/components/ctf-teaser";
 import { EventBanner } from "@/components/event-banner";
 import { EventsSlider } from "@/components/events-slider";
-import { CAMPUS, eventPath, events, upcomingEvent } from "@/lib/events";
 import { Reveal } from "@/components/reveal";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Steps } from "@/components/steps";
+import { Headline, RollLink, SectionBlock, SectionCounter, icons, panel } from "@/components/ui";
+import { eventPath, events, upcomingEvent } from "@/lib/events";
+import { faqs, pillars, team, tickerItems } from "@/lib/home-content";
 import { CONTACT_EMAIL, DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
-import { Headline, RollLink, SectionBlock, SectionCounter, icons } from "@/components/ui";
 
-const pillars = [
-  {
-    label: "Learn",
-    title: "Code from zero.",
-    kicker: "Workshops",
-    body: "Never written a line of code? Perfect. Hands-on workshops start with Scratch and build up from there. No experience needed.",
-    snippet: "when flag clicked\n  say \"Hello, NC!\"",
-  },
-  {
-    label: "Vibe",
-    title: "Vibe code with AI.",
-    kicker: "AI-assisted",
-    body: "Experiment with AI-assisted coding tools and turn an idea into a working personal project in a single session.",
-    snippet: "> build me a campus\n  study-room finder",
-  },
-  {
-    label: "Build",
-    title: "Ship real projects.",
-    kicker: "Showcase & hack",
-    body: "Team up to prototype solutions to real student and campus problems, then show them off at our showcases and hackathon.",
-    snippet: "git commit -m \"v1 🚀\"\ngit push origin main",
-  },
-];
-
-const team: { role: string; name: string; body: string; photo?: string }[] = [
-  {
-    role: "President",
-    name: "Nomuun Ankhbayar",
-    photo: "/profiles/nomuun.jpg",
-    body: "Plans and hosts meetings and events, and is the club's main contact with NCSAC.",
-  },
-  {
-    role: "Vice President",
-    name: "Tumenbayar Enkhbat",
-    photo: "/profiles/tumenbayar.jpg",
-    body: "Co-hosts meetings, co-organizes events and leads club marketing.",
-  },
-  {
-    role: "Secretary / Treasurer",
-    name: "Jack Torrance",
-    photo: "/profiles/jack.jpg",
-    body: "Runs agendas, attendance and minutes, and keeps members updated on the budget.",
-  },
-];
-
-const tickerItems = [
-  ["Build a game", "Not just homework"],
-  ["Push to GitHub", "Not to next week"],
-  ["Pair program", "Not solo struggle"],
-  ["Vibe code", "Not boilerplate"],
-  ["Meet your crew", "Not a login screen"],
-  ["Ship a project", "Not an excuse"],
-];
-
-const faqs = [
-  {
-    q: "Do I need any coding experience?",
-    a: "None at all. Workshops start with Scratch and build up from there, and first-timers and seasoned devs build side by side.",
-  },
-  {
-    q: "Who can join?",
-    a: "Membership is open to every Niagara College student, regardless of program, background or experience.",
-  },
-  {
-    q: "How do I become a member?",
-    a: "Fill out the registration form. It takes about 2 minutes, gets you on the member list and means you'll hear about the next event.",
-  },
-  {
-    q: "Where can I chat with other members?",
-    a: "On our Discord. Hop in to ask questions, find teammates and get event reminders. You don't need to be registered to join.",
-  },
-  {
-    q: "When and where do events happen?",
-    a: `Every event is at the ${CAMPUS}. Our first one, the Club Launch, is Thursday, Oct 8 from 2:00 to 3:50 PM, outside the Core. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
-  },
-  {
-    q: "What's the CTF?",
-    a: "A capture-the-flag contest for members. Register on the CTF page, solve challenges to find hidden flags, and climb the live leaderboard. No experience needed, and every challenge is beginner-friendly.",
-  },
-  {
-    q: "Can I show off my own project or startup?",
-    a: "Yes, that's what our two showcases are for. Email us to pitch it and we'll save you a spot.",
-  },
-  {
-    q: "Who runs the club?",
-    a: "Knights Hack is a student club of the Niagara College Student Administrative Council (NCSAC), run by a three-person student exec team.",
-  },
-];
-
-// Events per month for the stats chart, derived from the schedule above.
+// Events per month for the stats chart, derived from the schedule in lib/events.ts.
 const perMonth = Object.entries(
   events.reduce<Record<string, number>>((acc, e) => {
     acc[e.month] = (acc[e.month] ?? 0) + 1;
@@ -116,8 +30,6 @@ const kindCounts = [
   ["Meet-and-greet", events.filter((e) => e.kind === "Social").length],
   ["Mini hackathon", events.filter((e) => e.kind === "Hackathon").length],
 ] as const;
-
-const panel = "relative scroll-mt-24 overflow-clip rounded-[2rem] lg:rounded-[2.5rem]";
 
 export default function Home() {
   const next = upcomingEvent();
@@ -165,7 +77,7 @@ export default function Home() {
                 <span className="text-knight-300">{icons.star}</span> Beginners welcome
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-knight-300">{icons.calendar}</span> Fall 2026 · 8 events
+                <span className="text-knight-300">{icons.calendar}</span> Fall 2026 · {events.length} events
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-knight-300">{icons.pin}</span> Welland Campus
@@ -188,12 +100,12 @@ export default function Home() {
                   Join our Discord ↗
                 </RollLink>
               </div>
-              <a
+              <Link
                 href="/ctf"
                 className="-mt-1 justify-self-center text-center font-mono text-sm font-medium text-knight-300 underline-offset-4 hover:text-white hover:underline"
               >
                 {"> play the CTF →"}
-              </a>
+              </Link>
             </div>
           </div>
         </section>
@@ -501,9 +413,9 @@ export default function Home() {
               </div>
               <p data-reveal="up" className="mt-5 text-sm text-white/50">
                 Already registered?{" "}
-                <a href="/ctf/login" className="underline underline-offset-4 hover:text-white">
+                <Link href="/ctf/login" className="underline underline-offset-4 hover:text-white">
                   Sign in
-                </a>
+                </Link>
               </p>
             </div>
             <CtfTeaser />
@@ -555,79 +467,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="px-3 pb-3 sm:px-4 sm:pb-4">
-        <div className="overflow-clip rounded-[2rem] bg-ink text-white lg:rounded-[2.5rem]">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-5 pb-10 pt-12 sm:px-8 sm:pt-16 md:gap-10 lg:grid-cols-[1.5fr_1fr_1.2fr_1fr]">
-            <div className="col-span-2 flex items-start gap-4 md:col-span-1">
-              <Image src="/logo.png" alt="" width={56} height={56} className="size-14 shrink-0 rounded-xl object-contain" />
-              <p className="max-w-xs text-sm text-white/60">
-                A student club of the Niagara College Student Administrative
-                Council (NCSAC).
-              </p>
-            </div>
-            <nav aria-label="Footer">
-              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Club</p>
-              <ul className="mt-4 space-y-2 text-sm">
-                {[
-                  ["#about", "About"],
-                  ["#what-we-do", "What We Do"],
-                  ["#events", "Events"],
-                  ["#team", "Team"],
-                  ["/ctf", "CTF"],
-                  ["#faq", "FAQ"],
-                ].map(([href, label]) => (
-                  <li key={href}>
-                    <a className="underline-offset-4 hover:text-knight-300 hover:underline" href={href}>
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-            <div className="col-span-2 row-start-3 md:col-span-1 md:row-start-auto">
-              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Say hello</p>
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="mt-4 block break-all text-sm underline-offset-4 hover:text-knight-300 hover:underline"
-              >
-                {CONTACT_EMAIL}
-              </a>
-              <a
-                href={DISCORD_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 inline-flex items-center gap-2 text-sm underline-offset-4 hover:text-knight-300 hover:underline [&_svg]:size-4"
-              >
-                {icons.discord} Join our Discord ↗
-              </a>
-            </div>
-            <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Let&apos;s build</p>
-              <RollLink href={JOIN_FORM_URL} external className="mt-4 bg-white px-6 py-3 text-sm text-ink hover:bg-knight-300">
-                Join the Club ↗
-              </RollLink>
-            </div>
-          </div>
-
-          <div className="mx-auto max-w-7xl px-5 sm:px-8">
-            <p
-              className="headline bg-knight-gradient select-none bg-clip-text pb-2 text-center text-[14.5vw] text-transparent xl:text-[13.5rem]"
-              aria-hidden
-            >
-              Knights Hack
-            </p>
-          </div>
-
-          <div className="border-t border-white/10">
-            <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-x-4 gap-y-3 px-5 py-6 text-xs text-white/40 sm:px-8">
-              <p>© 2026 Knights Hack Club · Niagara College · Built by students, for students.</p>
-              <a href="#top" className="hover:text-white">
-                Back to top ↑
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

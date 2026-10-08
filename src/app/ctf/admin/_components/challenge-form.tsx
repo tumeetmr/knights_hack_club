@@ -4,8 +4,8 @@ import { useActionState, useState } from "react";
 import { saveChallengeAction } from "@/lib/ctf/actions";
 import type { FormState } from "@/lib/ctf/form";
 import { generateFlag } from "@/lib/ctf/flag";
-import { FormMessage } from "./form-message";
-import { btnGhost, btnPrimary, btnSmall, input, label } from "./styles";
+import { FormMessage, input, label } from "../../_components/form-ui";
+import { btnGhost, btnPrimary, btnSmall } from "./styles";
 
 type Initial = {
   id?: number;

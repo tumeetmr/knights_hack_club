@@ -22,27 +22,5 @@ export function AuthPanel({ eyebrow, title, children, footer }: { eyebrow: strin
   );
 }
 
-export const fieldLabel = "mb-1.5 block font-mono text-xs font-medium uppercase tracking-wider text-ink/60";
-// text-base keeps iOS from zooming into inputs on focus.
-export const fieldInput =
-  "block w-full rounded-xl bg-mist px-4 py-3.5 text-base ring-1 ring-ink/10 placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-knight-500";
 export const submitBtn =
   "inline-flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 font-bold text-white transition hover:bg-knight-600 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50";
-
-export function Notice({ error, ok }: { error?: string; ok?: string }) {
-  if (error) {
-    return (
-      <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800 ring-1 ring-red-700/20">
-        {error}
-      </p>
-    );
-  }
-  if (ok) {
-    return (
-      <p role="status" className="rounded-xl bg-knight-50 px-4 py-3 text-sm font-medium text-knight-900 ring-1 ring-knight-500/30">
-        {ok}
-      </p>
-    );
-  }
-  return null;
-}

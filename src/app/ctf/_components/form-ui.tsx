@@ -1,5 +1,11 @@
 import type { FormState } from "@/lib/ctf/form";
 
+// Shared by the player and admin forms.
+export const label = "mb-1.5 block font-mono text-xs font-medium uppercase tracking-wider text-ink/60";
+// text-base keeps iOS from zooming into inputs on focus.
+export const input =
+  "block w-full rounded-xl bg-mist px-4 py-3.5 text-base ring-1 ring-ink/10 placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-knight-500";
+
 export function FormMessage({ state }: { state: FormState }) {
   if (state.error) {
     return (

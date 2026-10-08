@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
 import type { ClubEvent } from "@/lib/events";
+import { TIME_ZONE } from "@/lib/time-zone";
 
 const DAY = 86_400_000;
 
-// Calendar-day difference in Toronto time, so "Tomorrow" flips at local midnight.
-const torontoDay = (t: number) =>
+// Calendar-day difference in club time, so "Tomorrow" flips at local midnight.
+const clubDay = (t: number) =>
   // en-CA formats as YYYY-MM-DD, which Date parses as UTC midnight.
-  Date.parse(new Date(t).toLocaleDateString("en-CA", { timeZone: "America/Toronto" })) / DAY;
+  Date.parse(new Date(t).toLocaleDateString("en-CA", { timeZone: TIME_ZONE })) / DAY;
 
 function statusLabel(e: ClubEvent, now: number) {
   if (!e.start || !e.end) return "Upcoming";
@@ -17,7 +18,7 @@ function statusLabel(e: ClubEvent, now: number) {
   const end = new Date(e.end).getTime();
   if (now >= end) return null;
   if (now >= start) return "Happening now";
-  const days = torontoDay(start) - torontoDay(now);
+  const days = clubDay(start) - clubDay(now);
   if (days <= 0) return "Today";
   if (days === 1) return "Tomorrow";
   return `In ${days} days`;

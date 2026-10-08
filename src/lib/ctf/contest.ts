@@ -1,4 +1,4 @@
-export const CONTEST_TZ = "America/Toronto";
+import { TIME_ZONE } from "@/lib/time-zone";
 
 export type ContestStatus = "upcoming" | "live" | "paused" | "ended";
 
@@ -18,7 +18,7 @@ export function contestStatus(
 
 const partsIn = (date: Date) => {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: CONTEST_TZ,
+    timeZone: TIME_ZONE,
     hourCycle: "h23",
     year: "numeric",
     month: "2-digit",
@@ -64,7 +64,7 @@ export function fromLocalInput(value: string): Date | null {
 export function formatContestTime(date: Date | null): string {
   if (!date) return "None";
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: CONTEST_TZ,
+    timeZone: TIME_ZONE,
     weekday: "short",
     month: "short",
     day: "numeric",

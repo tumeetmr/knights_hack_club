@@ -3,8 +3,8 @@
 import { useActionState } from "react";
 import { loginAction } from "@/lib/ctf/actions";
 import type { FormState } from "@/lib/ctf/form";
-import { FormMessage } from "../_components/form-message";
-import { btnPrimary, input, label } from "../_components/styles";
+import { FormMessage, input, label } from "../../_components/form-ui";
+import { btnPrimary } from "../_components/styles";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState<FormState, FormData>(loginAction, {});

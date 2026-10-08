@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { contestStatus } from "@/lib/ctf/contest";
 import { toId } from "@/lib/ctf/form";
+import { TIME_ZONE } from "@/lib/time-zone";
 import { getPlayer } from "@/lib/ctf/player-session";
 import { getContest, getPublicChallenge, listSolvers } from "@/lib/ctf/queries";
 import { AutoRefresh } from "../../_components/auto-refresh";
@@ -14,7 +15,7 @@ import { Hint } from "../../_components/hint";
 export const metadata: Metadata = { title: "Challenge | Knights Hack CTF" };
 
 const solvedAt = (d: Date) =>
-  new Intl.DateTimeFormat("en-CA", { timeZone: "America/Toronto", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(d);
+  new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(d);
 
 export default async function ChallengePage({ params }: PageProps<"/ctf/challenges/[id]">) {
   const player = await getPlayer();

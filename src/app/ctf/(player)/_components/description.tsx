@@ -1,7 +1,7 @@
 import { CopyText } from "./copy-text";
 
 /**
- * Challenge text. A line wrapped in backticks, like `NK{abc}`, becomes a tap-to-copy
+ * Challenge text. A line wrapped in backticks, like `KH{abc}`, becomes a tap-to-copy
  * block so phone users never have to select text by hand. Everything else is plain text.
  */
 export function Description({ text }: { text: string }) {

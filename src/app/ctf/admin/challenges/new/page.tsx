@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listChallenges } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
+import { FormMessage } from "../../../_components/form-ui";
 import { ChallengeForm } from "../../_components/challenge-form";
 import { AdminShell } from "../../_components/shell";
 import { btnGhost, btnSmall, card } from "../../_components/styles";
@@ -19,11 +20,7 @@ export default async function NewChallengePage({ searchParams }: PageProps<"/ctf
       <Link href="/ctf/admin" className={`${btnGhost} ${btnSmall} self-start`}>
         ← Back
       </Link>
-      {added && (
-        <p role="status" className="rounded-xl bg-knight-50 px-4 py-3 text-sm font-medium text-knight-900 ring-1 ring-knight-500/30">
-          Added “{added}”. Ready for the next one.
-        </p>
-      )}
+      {added && <FormMessage state={{ ok: `Added “${added}”. Ready for the next one.` }} />}
       <section className={card}>
         <h1 className="headline mb-5 text-4xl sm:text-5xl">New challenge</h1>
         {/* Keyed on the query string so "add another" gives a fresh form. */}

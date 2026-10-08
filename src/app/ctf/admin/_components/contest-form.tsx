@@ -3,8 +3,8 @@
 import { useActionState } from "react";
 import { saveContestAction } from "@/lib/ctf/actions";
 import type { FormState } from "@/lib/ctf/form";
-import { FormMessage } from "./form-message";
-import { btnPrimary, input, label } from "./styles";
+import { FormMessage, input, label } from "../../_components/form-ui";
+import { btnPrimary } from "./styles";
 
 export function ContestForm({
   title,

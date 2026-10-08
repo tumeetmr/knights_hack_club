@@ -8,6 +8,7 @@ import {
 import { contestStatus, formatContestTime, toLocalInput, type ContestStatus } from "@/lib/ctf/contest";
 import { getContest, listChallenges } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
+import { FormMessage } from "../_components/form-ui";
 import { ConfirmButton } from "./_components/confirm-button";
 import { ContestForm } from "./_components/contest-form";
 import { AdminShell } from "./_components/shell";
@@ -31,11 +32,7 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/ctf/a
 
   return (
     <AdminShell>
-      {added && (
-        <p role="status" className="rounded-xl bg-knight-50 px-4 py-3 text-sm font-medium text-knight-900 ring-1 ring-knight-500/30">
-          Added “{added}”.
-        </p>
-      )}
+      {added && <FormMessage state={{ ok: `Added “${added}”.` }} />}
 
       <section className={card}>
         <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
