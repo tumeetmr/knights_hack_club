@@ -1,6 +1,9 @@
 import type { Namespace, Socket } from "socket.io";
 import {
   MAX_CREW_SIZE,
+  TIMELINE_BUCKET_MS,
+  TIMELINE_BUCKETS,
+  VAULT_TOPICS,
   type ClientToServerEvents,
   type CrewBadge,
   type PlayerView,
@@ -22,6 +25,10 @@ const WRONG_ANSWER_COOLDOWN_MS = 5_000;
 const HINT_AFTER_WRONG_GUESSES = 2;
 const FEED_LENGTH = 8;
 const SCREENS_ROOM = "screens";
+/** A crew that wandered off mid-vault shouldn't drag the average solve time up for hours. */
+const MAX_COUNTED_SOLVE_MS = 10 * 60_000;
+/** Re-send stats this often so the timeline chart keeps sliding even when nobody is playing. */
+const SCREEN_TICK_MS = 30_000;
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 const BADGES: CrewBadge[] = [
@@ -47,6 +54,7 @@ type Player = {
 
 type Vault = Puzzle & {
   number: number;
+  startedAt: number;
   /** playerId → indexes of the lines only that player can see. */
   holders: Map<string, number[]>;
   cooldownUntil: number;
@@ -63,6 +71,9 @@ type Crew = {
   /** null while friends are still gathering in the lobby. */
   vault: Vault | null;
 };
+
+type Tally = { started: number; cracked: number; skipped: number; firstTry: number; solveMs: number };
+type SizeTally = { cracked: number; solveMs: number };
 
 const cleanNickname = (value: unknown) =>
   text(value, 64).replace(/\p{C}/gu, "").replace(/\s+/g, " ").trim().slice(0, 16);
@@ -84,8 +95,19 @@ export class VaultCrackers {
   private vaultsCracked = 0;
   private feed: ScreenFeedItem[] = [];
   private statsTimer: NodeJS.Timeout | null = null;
+  // Anonymous room-wide analytics for the projector.
+  private guesses = 0;
+  private readonly tallies = new Map<VaultKind, Tally>(
+    VAULT_TOPICS.map(({ kind }) => [kind, { started: 0, cracked: 0, skipped: 0, firstTry: 0, solveMs: 0 }]),
+  );
+  private readonly sizeTallies: SizeTally[] = Array.from({ length: MAX_CREW_SIZE }, () => ({ cracked: 0, solveMs: 0 }));
+  private crackTimes: number[] = [];
 
-  constructor(private readonly nsp: VaultNamespace) {}
+  constructor(private readonly nsp: VaultNamespace) {
+    setInterval(() => {
+      if (this.nsp.adapter.rooms.get(SCREENS_ROOM)?.size) this.scheduleStats();
+    }, SCREEN_TICK_MS).unref();
+  }
 
   connect(socket: VaultSocket): void {
     const as =
@@ -316,9 +338,12 @@ export class VaultCrackers {
   // ── Vaults ──────────────────────────────────────────────────────────────────
 
   private startVault(crew: Crew, number: number, avoid: VaultKind | null = null): void {
+    const puzzle = makePuzzle(number, avoid);
+    this.tallies.get(puzzle.kind)!.started += 1;
     crew.vault = {
-      ...makePuzzle(number, avoid),
+      ...puzzle,
       number,
+      startedAt: Date.now(),
       holders: new Map(),
       cooldownUntil: 0,
       wrongGuesses: 0,
@@ -353,15 +378,18 @@ export class VaultCrackers {
     const answer = text(value, 12).trim();
     if (!/^-?\d+$/.test(answer)) return fail("Type the number the program prints.");
 
+    this.guesses += 1;
     if (Number(answer) !== vault.answer) {
       vault.wrongGuesses += 1;
       vault.cooldownUntil = Date.now() + WRONG_ANSWER_COOLDOWN_MS;
       this.emitCrew(crew);
+      this.scheduleStats();
       return { ok: true, correct: false };
     }
 
     vault.crackedBy = player.nickname;
     this.vaultsCracked += 1;
+    this.recordCrack(crew, vault);
     const names = crew.memberIds.map((id) => this.players.get(id)?.nickname).filter(Boolean);
     this.feed = [
       {
@@ -383,9 +411,23 @@ export class VaultCrackers {
     if (!crew || !vault) return fail("No vault to move on from.");
     if (skip && vault.crackedBy) return { ok: true };
     if (!skip && !vault.crackedBy) return fail("Crack this vault first, or skip it.");
+    if (skip) this.tallies.get(vault.kind)!.skipped += 1;
     this.startVault(crew, skip ? vault.number : vault.number + 1, vault.kind);
     this.emitCrew(crew);
     return { ok: true };
+  }
+
+  private recordCrack(crew: Crew, vault: Vault): void {
+    const now = Date.now();
+    const solveMs = Math.min(now - vault.startedAt, MAX_COUNTED_SOLVE_MS);
+    const tally = this.tallies.get(vault.kind)!;
+    tally.cracked += 1;
+    tally.solveMs += solveMs;
+    if (vault.wrongGuesses === 0) tally.firstTry += 1;
+    const size = this.sizeTallies[Math.min(crew.memberIds.length, MAX_CREW_SIZE) - 1];
+    size.cracked += 1;
+    size.solveMs += solveMs;
+    this.crackTimes.push(now);
   }
 
   // ── Views ───────────────────────────────────────────────────────────────────
@@ -466,7 +508,33 @@ export class VaultCrackers {
     for (const crew of this.crews.values()) {
       if (crew.vault && crew.memberIds.some((id) => this.players.get(id)?.socketId)) crewsPlaying += 1;
     }
-    return { online, crewsPlaying, vaultsCracked: this.vaultsCracked, feed: this.feed };
+
+    const now = Date.now();
+    const windowStart = now - TIMELINE_BUCKETS * TIMELINE_BUCKET_MS;
+    this.crackTimes = this.crackTimes.filter((at) => at > windowStart);
+    const timeline = Array.from({ length: TIMELINE_BUCKETS }, () => 0);
+    for (const at of this.crackTimes) {
+      timeline[Math.min(Math.floor((at - windowStart) / TIMELINE_BUCKET_MS), TIMELINE_BUCKETS - 1)] += 1;
+    }
+
+    const average = (totalMs: number, count: number) => (count ? Math.round(totalMs / count) : null);
+    return {
+      online,
+      crewsPlaying,
+      vaultsCracked: this.vaultsCracked,
+      guesses: this.guesses,
+      topics: VAULT_TOPICS.map(({ kind }) => {
+        const { solveMs, ...tally } = this.tallies.get(kind)!;
+        return { kind, ...tally, avgSolveMs: average(solveMs, tally.cracked) };
+      }),
+      crewSizes: this.sizeTallies.map(({ cracked, solveMs }, index) => ({
+        size: index + 1,
+        cracked,
+        avgSolveMs: average(solveMs, cracked),
+      })),
+      timeline,
+      feed: this.feed,
+    };
   }
 
   /** Projector updates are batched: a burst of joins becomes one message. */

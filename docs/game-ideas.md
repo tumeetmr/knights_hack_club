@@ -25,7 +25,9 @@ get paired with a stranger or crew up with friends via a 4-letter code (1–4 pe
 is a tiny Python program whose lines are split across the crew's phones. They read their lines
 out loud, work out what it prints, and type the answer. Vaults ramp from variables → if/else,
 loops, AI neuron → functions, "how chatbots pick words". Each crack shows the full program plus
-a "you just learned" card. The projector shows a live "just cracked" feed and a shared counter.
+a "you just learned" card. The projector is a live, room-wide data dashboard (no per-crew scores):
+first-try rate per topic, cracks over the last hour, average crack time by crew size, and
+auto-written plain-English takeaways, plus the "just cracked" feed.
 
 ## 1. Pixel Wall (planned, replaces the homepage "Idea board" section)
 

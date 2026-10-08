@@ -20,6 +20,9 @@
 /* Sticky scroll scenes only when the screen is wide AND tall enough to hold them. */
 @custom-variant pinned (@media (width >= 64rem) and (height >= 40rem));
 
+/* Shorter projectors (e.g. 1366×768): screens locked to the viewport drop secondary text. */
+@custom-variant short (@media (height < 56rem));
+
 html {
   -webkit-tap-highlight-color: transparent;
 }

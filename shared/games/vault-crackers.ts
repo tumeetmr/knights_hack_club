@@ -58,10 +58,46 @@ export type PlayerView =
 
 export type ScreenFeedItem = { id: string; text: string; emoji: string; at: number };
 
+/** Every vault topic in difficulty order, with a plain-English name for the projector charts. */
+export const VAULT_TOPICS: { kind: VaultKind; label: string; emoji: string }[] = [
+  { kind: "variables", label: "Variables", emoji: "📦" },
+  { kind: "update", label: "Updating values", emoji: "🪙" },
+  { kind: "if-else", label: "If / else", emoji: "🔀" },
+  { kind: "loop", label: "Loops", emoji: "🔁" },
+  { kind: "neuron", label: "AI neurons", emoji: "🧠" },
+  { kind: "function", label: "Functions", emoji: "🧩" },
+  { kind: "next-word", label: "Chatbot words", emoji: "💬" },
+  { kind: "loop-if", label: "Loops + decisions", emoji: "🧹" },
+];
+
+/** The projector's "cracks over time" chart: this many buckets of this length, ending now. */
+export const TIMELINE_BUCKETS = 12;
+export const TIMELINE_BUCKET_MS = 5 * 60_000;
+
+/** Room-wide totals per topic. Never per crew: the projector has no scores or rankings. */
+export type TopicStats = {
+  kind: VaultKind;
+  started: number;
+  cracked: number;
+  skipped: number;
+  /** Cracks with no wrong guess before them. */
+  firstTry: number;
+  avgSolveMs: number | null;
+};
+
+export type CrewSizeStats = { size: number; cracked: number; avgSolveMs: number | null };
+
 export type ScreenStats = {
   online: number;
   crewsPlaying: number;
   vaultsCracked: number;
+  /** Every answer typed, right or wrong. */
+  guesses: number;
+  topics: TopicStats[];
+  /** Crew sizes 1 through MAX_CREW_SIZE. */
+  crewSizes: CrewSizeStats[];
+  /** Vaults cracked per TIMELINE_BUCKET_MS, oldest first; the last bucket ends now. */
+  timeline: number[];
   feed: ScreenFeedItem[];
 };
 
