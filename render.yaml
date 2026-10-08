@@ -1,0 +1,13 @@
+# Render blueprint for the realtime game server (game-server/). The website stays on Vercel.
+services:
+  - type: web
+    name: knights-hack-games
+    runtime: node
+    rootDir: game-server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      # Comma-separated website origins, e.g. https://knightshack.club,https://www.knightshack.club
+      - key: ALLOWED_ORIGINS
+        sync: false
