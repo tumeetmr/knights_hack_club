@@ -6,15 +6,12 @@ import { DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
 import { icons } from "./ui";
 
 const links = [
-  { href: "#about", label: "About" },
-  { href: "#what-we-do", label: "What We Do" },
   { href: "#events", label: "Events" },
-  { href: "#team", label: "Team" },
-  { href: "#ctf", label: "CTF" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/ctf", label: "CTF" },
+  { href: "/games", label: "Games" },
 ];
 
-/** `base` prefixes the section links, e.g. "/" so they point back to the landing page from subpages. */
+/** `base` prefixes the section links (those starting with "#"), e.g. "/" so they point back to the landing page from subpages. */
 export function SiteHeader({ base = "" }: { base?: string }) {
   const [open, setOpen] = useState(false);
 
@@ -56,7 +53,7 @@ export function SiteHeader({ base = "" }: { base?: string }) {
           {links.map((link) => (
             <a
               key={link.href}
-              href={base + link.href}
+              href={link.href.startsWith("#") ? base + link.href : link.href}
               className="rounded-full px-4 py-2 text-sm font-medium text-white/75 transition hover:bg-white/10 hover:text-white"
             >
               {link.label}
@@ -119,7 +116,7 @@ export function SiteHeader({ base = "" }: { base?: string }) {
             {links.map((link) => (
               <a
                 key={link.href}
-                href={base + link.href}
+                href={link.href.startsWith("#") ? base + link.href : link.href}
                 onClick={() => setOpen(false)}
                 className="headline block border-b border-white/10 py-3.5 text-[2.25rem] transition-colors active:text-knight-300"
               >
