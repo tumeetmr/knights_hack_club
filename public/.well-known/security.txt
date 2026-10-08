@@ -1,0 +1,11 @@
+# Knights Hack Club security.txt
+#
+# Real websites publish this file so people who find a security bug
+# know how to report it. You found ours, brave knight!
+#
+# Found a real bug on this site? Tell a Knights Hack organizer in person.
+
+Preferred-Languages: en
+Expires: 2027-12-31T23:59:00.000Z
+
+# Flag: KH{security_txt_says_hi}

@@ -3,8 +3,9 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-// Tables come from `bun run db:push` (or db:migrate). The app only seeds
-// the single contest row (id = 1) that the admin settings update.
+// Tables come from the SQL files in drizzle/, applied with `bun run db:migrate`.
+// Don't use db:push on the live database: it skips the migration log. The app
+// only seeds the single contest row (id = 1) that the admin settings update.
 const g = globalThis as unknown as {
   __khDb?: ReturnType<typeof drizzle<typeof schema>>;
   __khReady?: Promise<void>;

@@ -1,0 +1,206 @@
+<!doctype html><html lang="en"><head><title>Photo Inspector</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<style>
+body{font-family:system-ui,sans-serif;background:#0b1020;color:#fff;margin:0;padding:24px 16px 48px;line-height:1.5}
+main{max-width:560px;margin:0 auto}
+h1{font-size:2rem;margin:.2em 0 .3em;text-align:center}
+.lead{color:#ffffffb3;text-align:center;margin:0 0 24px}
+img{display:block;width:100%;height:auto;max-width:360px;margin:0 auto;border-radius:16px}
+.btn{display:block;width:100%;font:inherit;font-weight:700;border:0;border-radius:999px;background:#fff;color:#0b1020;padding:14px 28px;min-height:52px;margin-top:12px;cursor:pointer;text-align:center;box-sizing:border-box}
+.btn.ghost{background:#ffffff1f;color:#fff}
+.or{color:#ffffff80;text-align:center;font-size:.875rem;margin:20px 0 4px}
+#results{margin-top:24px}
+.card{background:#ffffff14;border-radius:16px;padding:16px;margin-top:12px}
+.card h2{font-size:1rem;margin:0 0 8px}
+dl{margin:0}
+dt{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#ffffff80;margin-top:10px}
+dd{margin:2px 0 0;word-break:break-word;font-family:ui-monospace,Menlo,monospace;font-size:.95rem;user-select:text;-webkit-user-select:text}
+.note{color:#ffffffb3;font-size:.875rem;margin:8px 0 0}
+.warn{background:#f5c54226;color:#ffe9a8}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+</style></head>
+<body><main>
+<h1>🔍 Photo Inspector</h1>
+<p class="lead">A picture file carries hidden notes: a title, a description, the camera, sometimes even <strong>where it was taken</strong>. This tool shows them. Nothing is uploaded; it all happens on your phone.</p>
+
+<img id="pic" src="/ctf-lab/knight-meme.jpg" alt="The picture to inspect" width="1825" height="1705">
+<button class="btn" id="meme" type="button">Look inside this picture</button>
+
+<p class="or">or try it on your own photo</p>
+<label class="btn ghost" for="file">Choose a photo</label>
+<input id="file" type="file" accept="image/jpeg,image/*">
+
+<div id="results" aria-live="polite"></div>
+</main>
+<script>
+// A tiny JPEG metadata reader: EXIF (incl. GPS), XMP, IPTC and JPEG comments.
+const utf8 = new TextDecoder("utf-8");
+const latin = new TextDecoder("latin1");
+const text = (bytes) => utf8.decode(bytes).replace(/\0+$/, "").trim();
+
+const EXIF_TAGS = {
+  0x010e: "Description", 0x010f: "Camera maker", 0x0110: "Camera model", 0x0131: "Software",
+  0x0132: "Date", 0x013b: "Artist", 0x8298: "Copyright", 0x9003: "Taken on", 0x9286: "Comment",
+};
+
+function readExif(view, start) {
+  const out = [];
+  const le = view.getUint16(start) === 0x4949;
+  const u16 = (o) => view.getUint16(start + o, le);
+  const u32 = (o) => view.getUint32(start + o, le);
+  const sizes = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 7: 1, 9: 4, 10: 8 };
+  let gps = null;
+
+  function value(entry) {
+    const type = u16(entry + 2), count = u32(entry + 4);
+    const size = (sizes[type] || 1) * count;
+    const at = size > 4 ? u32(entry + 8) : entry + 8;
+    if (type === 2 || type === 7) {
+      let bytes = new Uint8Array(view.buffer, view.byteOffset + start + at, count);
+      // UserComment starts with an 8-byte character code like "ASCII\0\0\0".
+      if (type === 7 && count > 8 && /^(ASCII|UNICODE|JIS)?\0*$/.test(latin.decode(bytes.slice(0, 8)))) bytes = bytes.slice(8);
+      return text(bytes);
+    }
+    if (type === 3) return u16(at);
+    if (type === 4) return u32(at);
+    if (type === 5) return Array.from({ length: count }, (_, i) => u32(at + i * 8) / (u32(at + i * 8 + 4) || 1));
+    return null;
+  }
+
+  function walk(offset, kind) {
+    const n = u16(offset);
+    for (let i = 0; i < n; i++) {
+      const entry = offset + 2 + i * 12;
+      const tag = u16(entry);
+      if (kind !== "gps" && tag === 0x8769) walk(u32(entry + 8), "exif");
+      else if (kind !== "gps" && tag === 0x8825) { gps = {}; walk(u32(entry + 8), "gps"); }
+      else if (kind === "gps") gps[tag] = value(entry);
+      else if (EXIF_TAGS[tag]) {
+        const v = value(entry);
+        if (v !== null && v !== "") out.push([EXIF_TAGS[tag], String(v)]);
+      }
+    }
+  }
+
+  walk(u32(4), "ifd0");
+  if (gps && gps[2] && gps[4]) {
+    const deg = ([d, m, s]) => d + m / 60 + s / 3600;
+    const lat = deg(gps[2]) * (gps[1] === "S" ? -1 : 1);
+    const lon = deg(gps[4]) * (gps[3] === "W" ? -1 : 1);
+    out.push(["📍 Location", `${lat.toFixed(5)}, ${lon.toFixed(5)}`]);
+  }
+  return out;
+}
+
+function readXmp(xml) {
+  const out = [];
+  const grab = (name, label) => {
+    const m = new RegExp(`<dc:${name}[^>]*>([\\s\\S]*?)</dc:${name}>`).exec(xml);
+    if (!m) return;
+    const v = m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    if (v) out.push([label, v.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")]);
+  };
+  grab("title", "Title");
+  grab("description", "Description");
+  grab("creator", "Creator");
+  return out;
+}
+
+function readIptc(bytes) {
+  const out = [];
+  const labels = { 5: "Title", 120: "Caption", 80: "By", 25: "Keyword" };
+  // Photoshop resources: "8BIM", id, padded name, size, data. IPTC lives in id 0x0404.
+  let p = 14;
+  while (p + 12 < bytes.length && latin.decode(bytes.slice(p, p + 4)) === "8BIM") {
+    const id = (bytes[p + 4] << 8) | bytes[p + 5];
+    let nameLen = bytes[p + 6];
+    let q = p + 7 + nameLen + ((nameLen + 1) % 2);
+    const size = (bytes[q] << 24) | (bytes[q + 1] << 16) | (bytes[q + 2] << 8) | bytes[q + 3];
+    q += 4;
+    if (id === 0x0404) {
+      let r = q;
+      while (r + 5 <= q + size && bytes[r] === 0x1c) {
+        const rec = bytes[r + 1], ds = bytes[r + 2], len = (bytes[r + 3] << 8) | bytes[r + 4];
+        if (rec === 2 && labels[ds]) out.push([labels[ds], text(bytes.slice(r + 5, r + 5 + len))]);
+        r += 5 + len;
+      }
+    }
+    p = q + size + (size % 2);
+  }
+  return out;
+}
+
+function inspect(buffer) {
+  const view = new DataView(buffer);
+  const bytes = new Uint8Array(buffer);
+  if (view.getUint16(0) !== 0xffd8) return { error: "This isn't a JPEG photo, so the inspector can't read it. Try a .jpg picture." };
+
+  const groups = [];
+  let p = 2;
+  while (p + 4 < bytes.length && bytes[p] === 0xff) {
+    const marker = bytes[p + 1];
+    if (marker === 0xda) break; // image data starts: no more metadata
+    const len = view.getUint16(p + 2);
+    const seg = bytes.subarray(p + 4, p + 2 + len);
+    const head = latin.decode(seg.subarray(0, 29));
+    try {
+      if (marker === 0xe1 && head.startsWith("Exif\0\0")) groups.push(["Camera info (EXIF)", readExif(new DataView(buffer, p + 10), 0)]);
+      else if (marker === 0xe1 && head.startsWith("http://ns.adobe.com/xap/1.0/")) groups.push(["Extra notes (XMP)", readXmp(utf8.decode(seg))]);
+      else if (marker === 0xed && head.startsWith("Photoshop 3.0")) groups.push(["News caption (IPTC)", readIptc(seg)]);
+      else if (marker === 0xfe) groups.push(["Comment", [["Comment", text(seg)]]]);
+    } catch { /* skip a damaged section, keep reading the rest */ }
+    p += 2 + len;
+  }
+  return { groups: groups.filter(([, rows]) => rows.length) };
+}
+
+const results = document.getElementById("results");
+// Coordinates are hard to copy on a phone, so the location row links straight to a map.
+const mapLink = (k, v) => {
+  const m = k.startsWith("📍") && /^(-?[\d.]+), (-?[\d.]+)$/.exec(v);
+  return m ? `<br><a href="https://www.openstreetmap.org/?mlat=${m[1]}&mlon=${m[2]}#map=13/${m[1]}/${m[2]}" target="_blank" rel="noopener noreferrer" style="color:#9cc3ff;font-family:system-ui,sans-serif;font-weight:700">Open on a map ↗</a>` : "";
+};
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+function show(buffer, name) {
+  const { error, groups } = inspect(buffer);
+  if (error) {
+    results.innerHTML = `<div class="card warn">${esc(error)}</div>`;
+  } else if (!groups.length) {
+    results.innerHTML = `<div class="card warn">No hidden notes found in <strong>${esc(name)}</strong>. Some phones remove them when you pick a photo.</div>`;
+  } else {
+    results.innerHTML =
+      `<p class="note">Hidden notes inside <strong>${esc(name)}</strong>:</p>` +
+      groups.map(([title, rows]) => `<div class="card"><h2>${esc(title)}</h2><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}${mapLink(k, v)}</dd>`).join("")}</dl></div>`).join("") +
+      (groups.some(([, rows]) => rows.some(([k]) => k.startsWith("📍")))
+        ? `<p class="note">📍 This photo remembers where it was taken. Think about that before posting pictures online!</p>`
+        : "");
+  }
+  results.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ?img=vacation.jpg opens another picture from this folder; anything else falls back to the meme.
+const asked = new URLSearchParams(location.search).get("img") || "";
+const picked = /^[\w-]+\.jpe?g$/i.test(asked) ? asked : "knight-meme.jpg";
+const pic = document.getElementById("pic");
+pic.src = "/ctf-lab/" + picked;
+pic.removeAttribute("width");
+pic.removeAttribute("height");
+
+document.getElementById("meme").addEventListener("click", async (e) => {
+  e.target.textContent = "Looking…";
+  try {
+    const res = await fetch("/ctf-lab/" + picked, { cache: "no-store" });
+    if (!res.ok) throw new Error();
+    show(await res.arrayBuffer(), "this picture");
+  } catch {
+    results.innerHTML = `<div class="card warn">Couldn't load the picture. Check your connection and try again.</div>`;
+  }
+  e.target.textContent = "Look inside this picture";
+});
+
+document.getElementById("file").addEventListener("change", async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (file) show(await file.arrayBuffer(), file.name);
+});
+</script>
+</body></html>
