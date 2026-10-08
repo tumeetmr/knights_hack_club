@@ -9,6 +9,7 @@ const links = [
   { href: "#events", label: "Events" },
   { href: "/ctf", label: "CTF" },
   { href: "/games", label: "Games" },
+  { href: "#pixel-wall", label: "Pixel Wall" },
 ];
 
 /** `base` prefixes the section links (those starting with "#"), e.g. "/" so they point back to the landing page from subpages. */
