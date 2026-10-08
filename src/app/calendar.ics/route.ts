@@ -1,9 +1,9 @@
-import { calStamp, eventLocation, scheduled } from "../events";
+import { calStamp, eventLocation, scheduled } from "@/lib/events";
 
 export const dynamic = "force-static";
 
 // Escape text per RFC 5545: backslash, semicolon, comma and newlines.
-const esc = (text: string) => text.replace(/[\;,]/g, (c) => `\\${c}`).replace(/\n/g, "\\n");
+const esc = (text: string) => text.replace(/[\\;,]/g, (c) => `\\${c}`).replace(/\n/g, "\\n");
 
 export function GET() {
   const now = calStamp(new Date().toISOString());

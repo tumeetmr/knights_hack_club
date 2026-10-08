@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { DISCORD_URL, JOIN_FORM_URL } from "./links";
+import { DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
 import { icons } from "./ui";
 
 const links = [
@@ -10,10 +10,12 @@ const links = [
   { href: "#what-we-do", label: "What We Do" },
   { href: "#events", label: "Events" },
   { href: "#team", label: "Team" },
+  { href: "#ctf", label: "CTF" },
   { href: "#faq", label: "FAQ" },
 ];
 
-export function SiteHeader() {
+/** `base` prefixes the section links, e.g. "/" so they point back to the landing page from subpages. */
+export function SiteHeader({ base = "" }: { base?: string }) {
   const [open, setOpen] = useState(false);
 
   // Close on Escape, and when the screen grows past the mobile layout.
@@ -32,20 +34,20 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-5">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between rounded-full bg-ink/80 pl-2 pr-2 sm:h-16 sm:pl-2.5 sm:pr-2.5 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10 backdrop-blur-md md:pl-3">
-        <a href="#top" className="flex items-center gap-2.5 sm:gap-3" onClick={() => setOpen(false)}>
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between rounded-full bg-ink/95 pl-4 pr-2 sm:h-16 sm:pl-5 sm:pr-2.5 text-white shadow-lg shadow-ink/20 ring-1 ring-white/10">
+        <a href={`${base}#top`} className="flex items-center gap-2.5 sm:gap-3" onClick={() => setOpen(false)}>
           <Image
             src="/logo.png"
             alt=""
-            width={44}
-            height={44}
-            className="size-10 shrink-0 rounded-full object-cover sm:size-11"
+            width={48}
+            height={45}
+            className="h-9 w-auto shrink-0 sm:h-10"
             preload
           />
           <span className="headline text-xl leading-none">
             Knights Hack
             <span className="block font-mono text-[0.625rem] font-medium normal-case tracking-normal text-white/55 [font-variation-settings:normal]">
-              An NCSAC Club
+              Official NCSAC Club
             </span>
           </span>
         </a>
@@ -54,7 +56,7 @@ export function SiteHeader() {
           {links.map((link) => (
             <a
               key={link.href}
-              href={link.href}
+              href={base + link.href}
               className="rounded-full px-4 py-2 text-sm font-medium text-white/75 transition hover:bg-white/10 hover:text-white"
             >
               {link.label}
@@ -117,7 +119,7 @@ export function SiteHeader() {
             {links.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
+                href={base + link.href}
                 onClick={() => setOpen(false)}
                 className="headline block border-b border-white/10 py-3.5 text-[2.25rem] transition-colors active:text-knight-300"
               >

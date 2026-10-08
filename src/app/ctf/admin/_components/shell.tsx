@@ -11,10 +11,10 @@ export async function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-mist">
-      <header className="sticky top-0 z-10 border-b border-ink/10 bg-paper/90 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-ink/10 bg-paper/95">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between gap-3 px-4">
           <Link href="/ctf/admin" className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt="" width={40} height={40} className="size-10 rounded-full" />
+            <Image src="/logo-light.png" alt="" width={43} height={40} className="h-9 w-auto shrink-0" />
             <span className="headline text-xl leading-none">
               CTF Admin
               <span className="block font-mono text-[0.625rem] font-medium normal-case tracking-normal text-ink/50 [font-variation-settings:normal]">

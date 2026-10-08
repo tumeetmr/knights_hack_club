@@ -1,7 +1,15 @@
+import { DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
+
 export const CAMPUS = "Niagara College Welland Campus";
 export const CAMPUS_ADDRESS = "300 Woodlawn Rd, Welland, ON L3C 7L3";
 
+export type AgendaItem = { time: string; title: string; body?: string };
+
+export type EventLink = { label: string; href: string; note?: string };
+
 export type ClubEvent = {
+  /** Gives the event its own detail page at /events/[slug]. */
+  slug?: string;
   month: string;
   /** Set once the exact day is confirmed; otherwise the card shows the month. */
   date?: string;
@@ -14,6 +22,8 @@ export type ClubEvent = {
   title: string;
   body: string;
   kind: string;
+  agenda?: AgendaItem[];
+  links?: EventLink[];
 };
 
 export const events: ClubEvent[] = [
@@ -27,6 +37,45 @@ export const events: ClubEvent[] = [
     title: "Club Launch & Meet-and-Greet",
     body: "Meet students into coding and tech, pitch ideas for future activities and find your people. Members and non-members welcome.",
     kind: "Social",
+    slug: "club-launch",
+    agenda: [
+      {
+        time: "2:00 PM",
+        title: "Doors open & sign-in",
+        body: "Grab a name tag, say hi to the exec team and register as a member if you haven't yet.",
+      },
+      {
+        time: "2:15 PM",
+        title: "Welcome to Knights Hack",
+        body: "Who we are, what's planned for the fall and how to get involved.",
+      },
+      {
+        time: "2:30 PM",
+        title: "Meet-and-greet",
+        body: "Quick icebreakers to find people with the same interests, from total beginners to seasoned devs.",
+      },
+      {
+        time: "2:50 PM",
+        title: "CTF kickoff",
+        body: "Register for the Knights Hack CTF and race to capture your first flags. Bring a laptop or phone.",
+      },
+      {
+        time: "3:25 PM",
+        title: "Idea board",
+        body: "Pitch workshops, projects and events you want to see this term.",
+      },
+      {
+        time: "3:40 PM",
+        title: "Wrap-up",
+        body: "CTF leaderboard check-in, next steps and where to find us on Discord.",
+      },
+    ],
+    links: [
+      { label: "Play the CTF", href: "/ctf", note: "Challenges, flags and the live leaderboard" },
+      { label: "Register for the CTF", href: "/ctf/register", note: "Takes a minute, do it before you arrive" },
+      { label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
+      { label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
+    ],
   },
   {
     month: "Oct",
@@ -83,6 +132,12 @@ export const events: ClubEvent[] = [
 export const scheduled = events.filter(
   (e): e is ClubEvent & { start: string; end: string } => Boolean(e.start && e.end),
 );
+
+export const eventPath = (e: ClubEvent) => (e.slug ? `/events/${e.slug}` : undefined);
+
+/** The next event with its own page that hasn't finished yet, for the landing banner. */
+export const upcomingEvent = (now = Date.now()) =>
+  events.find((e) => e.slug && (!e.end || new Date(e.end).getTime() > now));
 
 /** UTC timestamp in iCalendar / Google Calendar form, e.g. 20261008T180000Z. */
 export const calStamp = (iso: string) =>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { saveChallengeAction, type FormState } from "@/lib/ctf/actions";
+import { saveChallengeAction } from "@/lib/ctf/actions";
+import type { FormState } from "@/lib/ctf/form";
 import { generateFlag } from "@/lib/ctf/flag";
 import { FormMessage } from "./form-message";
 import { btnGhost, btnPrimary, btnSmall, input, label } from "./styles";
@@ -13,6 +14,7 @@ type Initial = {
   points?: number;
   description?: string;
   hint?: string;
+  url?: string;
   location?: string;
   flag?: string;
   published?: boolean;
@@ -110,6 +112,9 @@ export function ChallengeForm({
           placeholder="Something's hiding on our homepage. Can you find it?"
           className={input}
         />
+        <p className="mt-1.5 text-sm text-ink/60">
+          Put a line in backticks, like <span className="font-mono">`SGVsbG8=`</span>, to give students a tap-to-copy box.
+        </p>
       </div>
 
       <div>
@@ -122,6 +127,24 @@ export function ChallengeForm({
           placeholder="Developers can see more than visitors do."
           className={input}
         />
+      </div>
+
+      <div>
+        <label htmlFor="url" className={label}>Where to look (optional)</label>
+        <input
+          id="url"
+          name="url"
+          maxLength={300}
+          inputMode="url"
+          autoCapitalize="none"
+          autoCorrect="off"
+          defaultValue={v?.url ?? initial.url}
+          placeholder="/ctf-lab/look-closer.html"
+          className={input}
+        />
+        <p className="mt-1.5 text-sm text-ink/60">
+          Students get an &ldquo;Open the page&rdquo; button on the challenge. Use a path like <span className="font-mono">/about</span> or a full <span className="font-mono">https://</span> link.
+        </p>
       </div>
 
       <div>
@@ -148,7 +171,7 @@ export function ChallengeForm({
       </div>
 
       <div>
-        <label htmlFor="location" className={label}>Where it's hidden (admin note)</label>
+        <label htmlFor="location" className={label}>Where it&apos;s hidden (admin note)</label>
         <input
           id="location"
           name="location"

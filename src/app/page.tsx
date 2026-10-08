@@ -1,13 +1,15 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { CountUp } from "./count-up";
-import { EventsSlider } from "./events-slider";
-import { CAMPUS, events } from "./events";
-import { Reveal } from "./reveal";
-import { SiteHeader } from "./site-header";
-import { Steps } from "./steps";
-import { CONTACT_EMAIL, DISCORD_URL, JOIN_FORM_URL } from "./links";
-import { Headline, RollLink, SectionBlock, SectionCounter, icons } from "./ui";
+import { CountUp } from "@/components/count-up";
+import { CtfTeaser } from "@/components/ctf-teaser";
+import { EventBanner } from "@/components/event-banner";
+import { EventsSlider } from "@/components/events-slider";
+import { CAMPUS, eventPath, events, upcomingEvent } from "@/lib/events";
+import { Reveal } from "@/components/reveal";
+import { SiteHeader } from "@/components/site-header";
+import { Steps } from "@/components/steps";
+import { CONTACT_EMAIL, DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
+import { Headline, RollLink, SectionBlock, SectionCounter, icons } from "@/components/ui";
 
 const pillars = [
   {
@@ -37,19 +39,19 @@ const team: { role: string; name: string; body: string; photo?: string }[] = [
   {
     role: "President",
     name: "Nomuun Ankhbayar",
-    photo: "/profiles/nomuun.png",
+    photo: "/profiles/nomuun.jpg",
     body: "Plans and hosts meetings and events, and is the club's main contact with NCSAC.",
   },
   {
     role: "Vice President",
     name: "Tumenbayar Enkhbat",
-    photo: "/profiles/tumenbayar.png",
+    photo: "/profiles/tumenbayar.jpg",
     body: "Co-hosts meetings, co-organizes events and leads club marketing.",
   },
   {
     role: "Secretary / Treasurer",
     name: "Jack Torrance",
-    photo: "/profiles/jack.png",
+    photo: "/profiles/jack.jpg",
     body: "Runs agendas, attendance and minutes, and keeps members updated on the budget.",
   },
 ];
@@ -82,7 +84,11 @@ const faqs = [
   },
   {
     q: "When and where do events happen?",
-    a: `Every event is at the ${CAMPUS}, Our first one, the Club Launch, is Thursday, Oct 8 from 2:00 to 3:50 PM, outside the Core. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
+    a: `Every event is at the ${CAMPUS}. Our first one, the Club Launch, is Thursday, Oct 8 from 2:00 to 3:50 PM, outside the Core. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
+  },
+  {
+    q: "What's the CTF?",
+    a: "A capture-the-flag contest for members. Register on the CTF page, solve challenges to find hidden flags, and climb the live leaderboard. No experience needed, and every challenge is beginner-friendly.",
   },
   {
     q: "Can I show off my own project or startup?",
@@ -114,6 +120,9 @@ const kindCounts = [
 const panel = "relative scroll-mt-24 overflow-clip rounded-[2rem] lg:rounded-[2.5rem]";
 
 export default function Home() {
+  const next = upcomingEvent();
+  const nextHref = next && eventPath(next);
+
   return (
     <>
       <SiteHeader />
@@ -124,15 +133,20 @@ export default function Home() {
         <section className={`${panel} bg-ink text-white`}>
           <div className="bg-grid absolute inset-0" aria-hidden />
           <div
-            className="absolute -right-32 -top-32 size-[360px] rounded-full bg-knight-500/40 blur-3xl sm:-right-40 sm:-top-40 sm:size-[640px]"
+            className="absolute -right-32 -top-32 size-[360px] glow sm:-right-40 sm:-top-40 sm:size-[640px]"
             aria-hidden
           />
           <div
-            className="absolute -bottom-40 -left-32 size-[320px] rounded-full bg-knight-600/30 blur-3xl sm:-bottom-60 sm:-left-40 sm:size-[520px]"
+            className="absolute -bottom-40 -left-32 size-[320px] glow [--glow:rgb(37_99_184_/_0.3)] sm:-bottom-60 sm:-left-40 sm:size-[520px]"
             aria-hidden
           />
 
-          <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] max-w-7xl flex-col justify-center px-5 pb-10 pt-28 sm:min-h-[calc(100dvh-2rem)] sm:px-8 sm:pb-16 sm:pt-32">
+          <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] max-w-7xl flex-col justify-center px-5 pb-10 pt-24 sm:min-h-[calc(100svh-2rem)] sm:px-8 sm:pb-16 sm:pt-28">
+            {next && nextHref && (
+              <div className="mb-8 flex justify-center sm:mb-10">
+                <EventBanner event={next} href={nextHref} />
+              </div>
+            )}
             <p className="rise caret text-center font-mono text-xs text-knight-300 sm:text-sm">
               niagara_college/knights_hack
             </p>
@@ -162,25 +176,6 @@ export default function Home() {
               className="rise mx-auto mt-10 grid w-full max-w-md gap-5 sm:mt-12 sm:gap-6"
               style={{ "--d": "700ms" } as CSSProperties}
             >
-              <SectionBlock
-                tone="dark"
-                label="Knights Hack Club"
-                icon={
-                  <Image
-                    src="/logo.png"
-                    alt=""
-                    width={32}
-                    height={32}
-                    className="size-8 rounded-md object-contain"
-                    preload
-                  />
-                }
-              >
-                <p className="text-white/75">
-                  A student club at Niagara College for anyone curious about
-                  code. First-timers and seasoned devs build side by side.
-                </p>
-              </SectionBlock>
               <div className="grid gap-3 sm:flex sm:flex-wrap sm:justify-center">
                 <RollLink href={JOIN_FORM_URL} external className="bg-white text-ink hover:bg-knight-300">
                   Join the Club ↗
@@ -194,10 +189,10 @@ export default function Home() {
                 </RollLink>
               </div>
               <a
-                href="#events"
-                className="-mt-1 justify-self-center text-center text-sm font-medium text-white/60 underline-offset-4 hover:text-white hover:underline"
+                href="/ctf"
+                className="-mt-1 justify-self-center text-center font-mono text-sm font-medium text-knight-300 underline-offset-4 hover:text-white hover:underline"
               >
-                <span className="text-knight-300">Next up:</span> Club Launch · Thu, Oct 8 · 2:00 PM · Outside the Core ↓
+                {"> play the CTF →"}
               </a>
             </div>
           </div>
@@ -425,8 +420,7 @@ export default function Home() {
                         src={m.photo}
                         alt={m.name}
                         fill
-                        sizes="(min-width: 640px) 33vw, 100vw"
-                        loading="eager"
+                        sizes="(min-width: 1280px) 400px, (min-width: 640px) 33vw, 100vw"
                         className="object-cover object-top"
                       />
                     ) : (
@@ -481,11 +475,46 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 08 CTF */}
+        <section id="ctf" className={`${panel} bg-ink text-white`}>
+          <div className="bg-grid absolute inset-0" aria-hidden />
+          <div
+            className="absolute -left-32 top-0 size-[320px] glow sm:size-[560px]"
+            aria-hidden
+          />
+          <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 sm:py-24 md:py-36 lg:grid-cols-[1fr_26rem] lg:items-end lg:gap-20">
+            <div>
+              <SectionCounter n={8} className="text-knight-300" />
+              <Headline lines={["Capture", "the flag."]} className="mt-8 text-[clamp(4rem,12vw,10rem)]" />
+              <p data-reveal="up" className="mt-8 max-w-xl text-white/70 sm:text-lg">
+                Hunt for hidden flags, crack beginner-friendly puzzles and race
+                your fellow members up the live leaderboard. Register once,
+                then play.
+              </p>
+              <div data-reveal="up" className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+                <RollLink href="/ctf/register" className="bg-white text-ink hover:bg-knight-300">
+                  Register for the CTF
+                </RollLink>
+                <RollLink href="/ctf/leaderboard" className="border border-white/30 hover:border-white hover:bg-white hover:text-ink">
+                  View leaderboard
+                </RollLink>
+              </div>
+              <p data-reveal="up" className="mt-5 text-sm text-white/50">
+                Already registered?{" "}
+                <a href="/ctf/login" className="underline underline-offset-4 hover:text-white">
+                  Sign in
+                </a>
+              </p>
+            </div>
+            <CtfTeaser />
+          </div>
+        </section>
+
         {/* Join */}
         <section id="join" className={`${panel} bg-ink text-white`}>
           <div className="bg-grid absolute inset-0" aria-hidden />
           <div
-            className="absolute left-1/2 top-full size-[420px] -translate-x-1/2 sm:size-[720px] -translate-y-1/2 rounded-full bg-knight-500/40 blur-3xl"
+            className="absolute left-1/2 top-full size-[420px] -translate-x-1/2 sm:size-[720px] -translate-y-1/2 glow"
             aria-hidden
           />
           <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 py-20 sm:py-24 text-center sm:px-8 md:py-36">
@@ -544,6 +573,7 @@ export default function Home() {
                   ["#what-we-do", "What We Do"],
                   ["#events", "Events"],
                   ["#team", "Team"],
+                  ["/ctf", "CTF"],
                   ["#faq", "FAQ"],
                 ].map(([href, label]) => (
                   <li key={href}>

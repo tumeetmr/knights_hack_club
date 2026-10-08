@@ -1,29 +1,71 @@
-import { boolean, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { boolean, check, index, integer, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /** One row (id = 1) holding the contest window and kill switch. */
-export const contest = pgTable("contest", {
-  id: integer("id").primaryKey().default(1),
-  title: text("title").notNull().default("Knights Hack CTF"),
-  startAt: timestamp("start_at", { withTimezone: true }),
-  endAt: timestamp("end_at", { withTimezone: true }),
-  paused: boolean("paused").notNull().default(false),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
+export const contest = pgTable(
+  "contest",
+  {
+    id: integer("id").primaryKey().default(1),
+    title: text("title").notNull().default("Knights Hack CTF"),
+    startAt: timestamp("start_at", { withTimezone: true }),
+    endAt: timestamp("end_at", { withTimezone: true }),
+    paused: boolean("paused").notNull().default(false),
+  },
+  (t) => [check("contest_single_row", sql`${t.id} = 1`)],
+);
 
-export const challenges = pgTable("challenges", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  category: text("category").notNull().default("Misc"),
-  description: text("description").notNull().default(""),
-  hint: text("hint").notNull().default(""),
-  points: integer("points").notNull().default(100),
-  flag: text("flag").notNull(),
-  /** Admin-only note: where the flag is hidden on the site. */
-  location: text("location").notNull().default(""),
-  published: boolean("published").notNull().default(false),
-  position: integer("position").notNull().default(0),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
+export const challenges = pgTable(
+  "challenges",
+  {
+    id: serial("id").primaryKey(),
+    title: text("title").notNull(),
+    category: text("category").notNull().default("Misc"),
+    description: text("description").notNull().default(""),
+    hint: text("hint").notNull().default(""),
+    /** Where students go to hunt for the flag: a site path ("/about") or an https:// link. */
+    url: text("url").notNull().default(""),
+    points: integer("points").notNull().default(100),
+    flag: text("flag").notNull(),
+    /** Admin-only note: where the flag is hidden on the site. */
+    location: text("location").notNull().default(""),
+    published: boolean("published").notNull().default(false),
+    position: integer("position").notNull().default(0),
+  },
+  (t) => [check("challenges_points_positive", sql`${t.points} > 0`)],
+);
 
-export type Contest = typeof contest.$inferSelect;
-export type Challenge = typeof challenges.$inferSelect;
+/** A registered student. Email is stored lowercase and is the login. */
+export const players = pgTable(
+  "players",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    passwordHash: text("password_hash").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("players_email_idx").on(t.email),
+    check("players_email_lowercase", sql`${t.email} = lower(${t.email})`),
+  ],
+);
+
+/** One row per correct submission. Points are copied so later edits don't rewrite history. */
+export const solves = pgTable(
+  "solves",
+  {
+    id: serial("id").primaryKey(),
+    playerId: integer("player_id")
+      .notNull()
+      .references(() => players.id, { onDelete: "cascade" }),
+    challengeId: integer("challenge_id")
+      .notNull()
+      .references(() => challenges.id, { onDelete: "cascade" }),
+    points: integer("points").notNull(),
+    solvedAt: timestamp("solved_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("solves_player_challenge_idx").on(t.playerId, t.challengeId),
+    index("solves_challenge_idx").on(t.challengeId),
+  ],
+);

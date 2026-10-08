@@ -7,7 +7,7 @@ import { cache } from "react";
 export const ADMIN_COOKIE = "kh_admin";
 const SESSION_HOURS = 12;
 
-const secret = () => {
+export const secret = () => {
   const value = process.env.SESSION_SECRET;
   if (!value) throw new Error("SESSION_SECRET is not set");
   return new TextEncoder().encode(value);

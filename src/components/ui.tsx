@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 
-export const TOTAL_SECTIONS = 7;
+export const TOTAL_SECTIONS = 8;
 
 /** Condensed all-caps heading whose words flip in, either on load or on scroll. */
 export function Headline({
@@ -44,7 +44,7 @@ export function Headline({
 const blockTones = {
   light: "bg-paper text-ink ring-ink/10",
   mist: "bg-mist text-ink ring-ink/5",
-  dark: "bg-white/5 text-white ring-white/15 backdrop-blur",
+  dark: "bg-white/5 text-white ring-white/15",
 };
 
 /** Small label card: a caption and icon cell on top, a short body underneath. */

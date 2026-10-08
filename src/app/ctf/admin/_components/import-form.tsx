@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { importChallengesAction, type FormState } from "@/lib/ctf/actions";
+import { importChallengesAction } from "@/lib/ctf/actions";
+import type { FormState } from "@/lib/ctf/form";
 import { FormMessage } from "./form-message";
 import { btnGhost, btnPrimary, btnSmall, input, label } from "./styles";
 

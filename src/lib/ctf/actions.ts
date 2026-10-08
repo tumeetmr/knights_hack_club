@@ -3,31 +3,19 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { asc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { challenges, contest } from "@/db/schema";
 import { parseChallenge, type ChallengeInput } from "./challenge-input";
 import { fromLocalInput } from "./contest";
 import { generateFlag } from "./flag";
+import { rawValues, toId, type FormState } from "./form";
+import { clearAttempts, clientIp, tooMany } from "./rate-limit";
 import { createAdminSession, deleteAdminSession, requireAdmin } from "./session";
-
-/** State shape shared by every form that uses useActionState. */
-export type FormState = {
-  error?: string;
-  ok?: string;
-  /** Submitted values, handed back so the form doesn't reset on an error. */
-  values?: Record<string, string>;
-};
-
-const rawValues = (fd: FormData) =>
-  Object.fromEntries([...fd.entries()].filter(([, v]) => typeof v === "string")) as Record<string, string>;
 
 const refresh = () => revalidatePath("/ctf/admin");
 
 // --- Sign in / out -------------------------------------------------------
-
-const failures = new Map<string, { count: number; since: number }>();
 
 const digest = (s: string) => createHash("sha256").update(s).digest();
 
@@ -35,24 +23,16 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
   const expected = process.env.ADMIN_PASSWORD;
   if (!expected) return { error: "ADMIN_PASSWORD is not configured on the server." };
 
-  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() ?? "local";
-  const now = Date.now();
-  const entry = failures.get(ip);
-  if (entry && now - entry.since < 600_000 && entry.count >= 8) {
-    return { error: "Too many attempts. Try again in a few minutes." };
-  }
+  const key = `admin:${await clientIp()}`;
+  if (tooMany(key, 8, 600_000)) return { error: "Too many attempts. Try again in a few minutes." };
 
   const given = String(fd.get("password") ?? "");
   if (!timingSafeEqual(digest(given), digest(expected))) {
-    failures.set(ip, {
-      count: entry && now - entry.since < 600_000 ? entry.count + 1 : 1,
-      since: entry && now - entry.since < 600_000 ? entry.since : now,
-    });
     await new Promise((r) => setTimeout(r, 700));
     return { error: "Wrong password." };
   }
 
-  failures.delete(ip);
+  clearAttempts(key);
   await createAdminSession();
   redirect("/ctf/admin");
 }
@@ -73,9 +53,6 @@ export async function saveContestAction(_prev: FormState, fd: FormData): Promise
 
   const startAt = fromLocalInput(values.start ?? "");
   const endAt = fromLocalInput(values.end ?? "");
-  if (Boolean(startAt) !== Boolean(endAt)) {
-    return { error: "Set both a start and an end, or leave both empty.", values };
-  }
   if (startAt && endAt && endAt <= startAt) {
     return { error: "The end must be after the start.", values };
   }
@@ -83,7 +60,7 @@ export async function saveContestAction(_prev: FormState, fd: FormData): Promise
   const db = await getDb();
   await db
     .update(contest)
-    .set({ title, startAt, endAt, paused: values.paused === "on", updatedAt: new Date() })
+    .set({ title, startAt, endAt, paused: values.paused === "on" })
     .where(eq(contest.id, 1));
   refresh();
   return { ok: "Contest settings saved.", values };
@@ -96,7 +73,7 @@ const nextPosition = sql<number>`coalesce(max(${challenges.position}), 0) + 1`;
 export async function saveChallengeAction(_prev: FormState, fd: FormData): Promise<FormState> {
   await requireAdmin();
   const values = rawValues(fd);
-  const id = Number(values.id) || null;
+  const id = toId(values.id);
   const db = await getDb();
 
   const existing = id
@@ -131,7 +108,8 @@ export async function saveChallengeAction(_prev: FormState, fd: FormData): Promi
 
 export async function togglePublishedAction(fd: FormData) {
   await requireAdmin();
-  const id = Number(fd.get("id"));
+  const id = toId(fd.get("id"));
+  if (!id) return;
   const db = await getDb();
   await db
     .update(challenges)
@@ -142,7 +120,8 @@ export async function togglePublishedAction(fd: FormData) {
 
 export async function moveChallengeAction(fd: FormData) {
   await requireAdmin();
-  const id = Number(fd.get("id"));
+  const id = toId(fd.get("id"));
+  if (!id) return;
   const dir = fd.get("dir") === "up" ? -1 : 1;
   const db = await getDb();
 
@@ -164,16 +143,16 @@ export async function moveChallengeAction(fd: FormData) {
 
 export async function duplicateChallengeAction(fd: FormData) {
   await requireAdmin();
-  const id = Number(fd.get("id"));
+  const id = toId(fd.get("id"));
+  if (!id) return;
   const db = await getDb();
   const [source] = await db.select().from(challenges).where(eq(challenges.id, id));
   if (!source) return;
 
   const [{ position }] = await db.select({ position: nextPosition }).from(challenges);
-  const { id: _id, createdAt: _createdAt, ...rest } = source;
   const [copy] = await db
     .insert(challenges)
-    .values({ ...rest, title: `${source.title} (copy)`.slice(0, 80), flag: generateFlag(), published: false, position })
+    .values({ ...source, id: undefined, title: `${source.title} (copy)`.slice(0, 80), flag: generateFlag(), published: false, position })
     .returning({ id: challenges.id });
   refresh();
   redirect(`/ctf/admin/challenges/${copy.id}`);
@@ -181,8 +160,11 @@ export async function duplicateChallengeAction(fd: FormData) {
 
 export async function deleteChallengeAction(fd: FormData) {
   await requireAdmin();
-  const db = await getDb();
-  await db.delete(challenges).where(eq(challenges.id, Number(fd.get("id"))));
+  const id = toId(fd.get("id"));
+  if (id) {
+    const db = await getDb();
+    await db.delete(challenges).where(eq(challenges.id, id));
+  }
   refresh();
   redirect("/ctf/admin");
 }

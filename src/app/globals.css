@@ -69,6 +69,14 @@ body {
   background-position: -32px -32px;
 }
 
+/* Soft light blob. A radial gradient instead of `blur-3xl`: big blur filters are
+   re-rasterized on scroll by mobile GPUs, which drops frames and can crash the tab. */
+.glow {
+  pointer-events: none;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, var(--glow, rgb(47 120 212 / 0.4)) 40%, transparent);
+}
+
 @keyframes blink {
   50% {
     opacity: 0;
@@ -81,22 +89,34 @@ body {
   animation: blink 1s steps(1) infinite;
 }
 
-/* Headline words flip up into place, one after another. */
+/* Headline words rise into place, one after another. Phones get a flat slide:
+   every 3D-rotated word is its own GPU layer, and dozens of them at poster size
+   exhaust mobile GPU memory. Mouse-driven screens get the full 3D flip. */
 .headline-line {
   display: block;
   overflow: hidden;
-  perspective: 200vw;
   padding-bottom: 0.04em;
 }
 
 .word {
+  --word-from: translateY(105%);
   display: inline-block;
   transform-origin: 50% 75%;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .headline-line {
+    perspective: 200vw;
+  }
+
+  .word {
+    --word-from: translateY(75%) rotateX(-88deg);
+  }
+}
+
 @keyframes word-in {
   from {
-    transform: translateY(75%) rotateX(-88deg);
+    transform: var(--word-from);
     opacity: 0;
   }
 }
@@ -139,7 +159,7 @@ body {
 }
 
 [data-reveal="words"][data-reveal-state="pending"] .word {
-  transform: translateY(75%) rotateX(-88deg);
+  transform: var(--word-from);
   opacity: 0;
 }
 

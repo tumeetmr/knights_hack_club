@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { afterScrollRestore } from "./reveal";
 
 /** Renders the final number on the server, then ticks up from 0 when scrolled into view. */
 export function CountUp({ to, duration = 1200 }: { to: number; duration?: number }) {
@@ -9,9 +10,7 @@ export function CountUp({ to, duration = 1200 }: { to: number; duration?: number
   useEffect(() => {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (el.getBoundingClientRect().top < window.innerHeight) return;
 
-    el.textContent = "0";
     let frame = 0;
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
@@ -24,9 +23,15 @@ export function CountUp({ to, duration = 1200 }: { to: number; duration?: number
       };
       frame = requestAnimationFrame(tick);
     });
-    observer.observe(el);
+
+    const cancel = afterScrollRestore(() => {
+      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      el.textContent = "0";
+      observer.observe(el);
+    });
 
     return () => {
+      cancel();
       observer.disconnect();
       cancelAnimationFrame(frame);
     };

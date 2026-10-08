@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { type ClubEvent, googleCalendarUrl } from "./events";
+import Link from "next/link";
+import { type ClubEvent, eventPath, googleCalendarUrl } from "@/lib/events";
 import { icons } from "./ui";
 
 const calButton =
@@ -14,10 +15,10 @@ export function EventsSlider({ events }: { events: ClubEvent[] }) {
   const onScroll = () => {
     const el = track.current;
     if (!el) return;
-    setEdge({
-      start: el.scrollLeft <= 4,
-      end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4,
-    });
+    const start = el.scrollLeft <= 4;
+    const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+    // Scroll fires every frame while swiping; only re-render when an arrow flips.
+    setEdge((prev) => (prev.start === start && prev.end === end ? prev : { start, end }));
   };
 
   const step = (dir: 1 | -1) => {
@@ -88,6 +89,14 @@ export function EventsSlider({ events }: { events: ClubEvent[] }) {
             </p>
             <h3 className="mt-5 text-xl font-bold sm:mt-6 sm:text-2xl leading-tight tracking-tight">{e.title}</h3>
             <p className="mt-3 text-ink/70">{e.body}</p>
+            {e.slug && (
+              <Link
+                href={eventPath(e)!}
+                className="mt-4 self-start text-sm font-bold text-knight-600 underline-offset-4 hover:underline"
+              >
+                View agenda & details →
+              </Link>
+            )}
             {e.start && e.end && (
               <div className="mt-auto flex flex-wrap gap-2 pt-6">
                 <a

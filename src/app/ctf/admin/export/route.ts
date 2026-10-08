@@ -7,8 +7,8 @@ export async function GET() {
 
   const list = await listChallenges();
   const body = JSON.stringify(
-    list.map(({ title, category, points, description, hint, location, flag, published }) => ({
-      title, category, points, description, hint, location, flag, published,
+    list.map(({ title, category, points, description, hint, url, location, flag, published }) => ({
+      title, category, points, description, hint, url, location, flag, published,
     })),
     null,
     2,

@@ -1,16 +1,18 @@
 export const CONTEST_TZ = "America/Toronto";
 
-export type ContestStatus = "unscheduled" | "upcoming" | "live" | "paused" | "ended";
+export type ContestStatus = "upcoming" | "live" | "paused" | "ended";
 
-/** What state the contest is in right now. Pure, so the player side can reuse it. */
+/**
+ * What state the CTF is in right now. Dates are optional: with none set the board
+ * is always open, and "paused" is the off switch. Pure, so the player side can reuse it.
+ */
 export function contestStatus(
   c: { startAt: Date | null; endAt: Date | null; paused: boolean },
   now = new Date(),
 ): ContestStatus {
-  if (!c.startAt || !c.endAt) return "unscheduled";
-  if (now >= c.endAt) return "ended";
+  if (c.endAt && now >= c.endAt) return "ended";
   if (c.paused) return "paused";
-  if (now < c.startAt) return "upcoming";
+  if (c.startAt && now < c.startAt) return "upcoming";
   return "live";
 }
 
@@ -60,7 +62,7 @@ export function fromLocalInput(value: string): Date | null {
 }
 
 export function formatContestTime(date: Date | null): string {
-  if (!date) return "Not set";
+  if (!date) return "None";
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: CONTEST_TZ,
     weekday: "short",

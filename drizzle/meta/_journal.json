@@ -8,6 +8,27 @@
       "when": 1791338488055,
       "tag": "0000_mixed_nemesis",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791340336668,
+      "tag": "0001_ctf_players",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791340719552,
+      "tag": "0002_ctf_cleanup",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791342492037,
+      "tag": "0003_challenge_url",
+      "breakpoints": true
     }
   ]
 }

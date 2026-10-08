@@ -28,7 +28,6 @@ export function Steps({ steps }: { steps: Step[] }) {
     let frame = 0;
     const update = () => {
       frame = 0;
-      if (!pinned.matches) return;
       const rect = el.getBoundingClientRect();
       const scrollable = rect.height - window.innerHeight;
       if (scrollable <= 0) return;
@@ -39,12 +38,20 @@ export function Steps({ steps }: { steps: Step[] }) {
       if (!frame) frame = requestAnimationFrame(update);
     };
 
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    // Phones never pin, so they never pay for a scroll listener.
+    const listen = (on: boolean) => {
+      const method = on ? "addEventListener" : "removeEventListener";
+      window[method]("scroll", onScroll, { passive: true });
+      window[method]("resize", onScroll);
+      if (on) onScroll();
+    };
+    const onChange = () => listen(pinned.matches);
+
+    onChange();
+    pinned.addEventListener("change", onChange);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      pinned.removeEventListener("change", onChange);
+      listen(false);
       cancelAnimationFrame(frame);
     };
   }, [steps.length]);

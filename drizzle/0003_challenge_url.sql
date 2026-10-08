@@ -1,0 +1,1 @@
+ALTER TABLE "challenges" ADD COLUMN "url" text DEFAULT '' NOT NULL;

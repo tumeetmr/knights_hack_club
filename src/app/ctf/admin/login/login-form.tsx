@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginAction, type FormState } from "@/lib/ctf/actions";
+import { loginAction } from "@/lib/ctf/actions";
+import type { FormState } from "@/lib/ctf/form";
 import { FormMessage } from "../_components/form-message";
 import { btnPrimary, input, label } from "../_components/styles";
 
