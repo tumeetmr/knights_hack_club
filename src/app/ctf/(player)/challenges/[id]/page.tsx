@@ -18,10 +18,12 @@ const solvedAt = (d: Date) =>
   new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(d);
 
 export default async function ChallengePage({ params }: PageProps<"/ctf/challenges/[id]">) {
+  const rawId = (await params).id;
   const player = await getPlayer();
-  if (!player) redirect("/ctf/register");
+  // Keep the challenge as the destination, so a shared link or QR code lands here after sign-up.
+  if (!player) redirect(`/ctf/register?next=${encodeURIComponent(`/ctf/challenges/${rawId}`)}`);
 
-  const id = toId((await params).id);
+  const id = toId(rawId);
   if (!id) notFound();
 
   const contest = await getContest();

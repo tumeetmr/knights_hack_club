@@ -5,15 +5,17 @@ import { asc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { challenges, contest } from "@/db/schema";
+import { challenges, contest, players } from "@/db/schema";
 import { parseChallenge, type ChallengeInput } from "./challenge-input";
 import { fromLocalInput } from "./contest";
 import { generateFlag } from "./flag";
+import { hashPassword } from "./password";
 import { rawValues, toId, type FormState } from "./form";
 import { clearAttempts, clientIp, tooMany } from "./rate-limit";
 import { createAdminSession, deleteAdminSession, requireAdmin } from "./session";
 
-const refresh = () => revalidatePath("/ctf/admin");
+// Every admin tab shows contest and challenge data, so refresh them all.
+const refresh = () => revalidatePath("/ctf/admin", "layout");
 
 // --- Sign in / out -------------------------------------------------------
 
@@ -66,6 +68,17 @@ export async function saveContestAction(_prev: FormState, fd: FormData): Promise
   return { ok: "Contest settings saved.", values };
 }
 
+/** The quick open/close switch on the overview. */
+export async function toggleContestPausedAction() {
+  await requireAdmin();
+  const db = await getDb();
+  await db
+    .update(contest)
+    .set({ paused: sql`not ${contest.paused}` })
+    .where(eq(contest.id, 1));
+  refresh();
+}
+
 // --- Challenges ----------------------------------------------------------
 
 const nextPosition = sql<number>`coalesce(max(${challenges.position}), 0) + 1`;
@@ -103,7 +116,7 @@ export async function saveChallengeAction(_prev: FormState, fd: FormData): Promi
     });
     redirect(`/ctf/admin/challenges/new?${next}`);
   }
-  redirect(`/ctf/admin?${new URLSearchParams({ added: data.title })}`);
+  redirect(`/ctf/admin/challenges?${new URLSearchParams({ added: data.title })}`);
 }
 
 export async function togglePublishedAction(fd: FormData) {
@@ -166,7 +179,7 @@ export async function deleteChallengeAction(fd: FormData) {
     await db.delete(challenges).where(eq(challenges.id, id));
   }
   refresh();
-  redirect("/ctf/admin");
+  redirect("/ctf/admin/challenges");
 }
 
 // --- Bulk import ---------------------------------------------------------
@@ -205,4 +218,28 @@ export async function importChallengesAction(_prev: FormState, fd: FormData): Pr
   });
   refresh();
   return { ok: `Imported ${rows.length} challenge${rows.length === 1 ? "" : "s"}. Challenges are drafts unless they set "published": true.` };
+}
+
+// --- Players ---------------------------------------------------------------
+
+/** For players who forgot their password: an organizer sets a temporary one and tells them in person. */
+export async function resetPlayerPasswordAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  const email = String(fd.get("email") ?? "").trim().toLowerCase();
+  const password = String(fd.get("password") ?? "");
+  if (!email) return { error: "Enter the player's email." };
+  if (password.length < 8 || password.length > 100) {
+    return { error: "The new password needs 8 to 100 characters.", values: { email } };
+  }
+
+  const db = await getDb();
+  const [row] = await db
+    .update(players)
+    .set({ passwordHash: await hashPassword(password) })
+    .where(eq(players.email, email))
+    .returning({ name: players.name });
+  if (!row) return { error: "No player is registered with that email.", values: { email } };
+
+  clearAttempts(`login:${email}`);
+  return { ok: `Password reset for ${row.name}. They can sign in with the new password now.` };
 }

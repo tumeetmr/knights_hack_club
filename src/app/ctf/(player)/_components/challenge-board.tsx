@@ -16,6 +16,8 @@ export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] })
   const categories = ["All", ...new Set(challenges.map((c) => c.category))];
   const [category, setCategory] = useState("All");
   const shown = category === "All" ? challenges : challenges.filter((c) => c.category === category);
+  // Point first-timers at the first challenge in the organizers' order (put the easiest one first).
+  const startId = challenges.some((c) => c.solved) ? null : challenges[0]?.id;
 
   return (
     <div>
@@ -45,7 +47,9 @@ export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] })
               className={`flex h-full items-start justify-between gap-4 rounded-3xl p-5 ring-1 transition active:scale-[0.99] ${
                 c.solved
                   ? "bg-knight-600 text-white ring-knight-600 hover:bg-knight-500"
-                  : "bg-paper text-ink ring-ink/10 hover:ring-knight-500/50"
+                  : c.id === startId
+                    ? "bg-paper text-ink ring-2 ring-knight-500 hover:ring-knight-600"
+                    : "bg-paper text-ink ring-ink/10 hover:ring-knight-500/50"
               }`}
             >
               <span className="min-w-0">
@@ -59,6 +63,11 @@ export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] })
               </span>
               <span className="flex shrink-0 flex-col items-end gap-2">
                 <span className="headline text-4xl tabular-nums">{c.points}</span>
+                {c.id === startId && (
+                  <span className="rounded-full bg-knight-500 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-wider text-white">
+                    Start here
+                  </span>
+                )}
                 {c.solved && (
                   <span className="rounded-full bg-white/20 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-wider">
                     ✓ Solved

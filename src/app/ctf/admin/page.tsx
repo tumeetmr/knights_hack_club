@@ -1,161 +1,166 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { toggleContestPausedAction } from "@/lib/ctf/actions";
+import { contestStatus } from "@/lib/ctf/contest";
 import {
-  deleteChallengeAction,
-  duplicateChallengeAction,
-  moveChallengeAction,
-  togglePublishedAction,
-} from "@/lib/ctf/actions";
-import { contestStatus, formatContestTime, toLocalInput, type ContestStatus } from "@/lib/ctf/contest";
-import { getContest, listChallenges } from "@/lib/ctf/queries";
+  countPlayers,
+  countSolves,
+  getContest,
+  getLeaderboard,
+  listChallengesWithSolves,
+  listRecentSolves,
+} from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
-import { FormMessage } from "../_components/form-ui";
-import { ConfirmButton } from "./_components/confirm-button";
-import { ContestForm } from "./_components/contest-form";
-import { AdminShell } from "./_components/shell";
+import { AutoRefresh } from "../(player)/_components/auto-refresh";
+import { timeAgo } from "./_components/format";
+import { AdminShell, PageHeader } from "./_components/shell";
+import { describeStatus } from "./_components/status";
 import { btnDanger, btnGhost, btnPrimary, btnSmall, card } from "./_components/styles";
 
-const statusStyle: Record<ContestStatus, { label: string; className: string }> = {
-  upcoming: { label: "Upcoming", className: "bg-knight-50 text-knight-900" },
-  live: { label: "Live now", className: "bg-green-100 text-green-900" },
-  paused: { label: "Paused", className: "bg-amber-100 text-amber-900" },
-  ended: { label: "Ended", className: "bg-ink text-white" },
-};
-
-export default async function AdminDashboard({ searchParams }: PageProps<"/ctf/admin">) {
+export default async function AdminOverview() {
   await requireAdmin();
-  const [contest, list, params] = await Promise.all([getContest(), listChallenges(), searchParams]);
+  const [contest, list, players, solveTotal, recent, top] = await Promise.all([
+    getContest(),
+    listChallengesWithSolves(),
+    countPlayers(),
+    countSolves(),
+    listRecentSolves(8),
+    getLeaderboard(5),
+  ]);
 
-  const status = statusStyle[contestStatus(contest)];
+  const status = contestStatus(contest);
+  const info = describeStatus(status, contest);
   const published = list.filter((c) => c.published);
   const livePoints = published.reduce((sum, c) => sum + c.points, 0);
-  const added = typeof params.added === "string" ? params.added : null;
 
   return (
     <AdminShell>
-      {added && <FormMessage state={{ ok: `Added “${added}”.` }} />}
+      {status === "live" && <AutoRefresh every={30_000} />}
+      <PageHeader title="Overview" description="How the CTF is going right now." />
 
-      <section className={card}>
-        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="mb-1 font-mono text-xs uppercase tracking-wider text-ink/60">Contest</p>
-            <h1 className="headline text-4xl sm:text-5xl">{contest.title}</h1>
+      {/* Status: the one thing an organizer needs to know at a glance. */}
+      <section className={`${card} flex flex-wrap items-center justify-between gap-5`}>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className={`rounded-full px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider ring-1 ${info.badge}`}>
+              {status === "live" && <span className="mr-1.5 inline-block size-1.5 animate-pulse rounded-full bg-green-600 align-middle" aria-hidden />}
+              {info.label}
+            </span>
+            <h2 className="text-xl font-bold tracking-tight">{contest.title}</h2>
           </div>
-          <span className={`rounded-full px-3.5 py-1.5 font-mono text-xs font-medium uppercase tracking-wider ${status.className}`}>
-            {status.label}
-          </span>
+          <p className="mt-2 text-ink/70">{info.text}</p>
         </div>
-        <dl className="mb-6 grid grid-cols-2 gap-3 text-sm">
-          <div className="rounded-xl bg-mist p-3.5">
-            <dt className="font-mono text-xs uppercase tracking-wider text-ink/60">Starts</dt>
-            <dd className="mt-1 font-medium">{formatContestTime(contest.startAt)}</dd>
-          </div>
-          <div className="rounded-xl bg-mist p-3.5">
-            <dt className="font-mono text-xs uppercase tracking-wider text-ink/60">Ends</dt>
-            <dd className="mt-1 font-medium">{formatContestTime(contest.endAt)}</dd>
-          </div>
-        </dl>
-        <ContestForm
-          // Remount when saved elsewhere so the fields show the stored values.
-          key={`${contest.title}|${contest.startAt?.getTime()}|${contest.endAt?.getTime()}|${contest.paused}`}
-          title={contest.title}
-          start={toLocalInput(contest.startAt)}
-          end={toLocalInput(contest.endAt)}
-          paused={contest.paused}
-        />
+        <div className="flex flex-wrap gap-2">
+          {status !== "ended" && (
+            <form action={toggleContestPausedAction}>
+              <button type="submit" className={contest.paused ? btnPrimary : btnDanger}>
+                {contest.paused ? "Reopen the CTF" : "Close the CTF now"}
+              </button>
+            </form>
+          )}
+          <Link href="/ctf/admin/settings" className={btnGhost}>
+            {status === "ended" ? "Extend in settings" : "Change dates"}
+          </Link>
+        </div>
       </section>
 
-      <section className={card}>
-        <div className="mb-5">
-          <p className="mb-1 font-mono text-xs uppercase tracking-wider text-ink/60">Challenges</p>
-          <h2 className="headline text-4xl sm:text-5xl">
-            {list.length} total
-          </h2>
-          <p className="mt-2 text-ink/60">
-            {published.length} published · {livePoints} points available
-          </p>
-        </div>
-
-        <div className="mb-6 grid gap-2 sm:grid-cols-3">
-          <Link href="/ctf/admin/challenges/new" className={`${btnPrimary} sm:col-span-1`}>
-            + Add challenge
+      {published.length === 0 && (
+        <p className="rounded-2xl bg-amber-50 px-5 py-4 text-amber-900 ring-1 ring-amber-700/20">
+          <strong>Players can&apos;t see any challenges yet.</strong>{" "}
+          {list.length === 0 ? "Add your first one" : "Publish at least one"} on the{" "}
+          <Link href="/ctf/admin/challenges" className="font-bold underline underline-offset-4">
+            Challenges tab
           </Link>
-          <Link href="/ctf/admin/import" className={btnGhost}>
-            Import JSON
-          </Link>
-          <a href="/ctf/admin/export" className={btnGhost}>
-            Export backup
-          </a>
-        </div>
+          .
+        </p>
+      )}
 
-        {list.length === 0 ? (
-          <p className="rounded-xl bg-mist p-5 text-center text-ink/60">
-            No challenges yet. Add your first one above.
-          </p>
-        ) : (
-          <ol className="grid gap-3">
-            {list.map((c, i) => (
-              <li key={c.id} className="rounded-2xl bg-mist p-4 ring-1 ring-ink/5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-mono text-xs uppercase tracking-wider text-ink/50">
-                      {String(i + 1).padStart(2, "0")} · {c.category} · {c.points} pts
-                    </p>
-                    <Link href={`/ctf/admin/challenges/${c.id}`} className="mt-1 block break-words text-lg font-bold hover:text-knight-600">
-                      {c.title}
-                    </Link>
-                    {c.location && <p className="mt-1 text-sm text-ink/60">📍 {c.location}</p>}
-                  </div>
-                  <span
-                    className={`shrink-0 rounded-full px-3 py-1 font-mono text-[0.6875rem] font-medium uppercase tracking-wider ${
-                      c.published ? "bg-green-100 text-green-900" : "bg-ink/10 text-ink/70"
-                    }`}
-                  >
-                    {c.published ? "Published" : "Draft"}
+      <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Stat label="Players registered" value={players} />
+        <Stat label="Flags captured" value={solveTotal} />
+        <Stat label="Challenges live" value={published.length} sub={`of ${list.length}`} />
+        <Stat label="Points available" value={livePoints} />
+      </dl>
+
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Panel title="Recent solves" action={<Link href="/ctf/admin/players" className="text-sm font-bold text-knight-600 hover:text-ink">All players →</Link>}>
+          {recent.length ? (
+            <ul className="divide-y divide-ink/10">
+              {recent.map((s) => (
+                <li key={s.id} className="flex items-center gap-3 py-3">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate">
+                      <strong>{s.player}</strong> <span className="text-ink/60">solved</span> {s.challenge}
+                    </span>
+                    <span className="font-mono text-xs text-ink/50">{timeAgo(s.solvedAt)}</span>
                   </span>
-                </div>
+                  <span className="shrink-0 font-mono text-sm font-bold text-knight-600">+{s.points}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty>No flags captured yet. Solves show up here as they happen.</Empty>
+          )}
+        </Panel>
 
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Link href={`/ctf/admin/challenges/${c.id}`} className={`${btnGhost} ${btnSmall} bg-paper`}>
-                    Edit
-                  </Link>
-                  <form action={togglePublishedAction}>
-                    <input type="hidden" name="id" value={c.id} />
-                    <button type="submit" className={`${btnGhost} ${btnSmall} bg-paper`}>
-                      {c.published ? "Unpublish" : "Publish"}
-                    </button>
-                  </form>
-                  <form action={moveChallengeAction}>
-                    <input type="hidden" name="id" value={c.id} />
-                    <input type="hidden" name="dir" value="up" />
-                    <button type="submit" disabled={i === 0} aria-label={`Move ${c.title} up`} className={`${btnGhost} ${btnSmall} bg-paper`}>
-                      ↑
-                    </button>
-                  </form>
-                  <form action={moveChallengeAction}>
-                    <input type="hidden" name="id" value={c.id} />
-                    <input type="hidden" name="dir" value="down" />
-                    <button type="submit" disabled={i === list.length - 1} aria-label={`Move ${c.title} down`} className={`${btnGhost} ${btnSmall} bg-paper`}>
-                      ↓
-                    </button>
-                  </form>
-                  <form action={duplicateChallengeAction}>
-                    <input type="hidden" name="id" value={c.id} />
-                    <button type="submit" className={`${btnGhost} ${btnSmall} bg-paper`}>
-                      Duplicate
-                    </button>
-                  </form>
-                  <form action={deleteChallengeAction}>
-                    <input type="hidden" name="id" value={c.id} />
-                    <ConfirmButton message={`Delete “${c.title}”? This can't be undone.`} className={`${btnDanger} ${btnSmall}`}>
-                      Delete
-                    </ConfirmButton>
-                  </form>
-                </div>
-              </li>
-            ))}
-          </ol>
-        )}
+        <Panel title="Top players" action={<a href="/ctf/leaderboard" target="_blank" className="text-sm font-bold text-knight-600 hover:text-ink">Public leaderboard ↗</a>}>
+          {top.length ? (
+            <ol className="divide-y divide-ink/10">
+              {top.map((r, i) => (
+                <li key={r.playerId} className="flex items-center gap-3 py-3">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-mist font-mono text-sm font-bold">{i + 1}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-bold">{r.name}</span>
+                    <span className="font-mono text-xs text-ink/50">
+                      {r.solved} solve{r.solved === 1 ? "" : "s"}
+                    </span>
+                  </span>
+                  <span className="headline shrink-0 text-3xl tabular-nums text-knight-600">{r.score}</span>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <Empty>Nobody has scored yet.</Empty>
+          )}
+        </Panel>
+      </div>
+
+      <section className={`${card} flex flex-wrap items-center justify-between gap-3`}>
+        <p className="font-bold">Quick actions</p>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/ctf/admin/challenges/new" className={`${btnPrimary} ${btnSmall}`}>+ Add challenge</Link>
+          <Link href="/ctf/admin/players" className={`${btnGhost} ${btnSmall}`}>Reset a password</Link>
+          <a href="/ctf/admin/export" className={`${btnGhost} ${btnSmall}`}>Download backup</a>
+        </div>
       </section>
     </AdminShell>
   );
+}
+
+function Stat({ label, value, sub }: { label: string; value: number; sub?: string }) {
+  return (
+    <div className="rounded-2xl bg-paper p-4 ring-1 ring-ink/10 sm:p-5">
+      <dt className="font-mono text-xs uppercase tracking-wider text-ink/55">{label}</dt>
+      <dd className="mt-1 flex items-baseline gap-1.5">
+        <span className="headline text-5xl tabular-nums">{value}</span>
+        {sub && <span className="font-mono text-sm text-ink/50">{sub}</span>}
+      </dd>
+    </div>
+  );
+}
+
+function Panel({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
+  return (
+    <section className={card}>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <h2 className="text-lg font-bold tracking-tight">{title}</h2>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Empty({ children }: { children: ReactNode }) {
+  return <p className="rounded-xl bg-mist px-4 py-6 text-center text-sm text-ink/60">{children}</p>;
 }

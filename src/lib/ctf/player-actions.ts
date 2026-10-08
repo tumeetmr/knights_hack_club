@@ -7,7 +7,7 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { challenges, players, solves } from "@/db/schema";
 import { contestStatus } from "./contest";
-import { rawValues, toId, type FormState } from "./form";
+import { rawValues, safeNext, toId, type FormState } from "./form";
 import { hashPassword, verifyPassword } from "./password";
 import { createPlayerSession, deletePlayerSession, requirePlayer } from "./player-session";
 import { getContest } from "./queries";
@@ -45,7 +45,7 @@ export async function registerAction(_prev: FormState, fd: FormData): Promise<Fo
   if (!created) return { error: "That email is already registered. Sign in instead.", values: safe };
 
   await createPlayerSession(created.id);
-  redirect("/ctf");
+  redirect(safeNext(fd.get("next")));
 }
 
 export async function loginPlayerAction(_prev: FormState, fd: FormData): Promise<FormState> {
@@ -69,7 +69,7 @@ export async function loginPlayerAction(_prev: FormState, fd: FormData): Promise
 
   clearAttempts(accountKey);
   await createPlayerSession(row.id);
-  redirect("/ctf");
+  redirect(safeNext(fd.get("next")));
 }
 
 export async function logoutPlayerAction() {
@@ -110,7 +110,16 @@ export async function submitFlagAction(_prev: SubmitState, fd: FormData): Promis
     .where(and(eq(challenges.id, id), eq(challenges.published, true)));
   if (!challenge) return { id, error: "That challenge isn't available." };
 
-  if (guess !== challenge.flag) return { id, error: "Not quite. Check the flag and try again." };
+  if (guess !== challenge.flag) {
+    // Beginners often paste only the inside of the braces or change the capitals; say so.
+    if (guess.toLowerCase() === challenge.flag.toLowerCase()) {
+      return { id, error: "So close! Flags care about capital letters. Copy it exactly as you found it." };
+    }
+    if (!/^KH\{.+\}$/i.test(guess)) {
+      return { id, error: "Flags look like KH{...}. Copy the whole thing, including KH{ and the closing }." };
+    }
+    return { id, error: "Not quite. Check the flag and try again." };
+  }
 
   const [row] = await db
     .insert(solves)

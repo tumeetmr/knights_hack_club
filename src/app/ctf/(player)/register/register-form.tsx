@@ -5,11 +5,13 @@ import { registerAction } from "@/lib/ctf/player-actions";
 import type { FormState } from "@/lib/ctf/form";
 import { FormMessage, input, label } from "../../_components/form-ui";
 import { submitBtn } from "../_components/auth-card";
+import { PasswordInput } from "../_components/password-input";
 
-export function RegisterForm() {
+export function RegisterForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(registerAction, {});
   return (
     <form action={action} className="grid gap-4">
+      <input type="hidden" name="next" value={next} />
       <div>
         <label htmlFor="name" className={label}>Display name</label>
         <input id="name" name="name" required minLength={2} maxLength={40} autoComplete="name" defaultValue={state.values?.name} placeholder="Shown on the leaderboard" className={input} />
@@ -20,7 +22,7 @@ export function RegisterForm() {
       </div>
       <div>
         <label htmlFor="password" className={label}>Password</label>
-        <input id="password" name="password" type="password" required minLength={8} maxLength={100} autoComplete="new-password" placeholder="8+ characters" className={input} />
+        <PasswordInput id="password" name="password" required minLength={8} maxLength={100} autoComplete="new-password" placeholder="8+ characters" />
       </div>
       <FormMessage state={state} />
       <button type="submit" disabled={pending} className={submitBtn}>

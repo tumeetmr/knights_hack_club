@@ -1,10 +1,8 @@
-import Link from "next/link";
 import { listChallenges } from "@/lib/ctf/queries";
 import { requireAdmin } from "@/lib/ctf/session";
 import { FormMessage } from "../../../_components/form-ui";
 import { ChallengeForm } from "../../_components/challenge-form";
-import { AdminShell } from "../../_components/shell";
-import { btnGhost, btnSmall, card } from "../../_components/styles";
+import { AdminShell, PageHeader } from "../../_components/shell";
 
 export default async function NewChallengePage({ searchParams }: PageProps<"/ctf/admin/challenges/new">) {
   await requireAdmin();
@@ -17,15 +15,16 @@ export default async function NewChallengePage({ searchParams }: PageProps<"/ctf
 
   return (
     <AdminShell>
-      <Link href="/ctf/admin" className={`${btnGhost} ${btnSmall} self-start`}>
-        ← Back
-      </Link>
+      <PageHeader
+        back={{ href: "/ctf/admin/challenges", label: "Challenges" }}
+        title="New challenge"
+        description="Only the title is required. Leave the flag blank and one is made for you."
+      />
       {added && <FormMessage state={{ ok: `Added “${added}”. Ready for the next one.` }} />}
-      <section className={card}>
-        <h1 className="headline mb-5 text-4xl sm:text-5xl">New challenge</h1>
+      <div className="max-w-3xl">
         {/* Keyed on the query string so "add another" gives a fresh form. */}
         <ChallengeForm key={`${added}`} initial={{ category, points }} categories={categories} />
-      </section>
+      </div>
     </AdminShell>
   );
 }

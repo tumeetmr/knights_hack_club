@@ -25,18 +25,21 @@ export function ContestForm({
       <div>
         <label htmlFor="title" className={label}>Contest name</label>
         <input id="title" name="title" defaultValue={v?.title ?? title} maxLength={80} className={input} />
+        <p className="mt-1.5 text-sm text-ink/60">The big heading players see on the challenge board.</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="start" className={label}>Opens (optional, Niagara time)</label>
+          <label htmlFor="start" className={label}>Opens (Niagara time)</label>
           <input id="start" name="start" type="datetime-local" defaultValue={v?.start ?? start} className={input} />
+          <p className="mt-1.5 text-sm text-ink/60">Leave blank to open right away. Before this, players see a countdown.</p>
         </div>
         <div>
-          <label htmlFor="end" className={label}>Closes (optional, Niagara time)</label>
+          <label htmlFor="end" className={label}>Closes (Niagara time)</label>
           <input id="end" name="end" type="datetime-local" defaultValue={v?.end ?? end} className={input} />
+          <p className="mt-1.5 text-sm text-ink/60">Leave blank to keep it open. After this, flags stop counting.</p>
         </div>
       </div>
-      <label className="flex min-h-12 items-center gap-3 rounded-xl bg-mist px-4 ring-1 ring-ink/10">
+      <label className="flex min-h-12 items-center gap-3 rounded-xl bg-mist px-4 py-3 ring-1 ring-ink/10">
         <input
           type="checkbox"
           name="paused"
@@ -44,8 +47,8 @@ export function ContestForm({
           className="size-5 accent-knight-600"
         />
         <span>
-          <span className="block font-medium">Close the CTF</span>
-          <span className="block text-sm text-ink/60">Players can&apos;t see challenges or submit flags until you untick this. With no dates set, the CTF is always open.</span>
+          <span className="block font-medium">Close the CTF for now</span>
+          <span className="block text-sm text-ink/60">An off switch that overrides the dates. Players can&apos;t see challenges or submit flags until you untick it.</span>
         </span>
       </label>
       <FormMessage state={state} />

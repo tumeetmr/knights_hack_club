@@ -19,6 +19,14 @@ export function FlagForm({ id, solved, canSubmit, points }: { id: number; solved
     );
   }
 
+  if (!canSubmit) {
+    return (
+      <p role="status" className="rounded-2xl bg-mist px-5 py-4 text-ink/70 ring-1 ring-ink/10">
+        This CTF is over, so flags can&apos;t be submitted anymore. You can still read the challenge and try it for fun.
+      </p>
+    );
+  }
+
   async function paste() {
     setPasteNote("");
     try {
@@ -48,28 +56,25 @@ export function FlagForm({ id, solved, canSubmit, points }: { id: number; solved
             required
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            disabled={!canSubmit}
             autoComplete="off"
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck={false}
             enterKeyHint="send"
-            placeholder={canSubmit ? "KH{...}" : "Submissions are closed"}
-            className="w-full rounded-full bg-mist py-3.5 pl-5 pr-24 font-mono text-base text-ink ring-1 ring-ink/15 placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-knight-500 disabled:opacity-50"
+            placeholder="KH{...}"
+            className="w-full rounded-full bg-mist py-3.5 pl-5 pr-24 font-mono text-base text-ink ring-1 ring-ink/15 placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-knight-500"
           />
-          {canSubmit && (
-            <button
-              type="button"
-              onClick={paste}
-              className="absolute right-1.5 top-1/2 min-h-10 -translate-y-1/2 rounded-full bg-ink/10 px-4 text-sm font-bold text-ink transition hover:bg-ink/15 active:scale-95"
-            >
-              Paste
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={paste}
+            className="absolute right-1.5 top-1/2 min-h-10 -translate-y-1/2 rounded-full bg-ink/10 px-4 text-sm font-bold text-ink transition hover:bg-ink/15 active:scale-95"
+          >
+            Paste
+          </button>
         </div>
         <button
           type="submit"
-          disabled={pending || !canSubmit}
+          disabled={pending}
           className="min-h-12 rounded-full bg-ink px-7 font-bold text-white transition hover:bg-knight-600 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
         >
           {pending ? "Checking…" : "Submit"}
