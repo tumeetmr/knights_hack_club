@@ -42,6 +42,8 @@ export const players = pgTable(
     name: text("name").notNull(),
     email: text("email").notNull(),
     passwordHash: text("password_hash").notNull(),
+    /** When the student proved they own the email with a one-time code. Null = not verified. */
+    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -49,6 +51,20 @@ export const players = pgTable(
     check("players_email_lowercase", sql`${t.email} = lower(${t.email})`),
   ],
 );
+
+/**
+ * The one active email code per student (sending a new one replaces it). Only an HMAC of the
+ * code is stored; `attempts` counts wrong guesses so a code can't be brute-forced.
+ */
+export const emailCodes = pgTable("email_codes", {
+  playerId: integer("player_id")
+    .primaryKey()
+    .references(() => players.id, { onDelete: "cascade" }),
+  codeHash: text("code_hash").notNull(),
+  attempts: smallint("attempts").notNull().default(0),
+  sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+});
 
 /**
  * One row per correct submission. `points` records what the challenge was worth right after

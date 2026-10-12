@@ -3,8 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { AuthPanel } from "@/components/auth/auth-panel";
-import { loginHref, safeNext } from "@/lib/auth/next";
-import { getStudent } from "@/lib/auth/session";
+import { loginHref, safeNext, verifyHref } from "@/lib/auth/next";
+import { getSession } from "@/lib/auth/session";
 import { contestStatus, formatContestTime } from "@/lib/ctf/contest";
 import { getContest } from "@/lib/ctf/queries";
 import { RegisterForm } from "./register-form";
@@ -24,9 +24,9 @@ const ctfSteps = [
 ];
 
 export default async function RegisterPage({ searchParams }: PageProps<"/register">) {
-  const [student, params] = await Promise.all([getStudent(), searchParams]);
+  const [session, params] = await Promise.all([getSession(), searchParams]);
   const next = safeNext(params.next);
-  if (student) redirect(next);
+  if (session) redirect(session.needsVerification ? verifyHref(next) : next);
 
   // Coming from the CTF (or a challenge QR code): explain the contest instead of the account.
   const forCtf = next === "/ctf" || next.startsWith("/ctf/");

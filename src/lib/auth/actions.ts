@@ -7,9 +7,10 @@ import { getDb } from "@/db";
 import { players } from "@/db/schema";
 import { rawValues, type FormState } from "@/lib/form";
 import { clearAttempts, clientIp, tooMany } from "@/lib/rate-limit";
-import { loginHref, safeNext } from "./next";
+import { loginHref, safeNext, verifyHref } from "./next";
 import { hashPassword, verifyPassword } from "./password";
-import { createStudentSession, deleteStudentSession } from "./session";
+import { createStudentSession, deleteStudentSession, getSession } from "./session";
+import { checkVerificationCode, needsVerification, sendVerificationCode } from "./verification";
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, "Enter your name (2 characters or more)").max(40, "Name is too long (40 characters max)"),
@@ -37,11 +38,13 @@ export async function registerAction(_prev: FormState, fd: FormData): Promise<Fo
       passwordHash: await hashPassword(parsed.data.password),
     })
     .onConflictDoNothing()
-    .returning({ id: players.id });
+    .returning({ id: players.id, name: players.name, email: players.email });
   if (!created) return { error: "That email is already registered. Sign in instead.", values: safe };
 
   await createStudentSession(created.id);
-  redirect(safeNext(fd.get("next")));
+  // If the email fails, the verify page still lets them ask for another code.
+  await sendVerificationCode(created);
+  redirect(verifyHref(safeNext(fd.get("next"))));
 }
 
 export async function loginAction(_prev: FormState, fd: FormData): Promise<FormState> {
@@ -65,11 +68,41 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
 
   clearAttempts(accountKey);
   await createStudentSession(row.id);
-  redirect(safeNext(fd.get("next")));
+  const next = safeNext(fd.get("next"));
+  redirect(needsVerification(row) ? verifyHref(next) : next);
 }
 
 /** Signs out, then shows the sign-in page that leads back to `next` (the page the student was on). */
 export async function logoutAction(fd: FormData) {
   await deleteStudentSession();
   redirect(loginHref(safeNext(fd.get("next"))));
+}
+
+export async function verifyEmailAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  const next = safeNext(fd.get("next"));
+  const session = await getSession();
+  if (!session) redirect(loginHref(next));
+  if (!session.needsVerification) redirect(next);
+
+  // Allow "123 456" or a pasted code with spaces.
+  const code = String(fd.get("code") ?? "").replace(/\D/g, "");
+  if (code.length !== 6) return { error: "Enter the 6-digit code from the email." };
+
+  const result = await checkVerificationCode(session.id, code);
+  if (!result.ok) return { error: result.error };
+  redirect(next);
+}
+
+export async function resendCodeAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  const next = safeNext(fd.get("next"));
+  const session = await getSession();
+  if (!session) redirect(loginHref(next));
+  if (!session.needsVerification) redirect(next);
+
+  // The free Resend plan has a daily send limit; don't let one account use it up.
+  if (tooMany(`verify-send:${session.id}`, 5, 3_600_000)) {
+    return { error: "That's a lot of codes. Check your spam folder, or try again in an hour." };
+  }
+  const result = await sendVerificationCode(session);
+  return result.ok ? { ok: `New code sent to ${session.email}.` } : { error: result.error };
 }

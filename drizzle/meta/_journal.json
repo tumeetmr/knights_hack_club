@@ -36,6 +36,13 @@
       "when": 1791476696289,
       "tag": "0004_pixel_wall",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791494333205,
+      "tag": "0005_email_verification",
+      "breakpoints": true
     }
   ]
 }

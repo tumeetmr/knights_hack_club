@@ -6,8 +6,9 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/db";
 import { players } from "@/db/schema";
-import { loginHref } from "./next";
+import { loginHref, verifyHref } from "./next";
 import { secret } from "./secret";
+import { needsVerification } from "./verification";
 
 // One student account works across the site (CTF, Pixel Wall, ...). The cookie name and
 // "player" role predate that and are kept so existing sign-ins stay valid.
@@ -36,8 +37,11 @@ export async function deleteStudentSession() {
   (await cookies()).delete({ name: STUDENT_COOKIE, path: "/" });
 }
 
-/** The signed-in student, or null. Cached per request. */
-export const getStudent = cache(async () => {
+/**
+ * Whoever holds a valid student cookie, verified or not. Only the sign-in, sign-up and
+ * verify flow should use this; everything else uses getStudent. Cached per request.
+ */
+export const getSession = cache(async () => {
   const token = (await cookies()).get(STUDENT_COOKIE)?.value;
   if (!token) return null;
   try {
@@ -46,13 +50,25 @@ export const getStudent = cache(async () => {
     if (payload.role !== "player" || !id) return null;
     const db = await getDb();
     const [row] = await db
-      .select({ id: players.id, name: players.name })
+      .select({
+        id: players.id,
+        name: players.name,
+        email: players.email,
+        emailVerifiedAt: players.emailVerifiedAt,
+        createdAt: players.createdAt,
+      })
       .from(players)
       .where(eq(players.id, id));
-    return row ?? null;
+    return row ? { id: row.id, name: row.name, email: row.email, needsVerification: needsVerification(row) } : null;
   } catch {
     return null;
   }
+});
+
+/** The signed-in student, or null. Someone who still has to confirm their email counts as signed out. */
+export const getStudent = cache(async () => {
+  const session = await getSession();
+  return session && !session.needsVerification ? { id: session.id, name: session.name } : null;
 });
 
 /**
@@ -61,6 +77,6 @@ export const getStudent = cache(async () => {
  */
 export async function requireStudent(next = "/") {
   const student = await getStudent();
-  if (!student) redirect(loginHref(next));
+  if (!student) redirect((await getSession()) ? verifyHref(next) : loginHref(next));
   return student;
 }

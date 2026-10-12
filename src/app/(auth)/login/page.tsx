@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthPanel } from "@/components/auth/auth-panel";
-import { registerHref, safeNext } from "@/lib/auth/next";
-import { getStudent } from "@/lib/auth/session";
+import { registerHref, safeNext, verifyHref } from "@/lib/auth/next";
+import { getSession } from "@/lib/auth/session";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Sign in | Knights Hack Club" };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
-  const [student, params] = await Promise.all([getStudent(), searchParams]);
+  const [session, params] = await Promise.all([getSession(), searchParams]);
   const next = safeNext(params.next);
-  if (student) redirect(next);
+  if (session) redirect(session.needsVerification ? verifyHref(next) : next);
   return (
     <AuthPanel
       eyebrow="> knights --login"

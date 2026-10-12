@@ -8,3 +8,4 @@ const withNext = (base: string, next: string) => (next === "/" ? base : `${base}
 
 export const loginHref = (next = "/") => withNext("/login", next);
 export const registerHref = (next = "/") => withNext("/register", next);
+export const verifyHref = (next = "/") => withNext("/verify", next);
