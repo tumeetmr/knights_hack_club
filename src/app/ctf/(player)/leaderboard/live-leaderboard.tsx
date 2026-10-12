@@ -110,7 +110,7 @@ function useRankAnimations(container: RefObject<HTMLDivElement | null>, rows: Ro
   }, [container, rows]);
 }
 
-export function LiveLeaderboard({ initial, me, qr }: { initial: Board; me: number | null; qr: ReactNode }) {
+export function LiveLeaderboard({ initial, me }: { initial: Board; me: number | null }) {
   const { board, offline } = useLiveBoard(initial);
   const { rows, status, registered } = board;
   const podium = rows.slice(0, 3);
@@ -145,7 +145,6 @@ export function LiveLeaderboard({ initial, me, qr }: { initial: Board; me: numbe
                   ))}
               </p>
             </div>
-            <div className="hidden w-52 shrink-0 md:block lg:w-60">{qr}</div>
           </div>
 
           {podium.length > 0 && (

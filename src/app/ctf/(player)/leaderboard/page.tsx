@@ -23,7 +23,6 @@ export default async function LeaderboardPage() {
         rows: rows.map(({ playerId, name, score, solved }) => ({ playerId, name, score, solved })),
       }}
       me={player?.id ?? null}
-      qr={<JoinQr path="/ctf" size={240} />}
     />
   );
 }

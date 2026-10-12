@@ -328,10 +328,30 @@ body {
   animation: flicker 4s linear infinite;
 }
 
+@keyframes vinyl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Record for the CTF music player: grooves, a sheen, and a spin that pauses in place with the music. */
+.vinyl {
+  background:
+    conic-gradient(from 30deg, transparent 0 10%, rgb(255 255 255 / 0.14) 14%, transparent 20% 60%, rgb(255 255 255 / 0.1) 64%, transparent 70%),
+    repeating-radial-gradient(circle, #111 0 1.5px, #1d1d1d 1.5px 3px);
+  box-shadow: inset 0 0 0 2px #000;
+  animation: vinyl-spin 3s linear infinite paused;
+}
+
+.vinyl[data-playing] {
+  animation-play-state: running;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bat,
   .bat > span,
   .flicker,
+  .vinyl,
   .caret::after,
   .headline-load .word,
   .rise,
