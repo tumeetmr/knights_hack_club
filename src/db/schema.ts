@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, pgTable, serial, smallint, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, check, index, integer, jsonb, pgTable, serial, smallint, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /** One row (id = 1) holding the contest window and kill switch. */
 export const contest = pgTable(
@@ -44,6 +44,8 @@ export const players = pgTable(
     passwordHash: text("password_hash").notNull(),
     /** When the student proved they own the email with a one-time code. Null = not verified. */
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
+    /** Set when the student opts out of club newsletters. Null = subscribed. */
+    unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -110,3 +112,13 @@ export const pixels = pgTable(
     check("pixels_in_grid", sql`${t.x} >= 0 and ${t.y} >= 0 and ${t.x} < 64 and ${t.y} < 64`),
   ],
 );
+
+/** Log of member newsletters sent from the admin. `content` is the issue, reused to prefill the next one. */
+export const newsletters = pgTable("newsletters", {
+  id: serial("id").primaryKey(),
+  subject: text("subject").notNull(),
+  content: jsonb("content").notNull(),
+  recipients: integer("recipients").notNull(),
+  failed: integer("failed").notNull().default(0),
+  sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
+});

@@ -43,6 +43,13 @@
       "when": 1791494333205,
       "tag": "0005_email_verification",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791836325383,
+      "tag": "0006_newsletter",
+      "breakpoints": true
     }
   ]
 }

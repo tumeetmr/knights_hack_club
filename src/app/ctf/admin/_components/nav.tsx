@@ -11,6 +11,7 @@ const tabs = [
     match: (p: string) => p.startsWith("/ctf/admin/challenges") || p.startsWith("/ctf/admin/import"),
   },
   { href: "/ctf/admin/players", label: "Players", match: (p: string) => p.startsWith("/ctf/admin/players") },
+  { href: "/ctf/admin/newsletter", label: "Newsletter", match: (p: string) => p.startsWith("/ctf/admin/newsletter") },
   { href: "/ctf/admin/settings", label: "Settings", match: (p: string) => p.startsWith("/ctf/admin/settings") },
 ];
 
