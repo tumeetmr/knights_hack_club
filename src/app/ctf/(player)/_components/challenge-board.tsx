@@ -73,12 +73,12 @@ export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] })
                 )}
                 {c.id === startId && (
                   <span className="rounded-full bg-knight-500 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-wider text-white">
-                    Start here
+                    🎃 Start here
                   </span>
                 )}
                 {c.solved && (
                   <span className="rounded-full bg-white/20 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-wider">
-                    ✓ Solved
+                    🍬 Solved
                   </span>
                 )}
               </span>

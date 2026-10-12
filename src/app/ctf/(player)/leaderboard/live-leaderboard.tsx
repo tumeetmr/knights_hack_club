@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import type { ContestStatus } from "@/lib/ctf/contest";
+import { SpookySky } from "../_components/spooky-sky";
 
 export type Row = { playerId: number; name: string; score: number; solved: number };
 export type Board = { status: ContestStatus; registered: number; rows: Row[] };
@@ -123,10 +124,11 @@ export function LiveLeaderboard({ initial, me, qr }: { initial: Board; me: numbe
       <section className="relative overflow-clip rounded-[2rem] bg-ink text-white lg:rounded-[2.5rem]">
         <div className="bg-grid absolute inset-0" aria-hidden />
         <div className="absolute -left-32 -top-32 size-[320px] glow sm:size-[520px]" aria-hidden />
+        <SpookySky />
         <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-36">
           <div className="flex items-end justify-between gap-8">
             <div className="min-w-0">
-              <p className="font-mono text-xs text-knight-300 sm:text-sm">{"> ctf --leaderboard"}</p>
+              <p className="font-mono text-xs text-knight-300 sm:text-sm">{"> ctf --leaderboard 🦇"}</p>
               <h1 className="headline mt-4 text-[clamp(3.5rem,11vw,8.5rem)]">Leaderboard</h1>
               <p className="mt-4 flex flex-wrap items-center gap-x-1.5 font-mono text-sm text-white/60">
                 <span>

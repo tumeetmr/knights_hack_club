@@ -23,7 +23,7 @@ export function CtfHeader({ player }: { player: { name: string } | null }) {
           <span className="headline hidden text-xl leading-none min-[420px]:block">
             Knights Hack
             <span className="block font-mono text-[0.625rem] font-medium normal-case tracking-normal text-knight-300 [font-variation-settings:normal]">
-              CTF
+              Halloween CTF 🎃
             </span>
           </span>
         </Link>

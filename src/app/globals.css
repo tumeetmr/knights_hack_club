@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
-/* Palette: NCSAC-style black & white, with the Knights Hack logo blues as the accent. */
-@theme inline {
+/* Palette: NCSAC-style black & white, with the Knights Hack logo blues as the accent.
+   Not `inline`, so utilities read these as variables and a section (see .halloween) can reskin them. */
+@theme {
   --color-ink: #0a0a0a;
   --color-paper: #ffffff;
   --color-mist: #f3f5f8;
@@ -11,7 +12,9 @@
   --color-knight-500: #2f78d4;
   --color-knight-600: #2563b8;
   --color-knight-900: #0b1f3f;
+}
 
+@theme inline {
   --font-sans: var(--font-archivo);
   --font-display: var(--font-archivo);
   --font-mono: var(--font-jetbrains-mono);
@@ -255,7 +258,80 @@ body {
   display: none;
 }
 
+/* Seasonal CTF skin: swaps the blue accent for pumpkin orange and ink for midnight purple.
+   Remove the class in src/app/ctf/(player)/layout.tsx to go back to the regular look. */
+.halloween {
+  --color-ink: #160b22;
+  --color-paper: #fffaf4;
+  --color-mist: #f7efe7;
+  --color-knight-50: #fff1e3;
+  --color-knight-300: #fdba74;
+  --color-knight-400: #fb923c;
+  --color-knight-500: #ea580c;
+  --color-knight-600: #c2410c;
+  --color-knight-900: #3b1305;
+  --glow: rgb(234 88 12 / 0.45);
+  background: #0c0614;
+  color: var(--color-ink);
+}
+
+.glow-purple {
+  --glow: rgb(147 51 234 / 0.4);
+}
+
+@keyframes bat-flap {
+  50% {
+    transform: scaleX(0.6);
+  }
+}
+
+@keyframes bat-fly {
+  0% {
+    transform: translate(0, 0) rotate(-6deg);
+  }
+  50% {
+    transform: translate(var(--bat-x, -40px), var(--bat-y, -18px)) rotate(6deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(-6deg);
+  }
+}
+
+.bat {
+  position: absolute;
+  animation: bat-fly var(--bat-t, 7s) ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+
+.bat > span {
+  display: inline-block;
+  animation: bat-flap 0.35s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  42% {
+    opacity: 0.85;
+  }
+  44% {
+    opacity: 0.4;
+  }
+  46% {
+    opacity: 0.9;
+  }
+}
+
+.flicker {
+  animation: flicker 4s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .bat,
+  .bat > span,
+  .flicker,
   .caret::after,
   .headline-load .word,
   .rise,

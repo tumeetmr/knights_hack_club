@@ -6,7 +6,7 @@ export function Hint({ text }: { text: string }) {
   const [shown, setShown] = useState(false);
   return shown ? (
     <p role="status" className="max-w-xl rounded-2xl bg-knight-50 px-4 py-3.5 text-base leading-relaxed text-ink/85 ring-1 ring-knight-500/30">
-      <span className="block font-mono text-xs font-bold uppercase tracking-wider text-knight-600">💡 Hint</span>
+      <span className="block font-mono text-xs font-bold uppercase tracking-wider text-knight-600">🔮 Hint</span>
       {text}
     </p>
   ) : (

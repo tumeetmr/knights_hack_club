@@ -12,6 +12,7 @@ import { AutoRefresh } from "../../_components/auto-refresh";
 import { Description } from "../../_components/description";
 import { FlagForm } from "../../_components/flag-form";
 import { Hint } from "../../_components/hint";
+import { SpookySky } from "../../_components/spooky-sky";
 
 export const metadata: Metadata = { title: "Challenge | Knights Hack CTF" };
 
@@ -45,6 +46,7 @@ export default async function ChallengePage({ params }: PageProps<"/ctf/challeng
       <section className="relative overflow-clip rounded-[2rem] bg-ink text-white lg:rounded-[2.5rem]">
         <div className="bg-grid absolute inset-0" aria-hidden />
         <div className="absolute -right-32 -top-32 size-[320px] glow sm:size-[520px]" aria-hidden />
+        <SpookySky />
         <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-36">
           <Link href="/ctf" className="inline-flex min-h-10 items-center font-mono text-xs text-knight-300 hover:text-white sm:text-sm">
             ← All challenges
@@ -167,7 +169,7 @@ export default async function ChallengePage({ params }: PageProps<"/ctf/challeng
                 ))}
               </ol>
             ) : (
-              <p className="mt-3 text-sm text-ink/60">Nobody yet. Be the first!</p>
+              <p className="mt-3 text-sm text-ink/60">Nobody yet. Be the first brave soul!</p>
             )}
           </aside>
         </div>
