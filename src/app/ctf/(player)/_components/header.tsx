@@ -52,7 +52,15 @@ export function CtfHeader({ player }: { player: { name: string } | null }) {
         <div className="flex shrink-0 items-center gap-1.5">
           {player ? (
             <>
-              <span className="hidden max-w-32 truncate px-2 text-sm font-medium text-white/75 md:block">{player.name}</span>
+              <Link
+                href="/profile"
+                aria-current={path === "/profile" ? "page" : undefined}
+                aria-label="Your profile"
+                className="max-w-32 truncate rounded-full px-3 py-2 text-sm font-medium text-white/75 transition hover:bg-white/10 hover:text-white"
+              >
+                <span className="md:hidden">Me</span>
+                <span className="hidden md:inline">{player.name}</span>
+              </Link>
               <form action={logoutAction}>
                 <input type="hidden" name="next" value="/ctf" />
                 <button

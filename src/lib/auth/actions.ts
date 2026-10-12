@@ -10,7 +10,7 @@ import { clearAttempts, clientIp, tooMany } from "@/lib/rate-limit";
 import { loginHref, safeNext, verifyHref } from "./next";
 import { hashPassword, verifyPassword } from "./password";
 import { createStudentSession, deleteStudentSession, getSession } from "./session";
-import { checkVerificationCode, needsVerification, sendVerificationCode } from "./verification";
+import { checkVerificationCode, hasPendingCode, needsVerification, sendVerificationCode } from "./verification";
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, "Enter your name (2 characters or more)").max(40, "Name is too long (40 characters max)"),
@@ -69,7 +69,11 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
   clearAttempts(accountKey);
   await createStudentSession(row.id);
   const next = safeNext(fd.get("next"));
-  redirect(needsVerification(row) ? verifyHref(next) : next);
+  if (!needsVerification(row)) redirect(next);
+  // Accounts from before verification have never had a code. Skip if one is still live so
+  // signing in twice doesn't hit the resend cooldown; the verify page can always send another.
+  if (!(await hasPendingCode(row.id))) await sendVerificationCode(row);
+  redirect(verifyHref(next));
 }
 
 /** Signs out, then shows the sign-in page that leads back to `next` (the page the student was on). */

@@ -101,6 +101,23 @@ export async function listPlayerSolves(playerId: number) {
     .where(eq(solves.playerId, playerId));
 }
 
+/** A player's solves for their profile, newest first, with titles and what each is worth now. */
+export async function listPlayerSolveHistory(playerId: number) {
+  const db = await getDb();
+  return db
+    .select({
+      challengeId: solves.challengeId,
+      title: challenges.title,
+      category: challenges.category,
+      points: challengeValue,
+      solvedAt: solves.solvedAt,
+    })
+    .from(solves)
+    .innerJoin(challenges, eq(challenges.id, solves.challengeId))
+    .where(eq(solves.playerId, playerId))
+    .orderBy(desc(solves.solvedAt), desc(solves.id));
+}
+
 export type LeaderboardRow = {
   playerId: number;
   name: string;

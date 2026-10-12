@@ -8,19 +8,22 @@ import { VerifyCodeEmail } from "@/emails/verify-code";
 import { sendEmail } from "@/lib/email/send";
 import { secret } from "./secret";
 
-/**
- * Accounts created from this moment on must confirm their email before playing. Older
- * accounts keep working unverified; move this date back (or drop the check) to require
- * it from everyone.
- */
-export const VERIFY_REQUIRED_SINCE = new Date("2026-10-08T21:20:00Z");
-
 const CODE_MINUTES = 10;
 const RESEND_SECONDS = 60;
 const MAX_ATTEMPTS = 5;
 
-export const needsVerification = (p: { emailVerifiedAt: Date | null; createdAt: Date }) =>
-  !p.emailVerifiedAt && p.createdAt >= VERIFY_REQUIRED_SINCE;
+/** Every account must confirm its email before playing, including ones made before codes existed. */
+export const needsVerification = (p: { emailVerifiedAt: Date | null }) => !p.emailVerifiedAt;
+
+/** Whether the student has an unexpired code waiting, so the verify page knows whether to say "we sent". */
+export async function hasPendingCode(playerId: number) {
+  const db = await getDb();
+  const [row] = await db
+    .select({ playerId: emailCodes.playerId })
+    .from(emailCodes)
+    .where(and(eq(emailCodes.playerId, playerId), lt(emailCodes.attempts, MAX_ATTEMPTS), gt(emailCodes.expiresAt, new Date())));
+  return Boolean(row);
+}
 
 // Keyed to the student so a stored hash is useless for any other account.
 const hashCode = (playerId: number, code: string) =>

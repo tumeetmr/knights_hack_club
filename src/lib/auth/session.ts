@@ -55,7 +55,6 @@ export const getSession = cache(async () => {
         name: players.name,
         email: players.email,
         emailVerifiedAt: players.emailVerifiedAt,
-        createdAt: players.createdAt,
       })
       .from(players)
       .where(eq(players.id, id));

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/site-header";
 
-/** Student sign-in and sign-up. One account covers the CTF, the Pixel Wall and anything added later. */
+/** Student sign-in, sign-up and profile. One account covers the CTF, the Pixel Wall and anything added later. */
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <>

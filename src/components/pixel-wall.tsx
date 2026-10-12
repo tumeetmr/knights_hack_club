@@ -325,7 +325,11 @@ export function PixelWall() {
             )}
             <form action={logoutAction} className="text-sm text-white/55">
               <input type="hidden" name="next" value={HERE} />
-              Painting as <span className="font-bold text-white">{me.name}</span>.{" "}
+              Painting as{" "}
+              <Link href="/profile" className="font-bold text-white hover:underline hover:underline-offset-4">
+                {me.name}
+              </Link>
+              .{" "}
               <button type="submit" className="underline underline-offset-4 hover:text-white">
                 Not you?
               </button>

@@ -1,5 +1,5 @@
 import "server-only";
-import { desc, eq, gt } from "drizzle-orm";
+import { desc, eq, gt, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { pixels, players } from "@/db/schema";
 import { COOLDOWN_MS, GRID_SIZE, PIXEL_COLORS, type PlaceResult, type PixelTuple, type WallResponse } from "./config";
@@ -50,6 +50,13 @@ export async function getWaitMs(studentId: number) {
     .orderBy(desc(pixels.id))
     .limit(1);
   return last ? Math.max(0, last.placedAt.getTime() + COOLDOWN_MS - Date.now()) : 0;
+}
+
+/** How many pixels the student has ever placed, painted over or not. */
+export async function countPlayerPixels(studentId: number) {
+  const db = await getDb();
+  const [row] = await db.select({ n: sql<number>`count(*)::int` }).from(pixels).where(eq(pixels.playerId, studentId));
+  return row.n;
 }
 
 export async function placePixel(studentId: number, x: number, y: number, color: string): Promise<PlaceResult> {
