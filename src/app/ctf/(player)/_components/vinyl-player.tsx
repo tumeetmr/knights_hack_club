@@ -12,7 +12,10 @@ const tracks = [
   { src: "/audio/halloween/marionette.mp3", title: "Funeral March of a Marionette", by: "Gounod", credit: "San Francisco Symphony, 1929 · Public domain" },
 ];
 
-/** Floating record for the Halloween CTF: click to play or pause. Never autoplays; it spins only while music plays. */
+// Set once the player pauses the record, so later visits stay quiet.
+const MUTED_KEY = "ctf-music-muted";
+
+/** Floating record for the Halloween CTF: starts on arrival, click to play or pause. It spins only while music plays. */
 export function VinylPlayer() {
   const audio = useRef<HTMLAudioElement>(null);
   const [index, setIndex] = useState(0);
@@ -20,7 +23,27 @@ export function VinylPlayer() {
   const track = tracks[index];
 
   useEffect(() => {
-    if (audio.current) audio.current.volume = 0.3;
+    const el = audio.current;
+    if (!el) return;
+    el.volume = 0.3;
+
+    let muted = false;
+    try {
+      muted = localStorage.getItem(MUTED_KEY) === "1";
+    } catch {}
+    if (muted) return;
+
+    // Browsers block sound until the visitor interacts with the page, so if the first try is refused
+    // (a fresh load rather than an in-app redirect), start on their first click or key press instead.
+    const events = ["pointerdown", "keydown"] as const;
+    const start = (e: Event) => {
+      events.forEach((name) => window.removeEventListener(name, start));
+      // A press on the record itself is handled by its own toggle.
+      if (e.target instanceof Element && e.target.closest(".vinyl")) return;
+      if (el.paused) el.play().catch(() => {});
+    };
+    el.play().catch(() => events.forEach((e) => window.addEventListener(e, start)));
+    return () => events.forEach((e) => window.removeEventListener(e, start));
   }, []);
 
   // Swap the source by hand so playback carries straight on to the next record.
@@ -36,8 +59,13 @@ export function VinylPlayer() {
   function toggle() {
     const el = audio.current;
     if (!el) return;
-    if (el.paused) el.play().catch(() => setPlaying(false));
+    const play = el.paused;
+    if (play) el.play().catch(() => setPlaying(false));
     else el.pause();
+    try {
+      if (play) localStorage.removeItem(MUTED_KEY);
+      else localStorage.setItem(MUTED_KEY, "1");
+    } catch {}
   }
 
   return (
@@ -45,7 +73,7 @@ export function VinylPlayer() {
       <audio
         ref={audio}
         src={track.src}
-        preload="none"
+        preload="auto"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={next}
