@@ -17,9 +17,16 @@ import { checkVerificationCode, hasPendingCode, needsVerification, sendVerificat
 const emailSchema = z.string().trim().toLowerCase().max(120, "Email is too long").pipe(z.email("Enter a valid email address"));
 const passwordSchema = z.string().min(8, "Password needs at least 8 characters").max(100, "Password is too long (100 characters max)");
 
+// New accounts are for Niagara College students and staff only.
+const COLLEGE_DOMAINS = ["ncstudents.niagaracollege.ca", "niagaracollege.ca"];
+const collegeEmailSchema = emailSchema.refine(
+  (email) => COLLEGE_DOMAINS.includes(email.split("@")[1]),
+  "Use your Niagara College email (@ncstudents.niagaracollege.ca or @niagaracollege.ca)",
+);
+
 const registerSchema = z.object({
   name: z.string().trim().min(2, "Enter your name (2 characters or more)").max(40, "Name is too long (40 characters max)"),
-  email: emailSchema,
+  email: collegeEmailSchema,
   password: passwordSchema,
 });
 

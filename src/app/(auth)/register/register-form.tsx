@@ -19,6 +19,7 @@ export function RegisterForm({ next }: { next: string }) {
       <div>
         <label htmlFor="email" className={label}>Email</label>
         <input id="email" name="email" type="email" required maxLength={120} autoComplete="email" defaultValue={state.values?.email} placeholder="you@ncstudents.niagaracollege.ca" className={input} />
+        <p className="mt-1.5 text-xs text-ink/50">Niagara College email only (@ncstudents.niagaracollege.ca or @niagaracollege.ca).</p>
       </div>
       <div>
         <label htmlFor="password" className={label}>Password</label>
