@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import type { FormState } from "@/lib/form";
 import { FormMessage, input, label } from "@/components/form-ui";
@@ -17,16 +18,18 @@ export function LoginForm({ next }: { next: string }) {
         <input id="email" name="email" type="email" required autoComplete="email" defaultValue={state.values?.email} className={input} />
       </div>
       <div>
-        <label htmlFor="password" className={label}>Password</label>
+        <div className="flex items-center justify-between gap-3">
+          <label htmlFor="password" className={label}>Password</label>
+          <Link href="/forgot-password" className="mb-1.5 text-sm font-medium text-knight-600 underline underline-offset-4 hover:text-ink">
+            Forgot password?
+          </Link>
+        </div>
         <PasswordInput id="password" name="password" required autoComplete="current-password" />
       </div>
       <FormMessage state={state} />
       <button type="submit" disabled={pending} className={submitBtn}>
         {pending ? "Signing in…" : "Sign in"}
       </button>
-      <p className="text-center text-sm text-ink/60">
-        Forgot your password? Ask an organizer and they&apos;ll reset it for you.
-      </p>
     </form>
   );
 }

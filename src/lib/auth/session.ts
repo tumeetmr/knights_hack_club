@@ -37,6 +37,11 @@ export async function deleteStudentSession() {
   (await cookies()).delete({ name: STUDENT_COOKIE, path: "/" });
 }
 
+// A password change or reset signs out every session made before it. JWT times are in whole
+// seconds, so the cookie made right after the change counts as after it.
+const issuedAfter = (iat: number | undefined, changedAt: Date | null) =>
+  !changedAt || (iat ?? 0) >= Math.floor(changedAt.getTime() / 1000);
+
 /**
  * Whoever holds a valid student cookie, verified or not. Only the sign-in, sign-up and
  * verify flow should use this; everything else uses getStudent. Cached per request.
@@ -55,9 +60,11 @@ export const getSession = cache(async () => {
         name: players.name,
         email: players.email,
         emailVerifiedAt: players.emailVerifiedAt,
+        passwordChangedAt: players.passwordChangedAt,
       })
       .from(players)
       .where(eq(players.id, id));
+    if (row && !issuedAfter(payload.iat, row.passwordChangedAt)) return null;
     return row ? { id: row.id, name: row.name, email: row.email, needsVerification: needsVerification(row) } : null;
   } catch {
     return null;

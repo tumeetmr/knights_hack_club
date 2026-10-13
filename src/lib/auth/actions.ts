@@ -2,6 +2,7 @@
 
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/db";
 import { players } from "@/db/schema";
@@ -9,13 +10,17 @@ import { rawValues, type FormState } from "@/lib/form";
 import { clearAttempts, clientIp, tooMany } from "@/lib/rate-limit";
 import { loginHref, safeNext, verifyHref } from "./next";
 import { hashPassword, verifyPassword } from "./password";
+import { resetPassword, sendPasswordReset } from "./password-reset";
 import { createStudentSession, deleteStudentSession, getSession } from "./session";
 import { checkVerificationCode, hasPendingCode, needsVerification, sendVerificationCode } from "./verification";
 
+const emailSchema = z.string().trim().toLowerCase().max(120, "Email is too long").pipe(z.email("Enter a valid email address"));
+const passwordSchema = z.string().min(8, "Password needs at least 8 characters").max(100, "Password is too long (100 characters max)");
+
 const registerSchema = z.object({
   name: z.string().trim().min(2, "Enter your name (2 characters or more)").max(40, "Name is too long (40 characters max)"),
-  email: z.string().trim().toLowerCase().max(120, "Email is too long").pipe(z.email("Enter a valid email address")),
-  password: z.string().min(8, "Password needs at least 8 characters").max(100, "Password is too long (100 characters max)"),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
 export async function registerAction(_prev: FormState, fd: FormData): Promise<FormState> {
@@ -109,4 +114,38 @@ export async function resendCodeAction(_prev: FormState, fd: FormData): Promise<
   }
   const result = await sendVerificationCode(session);
   return result.ok ? { ok: `New code sent to ${session.email}.` } : { error: result.error };
+}
+
+export async function forgotPasswordAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  const values = { email: String(fd.get("email") ?? "") };
+  const parsed = emailSchema.safeParse(values.email);
+  if (!parsed.success) return { error: parsed.error.issues[0].message, values };
+
+  // The free Resend plan has a daily send limit; don't let one address or one machine use it up.
+  const tooManyForEmail = tooMany(`reset-send:${parsed.data}`, 5, 3_600_000);
+  const tooManyForIp = tooMany(`reset-send-ip:${await clientIp()}`, 30, 3_600_000);
+  if (tooManyForEmail || tooManyForIp) return { error: "Too many requests. Try again in an hour.", values };
+
+  // Look up and send after responding, so the answer and its timing are the same whether or
+  // not the email has an account.
+  after(() => sendPasswordReset(parsed.data));
+  return {
+    ok: `If ${parsed.data} has an account, a reset link is on its way. Check your spam folder too.`,
+    values,
+  };
+}
+
+export async function resetPasswordAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  if (tooMany(`reset-ip:${await clientIp()}`, 30, 600_000)) {
+    return { error: "Too many attempts. Try again in a few minutes." };
+  }
+  const parsed = passwordSchema.safeParse(String(fd.get("password") ?? ""));
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (parsed.data !== String(fd.get("confirm") ?? "")) return { error: "The passwords don't match." };
+
+  const studentId = await resetPassword(String(fd.get("token") ?? ""), parsed.data);
+  if (!studentId) return { error: "This link has expired or was already used. Ask for a new one." };
+
+  await createStudentSession(studentId);
+  redirect("/");
 }

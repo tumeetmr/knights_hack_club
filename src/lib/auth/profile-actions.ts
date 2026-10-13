@@ -8,7 +8,7 @@ import { players } from "@/db/schema";
 import type { FormState } from "@/lib/form";
 import { tooMany } from "@/lib/rate-limit";
 import { hashPassword, verifyPassword } from "./password";
-import { requireStudent } from "./session";
+import { createStudentSession, requireStudent } from "./session";
 
 const nameSchema = z.string().trim().min(2, "Enter your name (2 characters or more)").max(40, "Name is too long (40 characters max)");
 const passwordSchema = z.string().min(8, "New password needs at least 8 characters").max(100, "Password is too long (100 characters max)");
@@ -43,6 +43,11 @@ export async function changePasswordAction(_prev: FormState, fd: FormData): Prom
   const [row] = await db.select({ passwordHash: players.passwordHash }).from(players).where(eq(players.id, student.id));
   if (!row || !(await verifyPassword(current, row.passwordHash))) return { error: "Your current password isn't right." };
 
-  await db.update(players).set({ passwordHash: await hashPassword(parsed.data) }).where(eq(players.id, student.id));
-  return { ok: "Password changed." };
+  // Signs out every other device; this one gets a fresh session.
+  await db
+    .update(players)
+    .set({ passwordHash: await hashPassword(parsed.data), passwordChangedAt: new Date() })
+    .where(eq(players.id, student.id));
+  await createStudentSession(student.id);
+  return { ok: "Password changed. Other devices have been signed out." };
 }

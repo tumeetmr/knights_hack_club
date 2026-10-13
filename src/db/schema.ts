@@ -46,6 +46,8 @@ export const players = pgTable(
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     /** Set when the student opts out of club newsletters. Null = subscribed. */
     unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
+    /** Last password change or reset. Sessions signed before it are rejected, signing out other devices. */
+    passwordChangedAt: timestamp("password_changed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -64,6 +66,19 @@ export const emailCodes = pgTable("email_codes", {
     .references(() => players.id, { onDelete: "cascade" }),
   codeHash: text("code_hash").notNull(),
   attempts: smallint("attempts").notNull().default(0),
+  sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+});
+
+/**
+ * The one live password-reset link per student (asking again replaces it). Only a SHA-256 of the
+ * token is stored, so a database leak can't be turned into working links.
+ */
+export const passwordResets = pgTable("password_resets", {
+  playerId: integer("player_id")
+    .primaryKey()
+    .references(() => players.id, { onDelete: "cascade" }),
+  tokenHash: text("token_hash").notNull().unique(),
   sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 });
