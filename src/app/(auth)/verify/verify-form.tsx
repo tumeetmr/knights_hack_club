@@ -4,11 +4,18 @@ import { useActionState } from "react";
 import type { FormState } from "@/lib/form";
 import { FormMessage, input, label } from "@/components/form-ui";
 import { submitBtn } from "@/components/auth/auth-panel";
+import { useCooldown } from "@/components/auth/use-cooldown";
 import { resendCodeAction, verifyEmailAction } from "@/lib/auth/actions";
+import { RESEND_SECONDS } from "@/lib/auth/cooldown";
 
-export function VerifyForm({ next, sent }: { next: string; sent: boolean }) {
+export function VerifyForm({ next, sent, wait }: { next: string; sent: boolean; wait: number }) {
   const [state, action, pending] = useActionState<FormState, FormData>(verifyEmailAction, {});
-  const [resent, resend, resending] = useActionState<FormState, FormData>(resendCodeAction, {});
+  const [cooldown, setCooldown] = useCooldown(wait);
+  const [resent, resend, resending] = useActionState<FormState, FormData>(async (prev, fd) => {
+    const result = await resendCodeAction(prev, fd);
+    if (result.ok) setCooldown(RESEND_SECONDS);
+    return result;
+  }, {});
 
   return (
     <div className="grid gap-5">
@@ -45,10 +52,10 @@ export function VerifyForm({ next, sent }: { next: string; sent: boolean }) {
         <FormMessage state={resent} />
         <button
           type="submit"
-          disabled={resending}
+          disabled={resending || cooldown > 0}
           className="mx-auto inline-flex min-h-11 items-center rounded-full bg-mist px-5 text-sm font-bold text-ink ring-1 ring-ink/10 transition hover:bg-knight-50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
         >
-          {resending ? "Sending…" : sent || resent.ok ? "Send a new code" : "Send me a code"}
+          {resending ? "Sending…" : cooldown > 0 ? `Send a new code in ${cooldown}s` : sent || resent.ok ? "Send a new code" : "Send me a code"}
         </button>
       </form>
     </div>

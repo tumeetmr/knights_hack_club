@@ -4,7 +4,7 @@ import { AuthPanel } from "@/components/auth/auth-panel";
 import { logoutAction } from "@/lib/auth/actions";
 import { loginHref, safeNext } from "@/lib/auth/next";
 import { getSession } from "@/lib/auth/session";
-import { hasPendingCode } from "@/lib/auth/verification";
+import { hasPendingCode, resendWaitSeconds } from "@/lib/auth/verification";
 import { VerifyForm } from "./verify-form";
 
 export const metadata: Metadata = { title: "Confirm your email | Knights Hack Club" };
@@ -15,7 +15,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/verify">)
   if (!session) redirect(loginHref(next));
   if (!session.needsVerification) redirect(next);
   // Someone still signed in from before verification existed arrives here without a code.
-  const sent = await hasPendingCode(session.id);
+  const [sent, wait] = await Promise.all([hasPendingCode(session.id), resendWaitSeconds(session.id)]);
 
   return (
     <AuthPanel
@@ -38,7 +38,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/verify">)
         </form>
       }
     >
-      <VerifyForm next={next} sent={sent} />
+      <VerifyForm next={next} sent={sent} wait={wait} />
     </AuthPanel>
   );
 }

@@ -6,10 +6,10 @@ import { getDb } from "@/db";
 import { emailCodes, players } from "@/db/schema";
 import { VerifyCodeEmail } from "@/emails/verify-code";
 import { sendEmail } from "@/lib/email/send";
+import { RESEND_SECONDS } from "./cooldown";
 import { secret } from "./secret";
 
 const CODE_MINUTES = 10;
-const RESEND_SECONDS = 60;
 const MAX_ATTEMPTS = 5;
 
 /** Every account must confirm its email before playing, including ones made before codes existed. */
@@ -25,6 +25,14 @@ export async function hasPendingCode(playerId: number) {
   return Boolean(row);
 }
 
+/** Seconds until the student may ask for another code, so the verify page can start its countdown. */
+export async function resendWaitSeconds(playerId: number) {
+  const db = await getDb();
+  const [last] = await db.select({ sentAt: emailCodes.sentAt }).from(emailCodes).where(eq(emailCodes.playerId, playerId));
+  const waitMs = last ? last.sentAt.getTime() + RESEND_SECONDS * 1000 - Date.now() : 0;
+  return Math.max(0, Math.ceil(waitMs / 1000));
+}
+
 // Keyed to the student so a stored hash is useless for any other account.
 const hashCode = (playerId: number, code: string) =>
   createHmac("sha256", secret()).update(`email-code:${playerId}:${code}`).digest("hex");
@@ -33,10 +41,10 @@ export type SendResult = { ok: true } | { ok: false; error: string };
 
 /** Emails a fresh 6-digit code, replacing any earlier one. Rate limited per student. */
 export async function sendVerificationCode(player: { id: number; name: string; email: string }): Promise<SendResult> {
+  const wait = await resendWaitSeconds(player.id);
+  if (wait > 0) return { ok: false, error: `Wait ${wait} seconds before asking for a new code.` };
+
   const db = await getDb();
-  const [last] = await db.select({ sentAt: emailCodes.sentAt }).from(emailCodes).where(eq(emailCodes.playerId, player.id));
-  const waitMs = last ? last.sentAt.getTime() + RESEND_SECONDS * 1000 - Date.now() : 0;
-  if (waitMs > 0) return { ok: false, error: `Wait ${Math.ceil(waitMs / 1000)} seconds before asking for a new code.` };
 
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
   const row = {

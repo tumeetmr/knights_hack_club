@@ -7,10 +7,10 @@ import { passwordResets, players } from "@/db/schema";
 import { ResetPasswordEmail } from "@/emails/reset-password";
 import { siteUrl } from "@/emails/layout";
 import { sendEmail } from "@/lib/email/send";
+import { RESEND_SECONDS } from "./cooldown";
 import { hashPassword } from "./password";
 
 const LINK_MINUTES = 30;
-const RESEND_SECONDS = 60;
 
 // 32 random bytes as base64url is always 43 characters.
 const TOKEN_FORMAT = /^[A-Za-z0-9_-]{43}$/;
