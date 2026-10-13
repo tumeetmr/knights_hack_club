@@ -9,7 +9,7 @@ export async function placePixelAction(x: number, y: number, color: string): Pro
   const student = await getStudent();
   if (!student) return { ok: false, error: "Sign in to place pixels.", signIn: true };
 
-  // The real 30s cooldown lives in the database. This only stops one network hammering the endpoint.
+  // The real 5-hour cooldown lives in the database. This only stops one network hammering the endpoint.
   if (tooMany(`pixel-ip:${await clientIp()}`, 300, 60_000)) {
     return { ok: false, error: "Too many pixels from this network. Try again in a minute." };
   }

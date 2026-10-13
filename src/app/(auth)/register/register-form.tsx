@@ -10,7 +10,7 @@ import { registerAction } from "@/lib/auth/actions";
 export function RegisterForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(registerAction, {});
   return (
-    <form action={action} className="grid gap-4">
+    <form action={action} className="grid gap-3.5">
       <input type="hidden" name="next" value={next} />
       <div>
         <label htmlFor="name" className={label}>Display name</label>
@@ -19,7 +19,7 @@ export function RegisterForm({ next }: { next: string }) {
       <div>
         <label htmlFor="email" className={label}>Email</label>
         <input id="email" name="email" type="email" required maxLength={120} autoComplete="email" defaultValue={state.values?.email} placeholder="you@ncstudents.niagaracollege.ca" className={input} />
-        <p className="mt-1.5 text-xs text-ink/50">Niagara College email only (@ncstudents.niagaracollege.ca or @niagaracollege.ca).</p>
+        <p className="mt-1.5 text-xs text-ink/50">Niagara College email only.</p>
       </div>
       <div>
         <label htmlFor="password" className={label}>Password</label>

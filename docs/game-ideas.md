@@ -42,7 +42,7 @@ every 30 seconds; anyone can watch. Over the term people team up to draw logos a
   row per cell wins. That gives the cooldown check, the poll cursor and a timelapse for free.
 - **API:** `GET /api/pixels` (whole wall) and `?since=<id>` (changes only, polled every 2s while
   on screen); `GET /api/pixels/me`; placing is the `placePixelAction` server action
-- **Abuse:** 30s cooldown per student enforced in Postgres (row lock, so double clicks can't
+- **Abuse:** 5-hour cooldown per student enforced in Postgres (row lock, so double clicks can't
   sneak through), plus a per-IP cap via `src/lib/rate-limit.ts`
 
 ## 2. Code the Knight (main game)

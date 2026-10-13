@@ -34,11 +34,12 @@ export default async function RegisterPage({ searchParams }: PageProps<"/registe
 
   return (
     <AuthPanel
+      split
       eyebrow={forCtf ? "> ctf --register" : "> knights --register"}
       title={forCtf ? "Join the hunt." : "Join in."}
       intro={
-        <div className="grid gap-3 text-white/75">
-          {when && <p className="text-center font-mono text-sm text-knight-300">{when}</p>}
+        <div className="grid gap-3 text-left text-white/75">
+          {when && <p className="text-center font-mono text-sm text-knight-300 lg:text-left">{when}</p>}
           <Steps steps={forCtf ? ctfSteps : accountSteps} />
         </div>
       }
@@ -72,7 +73,7 @@ async function ctfWhen() {
 
 function Steps({ steps }: { steps: ReactNode[] }) {
   return (
-    <ol className="grid gap-2 rounded-2xl bg-white/10 p-4 text-sm ring-1 ring-white/15 sm:text-base">
+    <ol className="grid gap-2 rounded-2xl bg-white/10 p-4 text-sm ring-1 ring-white/15 lg:gap-3 lg:bg-transparent lg:p-0 lg:text-base lg:ring-0">
       {steps.map((s, i) => (
         <li key={i} className="flex gap-3">
           <span aria-hidden className="grid size-6 shrink-0 place-items-center rounded-full bg-white/15 font-mono text-xs font-bold text-white">

@@ -2,7 +2,7 @@
 
 /** Cells per side. The DB check constraint (drizzle/0004_pixel_wall.sql) uses the same 64. */
 export const GRID_SIZE = 64;
-export const COOLDOWN_MS = 30_000;
+export const COOLDOWN_MS = 5 * 60 * 60 * 1000; // 5 hours
 export const POLL_MS = 2_000;
 
 /** Unpainted cells. */

@@ -435,7 +435,7 @@ export default function Home() {
               </div>
               <p data-reveal="up" className="text-white/70 sm:text-lg">
                 One shared canvas for the whole club. Pick a color, place a pixel,
-                wait 30 seconds, repeat. Team up to draw logos, or defend your
+                wait 5 hours, repeat. Team up to draw logos, or defend your
                 corner. What it looks like by the end of term is up to you.
               </p>
             </div>

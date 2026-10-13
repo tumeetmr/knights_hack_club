@@ -313,7 +313,7 @@ export function PixelWall() {
               {placing
                 ? "Placing…"
                 : waitMs > 0
-                  ? `Next pixel in ${Math.ceil(waitMs / 1000)}s`
+                  ? `Next pixel in ${formatWait(waitMs)}`
                   : selected
                     ? `Place at (${selected.x}, ${selected.y})`
                     : "Pick a square first"}
@@ -358,4 +358,15 @@ export function PixelWall() {
       </div>
     </div>
   );
+}
+
+/** 5h 0m / 12m 30s / 45s */
+function formatWait(ms: number) {
+  const total = Math.ceil(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
 }
