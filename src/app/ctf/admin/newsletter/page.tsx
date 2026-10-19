@@ -15,9 +15,9 @@ export default async function NewsletterPage() {
   await requireAdmin();
   const [recipients, history] = await Promise.all([countRecipients(), listNewsletters()]);
 
-  // Start from the last issue so only what changed needs editing.
-  const last = history[0] && newsletterSchema.safeParse(history[0].content);
-  const initial: NewsletterContent = last?.success ? last.data : sampleNewsletter;
+  // Start from the last issue so only what changed needs editing (skipping other sends, like the availability email).
+  const last = history.map((n) => newsletterSchema.safeParse(n.content)).find((r) => r.success);
+  const initial: NewsletterContent = last?.data ?? sampleNewsletter;
 
   return (
     <AdminShell>

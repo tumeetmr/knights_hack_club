@@ -1,4 +1,14 @@
-import { Body, Container, Head, Html, Img, Link, Preview, Section, Text } from "@react-email/components";
+import {
+  Body,
+  Container,
+  Head,
+  Html,
+  Img,
+  Link,
+  Preview,
+  Section,
+  Text,
+} from "@react-email/components";
 import type { CSSProperties, ReactNode } from "react";
 
 /**
@@ -18,13 +28,16 @@ export const colors = {
 } as const;
 
 const sans = 'Archivo, "Helvetica Neue", Helvetica, Arial, sans-serif';
-const condensed = '"Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif';
-export const mono = '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace';
+const condensed =
+  '"Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif';
+export const mono =
+  '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace';
 
 /** Absolute site address for images and links: SITE_URL, else Vercel's production domain. */
 export function siteUrl() {
   if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, "");
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   return "http://localhost:3000";
 }
 
@@ -32,13 +45,16 @@ export function EmailLayout({
   preview,
   eyebrow,
   title,
+  compact = false,
   children,
 }: {
   /** Inbox preview line. */
   preview: string;
   /** Terminal-style line above the title, e.g. "> knights --verify". */
   eyebrow: string;
-  title: string;
+  title?: string;
+  /** A slim bar with just the logo and brand; the title moves into the card as a normal heading. */
+  compact?: boolean;
   children: ReactNode;
 }) {
   const site = siteUrl();
@@ -55,40 +71,82 @@ export function EmailLayout({
         />
       </Head>
       <Preview>{preview}</Preview>
-      <Body style={{ margin: 0, backgroundColor: colors.mist, fontFamily: sans, color: colors.ink }}>
-        <Container style={{ maxWidth: 560, margin: "0 auto", padding: "24px 12px" }}>
-          <Section style={hero}>
-            <Section style={{ padding: "28px 28px 36px" }}>
-              <table role="presentation" cellPadding={0} cellSpacing={0} style={{ borderCollapse: "collapse" }}>
-                <tbody>
-                  <tr>
-                    <td style={{ verticalAlign: "middle", paddingRight: 12 }}>
-                      <Img src={`${site}/email/logo.png`} width={40} height={37} alt="" style={{ display: "block" }} />
-                    </td>
-                    <td style={{ verticalAlign: "middle" }}>
-                      <Text style={brand}>KNIGHTS HACK</Text>
-                      <Text style={brandSub}>Official NCSAC Club</Text>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <Text style={eyebrowStyle}>{eyebrow}</Text>
-              <Text style={headline}>{title}</Text>
+      <Body
+        style={{
+          margin: 0,
+          backgroundColor: colors.mist,
+          fontFamily: sans,
+          color: colors.ink,
+        }}
+      >
+        <Container
+          style={{ maxWidth: 560, margin: "0 auto", padding: "24px 12px" }}
+        >
+          {compact ? (
+            <Section style={{ ...hero, borderRadius: "20px 20px 0 0" }}>
+              <Section style={{ padding: "16px 24px" }}>
+                <Brand site={site} />
+              </Section>
             </Section>
-          </Section>
+          ) : (
+            <Section style={hero}>
+              <Section style={{ padding: "28px 28px 36px" }}>
+                <Brand site={site} />
+                <Text style={eyebrowStyle}>{eyebrow}</Text>
+                {title && <Text style={headline}>{title}</Text>}
+              </Section>
+            </Section>
+          )}
 
-          <Section style={card}>{children}</Section>
+          <Section
+            style={compact ? { ...card, borderRadius: "0 0 20px 20px" } : card}
+          >
+            {compact && <Text style={compactTitle}>{title}</Text>}
+            {children}
+          </Section>
 
           <Text style={footer}>
             Knights Hack Club · Niagara College
             <br />
-            <Link href={site} style={{ color: colors.muted, textDecoration: "underline" }}>
+            <Link
+              href={site}
+              style={{ color: colors.muted, textDecoration: "underline" }}
+            >
               {site.replace(/^https?:\/\//, "")}
             </Link>
           </Text>
         </Container>
       </Body>
     </Html>
+  );
+}
+
+function Brand({ site }: { site: string }) {
+  return (
+    <table
+      role="presentation"
+      cellPadding={0}
+      cellSpacing={0}
+      style={{ borderCollapse: "collapse" }}
+    >
+      <tbody>
+        <tr>
+          <td style={{ verticalAlign: "middle", paddingRight: 12 }}>
+            <Img
+              src={`${site}/email/logo.png`}
+              width={40}
+              height={37}
+              alt=""
+              style={{ display: "block" }}
+            />
+          </td>
+          <td style={{ verticalAlign: "middle" }}>
+            <Text style={brand}>KNIGHTS HACK</Text>
+            <Text style={brandSub}>Official NCSAC Club</Text>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   );
 }
 
@@ -136,6 +194,15 @@ const headline: CSSProperties = {
   lineHeight: "46px",
   textTransform: "uppercase",
   color: colors.paper,
+};
+
+const compactTitle: CSSProperties = {
+  margin: "0 0 16px",
+  fontFamily: condensed,
+  fontSize: 26,
+  fontWeight: 700,
+  lineHeight: "30px",
+  color: colors.ink,
 };
 
 const card: CSSProperties = {
