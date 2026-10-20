@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { FormMessage, input, label } from "@/components/form-ui";
 import {
   type AvailabilityContent,
   type Recipient,
   previewAvailabilityAction,
+  sendAvailabilityAction,
+  sendTestAvailabilityAction,
 } from "@/lib/newsletter/availability-actions";
 import { NAME_TOKEN } from "@/lib/newsletter/availability-shared";
 import { btnGhost, btnPrimary, card } from "../_components/styles";
@@ -16,26 +18,10 @@ const initial: AvailabilityContent = {
   deadline: "",
 };
 
-const SENT_KEY = "availability-sent";
-
 const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-const firstName = (name?: string) => name?.split(/\s+/)[0] || "there";
-
 const withName = (html: string, name: string) => html.replaceAll(NAME_TOKEN, escapeHtml(name));
-
-/** Outlook on the web: opens a new message with the recipient and subject filled in. */
-const composeUrl = (to: string, subject: string) =>
-  `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}`;
-
-function loadSent(): Set<string> {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(SENT_KEY) ?? "[]"));
-  } catch {
-    return new Set();
-  }
-}
 
 export function AvailabilityForm() {
   const [content, setContent] = useState(initial);
@@ -44,15 +30,10 @@ export function AvailabilityForm() {
     recipients: [],
     invalid: [],
   });
-  const [sent, setSent] = useState<Set<string>>(new Set());
-  const [copied, setCopied] = useState<string | null>(null);
-  const [copyError, setCopyError] = useState("");
-
-  // Read saved ticks after mount so server and client render the same first paint.
-  useEffect(() => {
-    const timer = setTimeout(() => setSent(loadSent()), 0);
-    return () => clearTimeout(timer);
-  }, []);
+  const [testTo, setTestTo] = useState("");
+  const [testedKey, setTestedKey] = useState<string | null>(null);
+  const [result, setResult] = useState<{ ok?: string; error?: string }>({});
+  const [pending, startTransition] = useTransition();
 
   // Re-render the preview and re-read the list shortly after typing stops.
   useEffect(() => {
@@ -68,36 +49,24 @@ export function AvailabilityForm() {
     setContent((c) => ({ ...c, [key]: value }));
 
   const { html, recipients, invalid } = preview;
-  const doneCount = recipients.filter((r) => sent.has(r.email)).length;
   const previewHtml = useMemo(() => (html ? withName(html, "Axel") : ""), [html]);
 
-  const markSent = (email: string, value: boolean) =>
-    setSent((prev) => {
-      const next = new Set(prev);
-      if (value) next.add(email);
-      else next.delete(email);
-      try {
-        localStorage.setItem(SENT_KEY, JSON.stringify([...next]));
-      } catch {}
-      return next;
+  // A test only counts for the exact content it was sent with; editing anything asks for a new one.
+  const contentKey = JSON.stringify(content);
+  const tested = testedKey === contentKey;
+  const canSend = tested && recipients.length > 0 && !preview.error && !pending;
+
+  const sendTest = () =>
+    startTransition(async () => {
+      const r = await sendTestAvailabilityAction(content, testTo);
+      setResult(r);
+      if (r.ok) setTestedKey(contentKey);
     });
 
-  const copy = async (r: Recipient) => {
-    if (!html) return;
-    setCopyError("");
-    const body = withName(html, firstName(r.name));
-    try {
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "text/html": new Blob([body], { type: "text/html" }),
-          "text/plain": new Blob([`Open this email in an HTML-capable client.`], { type: "text/plain" }),
-        }),
-      ]);
-      setCopied(r.email);
-      setTimeout(() => setCopied((c) => (c === r.email ? null : c)), 2000);
-    } catch {
-      setCopyError("Couldn't copy. Check the form is complete and the browser allows clipboard access.");
-    }
+  const sendAll = () => {
+    const n = recipients.length;
+    if (!window.confirm(`Send this email to ${n} ${n === 1 ? "person" : "people"}? This can't be undone.`)) return;
+    startTransition(async () => setResult(await sendAvailabilityAction(content, list, n)));
   };
 
   return (
@@ -146,52 +115,34 @@ export function AvailabilityForm() {
         </section>
 
         <section className={`${card} grid gap-3`}>
-          <div className="flex items-baseline justify-between gap-2">
-            <p className={label}>Recipients</p>
-            <p className="text-sm text-ink/60">
-              {doneCount} of {recipients.length} sent
-            </p>
-          </div>
+          <p className={label}>Send</p>
           <p className="text-sm text-ink/60">
-            For each person: <strong>Copy email</strong>, then <strong>Open Outlook</strong>, paste into the message
-            body, send, and tick the box. Ticks are saved in this browser only.
+            Emails go out from the club address, one per person. Send yourself a test first; sending to everyone
+            unlocks once the test has gone out with the current content.
           </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="email"
+              value={testTo}
+              onChange={(e) => setTestTo(e.target.value)}
+              placeholder="you@ncstudents.niagaracollege.ca"
+              aria-label="Test email address"
+              className={`${input} min-w-0 flex-1`}
+            />
+            <button type="button" onClick={sendTest} disabled={pending || !testTo || !html} className={btnGhost}>
+              Send test
+            </button>
+          </div>
           {preview.error && <FormMessage state={{ error: preview.error }} />}
-          {copyError && <FormMessage state={{ error: copyError }} />}
-          {recipients.length === 0 ? (
-            <p className="text-sm text-ink/60">Paste your member list above.</p>
-          ) : (
-            <ul className="grid gap-2">
-              {recipients.map((r) => {
-                const done = sent.has(r.email);
-                return (
-                  <li key={r.email} className="flex flex-wrap items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={done}
-                      onChange={(e) => markSent(r.email, e.target.checked)}
-                      aria-label={`Mark ${r.email} as sent`}
-                    />
-                    <span className={`min-w-0 flex-1 truncate text-sm ${done ? "text-ink/40 line-through" : ""}`}>
-                      {r.name ? `${r.name} · ` : ""}
-                      {r.email}
-                    </span>
-                    <button type="button" onClick={() => copy(r)} disabled={!html} className={btnPrimary}>
-                      {copied === r.email ? "Copied!" : "Copy email"}
-                    </button>
-                    <a
-                      href={composeUrl(r.email, content.subject)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={btnGhost}
-                    >
-                      Open Outlook
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+          {result.error && <FormMessage state={{ error: result.error }} />}
+          {result.ok && <FormMessage state={{ ok: result.ok }} />}
+          <button type="button" onClick={sendAll} disabled={!canSend} className={btnPrimary}>
+            {recipients.length === 0
+              ? "Paste your member list"
+              : tested
+                ? `Send to ${recipients.length} ${recipients.length === 1 ? "person" : "people"}`
+                : "Send a test first"}
+          </button>
         </section>
       </div>
 
