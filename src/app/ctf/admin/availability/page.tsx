@@ -12,7 +12,7 @@ export default async function AvailabilityPage() {
         description={
           <>
             Tell members there are no events before midterms, the next one is the week after reading week, and ask
-            them to fill in your availability form. Paste your member list and it goes out in batches of 100.
+            them to fill in your availability form. Paste your member list, then copy the email for each person and send it from your own mailbox.
           </>
         }
       />
