@@ -74,7 +74,7 @@ export const faqs = [
   },
   {
     q: "When and where do events happen?",
-    a: `Every event is at the ${CAMPUS}. Our first one, the Club Launch, is Thursday, Oct 8 from 2:00 to 3:50 PM, outside the Core. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
+    a: `Every event is at the ${CAMPUS}. Next up is the Scratch workshop on Monday, Nov 2 from 1:00 to 3:00 PM in Room M114. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
   },
   {
     q: "What's the CTF?",

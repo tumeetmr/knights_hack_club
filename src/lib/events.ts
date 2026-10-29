@@ -79,11 +79,54 @@ export const events: ClubEvent[] = [
     ],
   },
   {
-    month: "Oct",
-    time: "Date & time TBA",
+    month: "Nov",
+    date: "Nov 2",
+    time: "Mon · 1:00 – 3:00 PM",
+    // Daylight saving ends Nov 1, so this one is EST (-05:00).
+    start: "2026-11-02T13:00:00-05:00",
+    end: "2026-11-02T15:00:00-05:00",
+    place: "Room M114 (Merritt)",
     title: "Scratch: Make Your First Game",
-    body: "A beginner-friendly, hands-on intro to programming concepts. Walk out with a game you built yourself.",
+    body: "A beginner-friendly, hands-on intro to coding with Scratch's visual blocks. Build your own game, then turn a Knights Hack button into a tap-to-open NFC link. No experience needed.",
     kind: "Workshop",
+    slug: "scratch-workshop",
+    agenda: [
+      {
+        time: "1:00 PM",
+        title: "Doors open & sign-in",
+        body: "Grab a seat, say hi to the exec team and open scratch.mit.edu on your laptop.",
+      },
+      {
+        time: "1:10 PM",
+        title: "What is Scratch?",
+        body: "A quick tour of sprites, the stage and coding blocks. Snap blocks together instead of typing code.",
+      },
+      {
+        time: "1:25 PM",
+        title: "Build your first game",
+        body: "Follow along step by step to make a small playable game: movement, scoring and a win condition.",
+      },
+      {
+        time: "2:05 PM",
+        title: "Make it yours",
+        body: "Remix your game with new sprites, sounds and levels. The exec team walks around to help.",
+      },
+      {
+        time: "2:30 PM",
+        title: "NFC buttons",
+        body: "Stick an NFC tag on the back of your button and link it to your website, game or any page. Tap it with a phone to open the link. Extra buttons available for newcomers.",
+      },
+      {
+        time: "2:50 PM",
+        title: "Share & wrap-up",
+        body: "Share your game link so we can showcase it on the Knights Hack website.",
+      },
+    ],
+    links: [
+      { label: "Open Scratch", href: "https://scratch.mit.edu", note: "Free and web-based, make an account before you arrive" },
+      { label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
+      { label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
+    ],
   },
   {
     month: "Oct",
