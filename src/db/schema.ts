@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, jsonb, pgTable, serial, smallint, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { bigint, boolean, check, index, integer, jsonb, pgTable, serial, smallint, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /** One row (id = 1) holding the contest window and kill switch. */
 export const contest = pgTable(
@@ -137,3 +137,30 @@ export const newsletters = pgTable("newsletters", {
   failed: integer("failed").notNull().default(0),
   sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Scratch workshop submissions. Scratch hosts the project; we keep only its id and show it with
+ * Scratch's embed. Hidden from the gallery until an admin approves it.
+ */
+export const scratchProjects = pgTable(
+  "scratch_projects",
+  {
+    id: serial("id").primaryKey(),
+    /** The number in scratch.mit.edu/projects/<id>. Also the public URL: /scratch/<id>. */
+    scratchId: bigint("scratch_id", { mode: "number" }).notNull(),
+    playerId: integer("player_id")
+      .notNull()
+      .references(() => players.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    /** Scratch username of the project's owner, as reported by Scratch. */
+    scratchAuthor: text("scratch_author").notNull().default(""),
+    approved: boolean("approved").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("scratch_projects_scratch_id_idx").on(t.scratchId),
+    index("scratch_projects_player_idx").on(t.playerId),
+    index("scratch_projects_approved_idx").on(t.approved, t.createdAt),
+  ],
+);

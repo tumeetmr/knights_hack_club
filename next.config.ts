@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Scratch project thumbnails in the gallery.
+  images: { remotePatterns: [{ protocol: "https", hostname: "uploads.scratch.mit.edu" }] },
   // Lets phones on the same Wi-Fi load the dev server via the laptop's LAN IP (game testing).
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
   async redirects() {

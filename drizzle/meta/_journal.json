@@ -57,6 +57,13 @@
       "when": 1791858679472,
       "tag": "0007_password_reset",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793633280568,
+      "tag": "0008_scratch_projects",
+      "breakpoints": true
     }
   ]
 }
