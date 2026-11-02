@@ -134,6 +134,7 @@ export const events: ClubEvent[] = [
     ],
     links: [
       { label: "Open Scratch", href: "https://scratch.mit.edu", note: "Free and web-based, make an account before you arrive" },
+      { label: "Workshop package", href: "/scratch/package", note: "Download the example games and the block cheat sheet" },
       { label: "Submit your project", href: "/scratch/submit", note: "Paste your Scratch share link to join the gallery" },
       { label: "Scratch gallery", href: "/scratch", note: "Play what everyone built" },
       { label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
