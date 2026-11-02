@@ -14,6 +14,9 @@ export type BoardChallenge = {
   solved: boolean;
 };
 
+/** Challenges filed under the "Halloween" category keep a spooky card, even though the rest of the CTF is not themed. */
+const isHalloween = (category: string) => category.trim().toLowerCase() === "halloween";
+
 export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] }) {
   const categories = ["All", ...new Set(challenges.map((c) => c.category))];
   const [category, setCategory] = useState("All");
@@ -47,7 +50,11 @@ export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] })
             <Link
               href={`/ctf/challenges/${c.id}`}
               className={`flex h-full items-start justify-between gap-4 rounded-3xl p-5 ring-1 transition active:scale-[0.99] ${
-                c.solved
+                isHalloween(c.category)
+                  ? c.solved
+                    ? "bg-orange-600 text-white ring-orange-600 hover:bg-orange-500"
+                    : "bg-[#160b22] text-white ring-orange-500/40 hover:ring-orange-400"
+                  : c.solved
                   ? "bg-knight-600 text-white ring-knight-600 hover:bg-knight-500"
                   : c.id === startId
                     ? "bg-paper text-ink ring-2 ring-knight-500 hover:ring-knight-600"
@@ -55,30 +62,35 @@ export function ChallengeBoard({ challenges }: { challenges: BoardChallenge[] })
               }`}
             >
               <span className="min-w-0">
-                <span className={`font-mono text-xs font-medium uppercase tracking-wider ${c.solved ? "text-knight-300" : "text-knight-600"}`}>
+                <span
+                  className={`font-mono text-xs font-medium uppercase tracking-wider ${
+                    isHalloween(c.category) ? (c.solved ? "text-orange-100" : "text-orange-400") : c.solved ? "text-knight-300" : "text-knight-600"
+                  }`}
+                >
+                  {isHalloween(c.category) && "🎃 "}
                   {c.category}
                 </span>
                 <span className="mt-1.5 block text-xl font-bold leading-tight tracking-tight">{c.title}</span>
-                <span className={`mt-2 block font-mono text-xs ${c.solved ? "text-white/60" : "text-ink/50"}`}>
+                <span className={`mt-2 block font-mono text-xs ${c.solved || isHalloween(c.category) ? "text-white/60" : "text-ink/50"}`}>
                   {c.solveCount} solve{c.solveCount === 1 ? "" : "s"}
                 </span>
               </span>
               <span className="flex shrink-0 flex-col items-end gap-2">
                 <span className="headline text-4xl tabular-nums">{c.points}</span>
                 {c.points < c.basePoints && (
-                  <span className={`-mt-2 font-mono text-xs line-through ${c.solved ? "text-white/50" : "text-ink/40"}`}>
+                  <span className={`-mt-2 font-mono text-xs line-through ${c.solved || isHalloween(c.category) ? "text-white/50" : "text-ink/40"}`}>
                     <span className="sr-only">was </span>
                     {c.basePoints}
                   </span>
                 )}
                 {c.id === startId && (
                   <span className="rounded-full bg-knight-500 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-wider text-white">
-                    🎃 Start here
+                    Start here
                   </span>
                 )}
                 {c.solved && (
                   <span className="rounded-full bg-white/20 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-wider">
-                    🍬 Solved
+                    ✓ Solved
                   </span>
                 )}
               </span>
