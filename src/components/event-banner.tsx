@@ -80,9 +80,9 @@ export function EventStatus({ event }: { event: ClubEvent }) {
   if (!label) return null;
   const tone =
     label === "Past"
-      ? "bg-ink/5 text-ink/50"
+      ? "bg-ink/5 text-ink/50 group-hover:bg-white/10 group-hover:text-white/60"
       : label === "Date TBA"
-        ? "bg-mist text-ink/60"
+        ? "bg-mist text-ink/60 group-hover:bg-white/15 group-hover:text-white"
         : "bg-knight-600 text-white";
   return (
     <span className={`inline-block rounded-full px-2.5 py-1 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider ${tone}`}>

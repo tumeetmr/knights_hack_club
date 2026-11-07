@@ -217,16 +217,16 @@ export default function Home() {
                 const row = (
                   <>
                     <div className="w-16 shrink-0 text-center sm:w-20">
-                      <p className="font-mono text-xs font-medium uppercase tracking-wider text-knight-600">{e.month}</p>
+                      <p className="font-mono text-xs font-medium uppercase tracking-wider text-knight-600 transition group-hover:text-white/70">{e.month}</p>
                       <p className="headline text-4xl sm:text-5xl">{e.date ? e.date.split(" ")[1] : "TBA"}</p>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-mist px-2.5 py-1 text-[0.6875rem] font-semibold">{e.kind}</span>
+                        <span className="rounded-full bg-mist px-2.5 py-1 text-[0.6875rem] font-semibold transition group-hover:bg-white/15 group-hover:text-white">{e.kind}</span>
                         <EventStatus event={e} />
                       </div>
                       <h3 className="mt-2 text-xl font-bold leading-tight tracking-tight sm:text-2xl">{e.title}</h3>
-                      <p className="mt-1 text-sm text-ink/60 sm:text-base">
+                      <p className="mt-1 text-sm text-ink/60 transition group-hover:text-white/70 sm:text-base">
                         {e.date
                           ? [day, hours, e.place].filter(Boolean).join(" · ")
                           : "Date, time and room announced a week before"}
