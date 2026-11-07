@@ -1,27 +1,27 @@
 // Copy for the landing page sections. Events live in events.ts.
 import { CAMPUS } from "@/lib/events";
 
-export const pillars = [
+/** The club's pipeline, from never-coded to hackathon-ready. */
+export const path = [
   {
-    label: "Learn",
-    title: "Code from zero.",
-    kicker: "Workshops",
-    body: "Never written a line of code? Perfect. Hands-on workshops start with Scratch and build up from there. No experience needed.",
-    snippet: "when flag clicked\n  say \"Hello, NC!\"",
+    step: "01",
+    title: "Learn to program",
+    body: "Beginner workshops start with Scratch's visual blocks. No experience needed, and no laptop skills assumed.",
   },
   {
-    label: "Vibe",
-    title: "Vibe code with AI.",
-    kicker: "AI-assisted",
-    body: "Experiment with AI-assisted coding tools and turn an idea into a working personal project in a single session.",
-    snippet: "> build me a campus\n  study-room finder",
+    step: "02",
+    title: "Manage your code",
+    body: "Get on GitHub, save and share your work, and publish a simple online portfolio you can link on a resume.",
   },
   {
-    label: "Build",
-    title: "Ship real projects.",
-    kicker: "Showcase & hack",
-    body: "Team up to prototype solutions to real student and campus problems, then show them off at our showcases and hackathon.",
-    snippet: "git commit -m \"v1 🚀\"\ngit push origin main",
+    step: "03",
+    title: "Build with AI",
+    body: "Learn to vibe code: describe an idea, build it with AI coding tools and learn to steer them when they go wrong.",
+  },
+  {
+    step: "04",
+    title: "Go live",
+    body: "Present your project at a showcase, then team up and ship it at our end-of-term mini hackathon.",
   },
 ];
 
@@ -46,16 +46,11 @@ export const team: { role: string; name: string; body: string; photo?: string }[
   },
 ];
 
-export const tickerItems = [
-  ["Build a game", "Not just homework"],
-  ["Push to GitHub", "Not to next week"],
-  ["Pair program", "Not solo struggle"],
-  ["Vibe code", "Not boilerplate"],
-  ["Meet your crew", "Not a login screen"],
-  ["Ship a project", "Not an excuse"],
-];
-
 export const faqs = [
+  {
+    q: "When and where do events happen?",
+    a: `Every event is at the ${CAMPUS}. Next up is Vibe Coding, Showcase & Portfolio Day on Friday, Nov 13 from 11:30 AM to 1:30 PM in Room M215. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
+  },
   {
     q: "Do I need any coding experience?",
     a: "None at all. Workshops start with Scratch and build up from there, and first-timers and seasoned devs build side by side.",
@@ -71,10 +66,6 @@ export const faqs = [
   {
     q: "Where can I chat with other members?",
     a: "On our Discord. Hop in to ask questions, find teammates and get event reminders. You don't need to be registered to join.",
-  },
-  {
-    q: "When and where do events happen?",
-    a: `Every event is at the ${CAMPUS}. Next up is the Scratch workshop on Monday, Nov 2 from 1:00 to 3:00 PM in Room M114. Exact dates, times and rooms for the rest are posted here and on Discord a week before each event.`,
   },
   {
     q: "What's the CTF?",

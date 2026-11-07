@@ -6,11 +6,12 @@ export const COPYRIGHT = "© 2026 Knights Hack Club · Niagara College · Built 
 
 const links = [
   ["#about", "About"],
-  ["#what-we-do", "What We Do"],
   ["#events", "Events"],
   ["#team", "Team"],
-  ["/ctf", "CTF"],
   ["#faq", "FAQ"],
+  ["/ctf", "CTF"],
+  ["/games", "Games"],
+  ["/pixel-wall", "Pixel wall"],
 ];
 
 /** Full footer for the landing page; its section links point at anchors on that page. */

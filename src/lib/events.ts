@@ -1,11 +1,17 @@
-import { DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
+import { CONTACT_EMAIL, DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
 
 export const CAMPUS = "Niagara College Welland Campus";
 export const CAMPUS_ADDRESS = "300 Woodlawn Rd, Welland, ON L3C 7L3";
 
 export type AgendaItem = { time: string; title: string; body?: string };
 
-export type EventLink = { label: string; href: string; note?: string };
+export type EventLink = {
+  label: string;
+  href: string;
+  note?: string;
+  /** Heading the link is listed under on the event page; ungrouped links go under "Links". */
+  group?: string;
+};
 
 export type ClubEvent = {
   /** Gives the event its own detail page at /events/[slug]. */
@@ -71,11 +77,11 @@ export const events: ClubEvent[] = [
       },
     ],
     links: [
-      { label: "Play the CTF", href: "/ctf", note: "Challenges, flags and the live leaderboard" },
-      { label: "Play Vault Crackers", href: "/games", note: "Team up on your phone and crack code puzzles" },
-      { label: "Register for the CTF", href: "/register?next=/ctf", note: "Takes a minute, do it before you arrive" },
-      { label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
-      { label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
+      { group: "Get ready", label: "Register for the CTF", href: "/register?next=/ctf", note: "Takes a minute, do it before you arrive" },
+      { group: "Play", label: "Play the CTF", href: "/ctf", note: "Challenges, flags and the live leaderboard" },
+      { group: "Play", label: "Play Vault Crackers", href: "/games", note: "Team up on your phone and crack code puzzles" },
+      { group: "Join the club", label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
+      { group: "Join the club", label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
     ],
   },
   {
@@ -133,27 +139,70 @@ export const events: ClubEvent[] = [
       },
     ],
     links: [
-      { label: "Open Scratch", href: "https://scratch.mit.edu", note: "Free and web-based, make an account before you arrive" },
-      { label: "Workshop package", href: "/scratch/package", note: "Download the example games and the block cheat sheet" },
-      { label: "Submit your project", href: "/scratch/submit", note: "Paste your Scratch share link to join the gallery" },
-      { label: "Scratch gallery", href: "/scratch", note: "Play what everyone built" },
-      { label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
-      { label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
+      { group: "Get ready", label: "Open Scratch", href: "https://scratch.mit.edu", note: "Free and web-based, make an account before you arrive" },
+      { group: "Workshop", label: "Workshop package", href: "/scratch/package", note: "Download the example games and the block cheat sheet" },
+      { group: "Workshop", label: "Submit your project", href: "/scratch/submit", note: "Paste your Scratch share link to join the gallery" },
+      { group: "Workshop", label: "Scratch gallery", href: "/scratch", note: "Play what everyone built" },
+      { group: "Join the club", label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
+      { group: "Join the club", label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
     ],
   },
   {
-    month: "Oct",
-    time: "Date & time TBA",
-    title: "Vibe Coding",
-    body: "Try AI-assisted coding in a relaxed setting and build a small personal project from scratch.",
-    kind: "Workshop",
-  },
-  {
     month: "Nov",
-    time: "Date & time TBA",
-    title: "Student Project & Startup Showcase",
-    body: "Present your project, startup or idea and get questions and feedback from fellow students.",
-    kind: "Showcase",
+    date: "Nov 13",
+    time: "Fri · 11:30 AM – 1:30 PM",
+    // Still EST (-05:00); daylight saving ended Nov 1.
+    start: "2026-11-13T11:30:00-05:00",
+    end: "2026-11-13T13:30:00-05:00",
+    place: "Room M215",
+    title: "Vibe Coding, Showcase & Portfolio Day",
+    body: "Three events in one afternoon. Vibe code a small project with AI, put your GitHub and portfolio online, then show off what you made to fellow students. No experience needed.",
+    kind: "Workshop",
+    slug: "vibe-coding",
+    agenda: [
+      {
+        time: "11:30 AM",
+        title: "Doors open & sign-in",
+        body: "Grab a seat, say hi to the exec team and get your laptop online. Free AI coding tools are all you need.",
+      },
+      {
+        time: "11:40 AM",
+        title: "Vibe coding 101",
+        body: "What vibe coding is, how to write a good prompt and how to steer an AI when it goes off track. Live demo from the exec team.",
+      },
+      {
+        time: "11:55 AM",
+        title: "Build your project",
+        body: "Pick an idea (a personal site, a small game, a tool you wish existed) and build it with AI. The exec team walks around to help you get unstuck.",
+      },
+      {
+        time: "12:35 PM",
+        title: "GitHub & portfolio workshop",
+        body: "Create a GitHub account, push your project and publish it as a simple online portfolio you can link on a resume.",
+      },
+      {
+        time: "1:05 PM",
+        title: "Project & Startup Showcase",
+        body: "Volunteers present their project, startup or idea on the projector and get questions and feedback from fellow students. Everyone cheers.",
+      },
+      {
+        time: "1:25 PM",
+        title: "Wrap-up",
+        body: "Next events, where to find us on Discord and how to pitch for the next showcase.",
+      },
+    ],
+    links: [
+      { group: "Get ready", label: "Create a GitHub account", href: "https://github.com/signup", note: "Free, do it before you arrive to save time" },
+      { group: "Get ready", label: "Pitch your project", href: `mailto:${CONTACT_EMAIL}?subject=Knights%20Hack%20Showcase`, note: "Want to present? Email us and we'll save you a spot" },
+      { group: "Free AI tools for students", label: "GitHub Student Developer Pack", href: "https://education.github.com/pack", note: "Verify with your college email. Includes free GitHub Copilot" },
+      { group: "Free AI tools for students", label: "Cursor for Students", href: "https://cursor.com/students", note: "Free Pro plan for verified students" },
+      { group: "Free AI tools for students", label: "Google Gemini for Students", href: "https://gemini.google/students/", note: "Free Google AI Pro plan with a student email" },
+      { group: "Free AI tools for students", label: "Perplexity for Students", href: "https://www.perplexity.ai/education", note: "Free Pro access for students" },
+      { group: "Free AI tools for students", label: "ChatGPT", href: "https://chatgpt.com", note: "The free plan is plenty for this workshop" },
+      { group: "Free AI tools for students", label: "Claude", href: "https://claude.ai", note: "The free plan is plenty for this workshop" },
+      { group: "Join the club", label: "Become a member", href: JOIN_FORM_URL, note: "The 2-minute club registration form" },
+      { group: "Join the club", label: "Join our Discord", href: DISCORD_URL, note: "Reminders, teammates and questions" },
+    ],
   },
   {
     month: "Nov",
@@ -161,13 +210,6 @@ export const events: ClubEvent[] = [
     title: "Build Something for Campus",
     body: "Brainstorm and prototype a small solution to a real student or campus problem, together.",
     kind: "Build",
-  },
-  {
-    month: "Dec",
-    time: "Date & time TBA",
-    title: "GitHub & Portfolio Workshop",
-    body: "Learn how to present your code and build an online portfolio that supports school and career goals.",
-    kind: "Workshop",
   },
   {
     month: "Dec",

@@ -6,10 +6,10 @@ import { DISCORD_URL, JOIN_FORM_URL } from "@/lib/links";
 import { icons } from "./ui";
 
 const links = [
+  { href: "#about", label: "About" },
   { href: "#events", label: "Events" },
-  { href: "/ctf", label: "CTF" },
-  { href: "/games", label: "Games" },
-  { href: "#pixel-wall", label: "Pixel Wall" },
+  { href: "#team", label: "Team" },
+  { href: "#faq", label: "FAQ" },
 ];
 
 /** `base` prefixes the section links (those starting with "#"), e.g. "/" so they point back to the landing page from subpages. */

@@ -46,3 +46,49 @@ src/
 
 Route-specific components live next to their routes in `_components/` folders
 (private folders, not routable).
+
+## Sponsor outreach (credits / tokens)
+
+Template for asking AI tool companies (Cursor, Base44, OpenAI hackathon support form) for extra
+credits for attendees. Fill in the `[brackets]` before sending.
+
+- Cursor: community@cursor.com or the credits request form on https://cursor.com/en-US/community
+- Base44: "Partner with us" on https://base44.com/highered
+- OpenAI: https://openai.com/form/hackathon-support (apply at least one month before the event)
+
+**Subject:** Helping non-tech students go from zero to hackathon: credit request for our Nov 13 vibe coding event
+
+> Hi [Cursor / Base44] team,
+>
+> I'm [Your name], [role] of Knights Hack Club, a student club at Niagara College's Welland campus,
+> run under the Niagara College Student Administrative Council (NCSAC).
+>
+> **Our purpose.** We help students who are new to tech, or who aren't in a tech program at all,
+> learn to program and bring their ideas to life. Many students on campus are curious about coding
+> and AI but have no idea where to start. We take them from zero, step by step:
+>
+> 1. **Learn to program:** beginner workshops start with Scratch's visual blocks, so no one needs
+>    prior experience. We've already run our club launch, a Scratch game workshop and a
+>    capture-the-flag contest this fall.
+> 2. **Manage your code:** we teach GitHub and how to publish a simple online portfolio.
+> 3. **Build with AI:** we show students how to use AI coding tools to turn an idea into a working project.
+> 4. **Show it off, then go live:** students present their projects at our showcases and apply
+>    everything at our end-of-term mini hackathon in December.
+>
+> **The event.** On Friday, Nov 13 (11:30 AM–1:30 PM, Room M215, Welland Campus) we're running Vibe
+> Coding, Showcase & Portfolio Day. In two hours, first-timers will build a small project with an AI
+> tool, put it on GitHub and present it to the group. We expect about [N] students.
+>
+> **Our ask.** This session is the step where beginners first build something real with AI, and
+> free-tier limits will run out partway through for a group this size. Our members are students who
+> can't easily pay for subscriptions. Could you provide extra credits or trial access for attendees?
+> In return, we'd gladly introduce [Cursor / Base44] to the group, share a link to your platform and
+> feature the projects students build in our Discord and newsletter. Many of these students will go
+> on to our December hackathon, so they would keep using the tools they learn here.
+>
+> Event page: [your site URL]/events/vibe-coding
+> Club contact: nankhbayar1@ncstudents.niagaracollege.ca
+>
+> Thank you for considering it,
+> [Your name]
+> [Role], Knights Hack Club · Niagara College

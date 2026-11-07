@@ -60,3 +60,33 @@ export function EventBanner({ event, href }: { event: ClubEvent; href: string })
     </Link>
   );
 }
+
+/** Small status tag for the schedule list: "Past", "In 6 days", "Date TBA". Worked out after hydration. */
+export function EventStatus({ event }: { event: ClubEvent }) {
+  const [label, setLabel] = useState<string | null>(event.end ? "" : "Date TBA");
+
+  useEffect(() => {
+    if (!event.start || !event.end) return;
+    const end = new Date(event.end).getTime();
+    const tick = () => {
+      const now = Date.now();
+      setLabel(now >= end ? "Past" : statusLabel(event, now));
+    };
+    tick();
+    const id = window.setInterval(tick, 60_000);
+    return () => window.clearInterval(id);
+  }, [event]);
+
+  if (!label) return null;
+  const tone =
+    label === "Past"
+      ? "bg-ink/5 text-ink/50"
+      : label === "Date TBA"
+        ? "bg-mist text-ink/60"
+        : "bg-knight-600 text-white";
+  return (
+    <span className={`inline-block rounded-full px-2.5 py-1 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider ${tone}`}>
+      {label}
+    </span>
+  );
+}

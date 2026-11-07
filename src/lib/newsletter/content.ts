@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { DISCORD_URL } from "@/lib/links";
 
 const text = (max: number) => z.string().trim().max(max);
 
@@ -54,15 +53,15 @@ export const sampleNewsletter: NewsletterContent = {
   ],
   soon: [
     {
-      tag: "Workshop dates",
-      title: "Scratch & Vibe Coding dates drop next",
-      body: "Rooms and times for our first two workshops are being locked in. Watch Discord for the announcement.",
-      href: DISCORD_URL,
-      cta: "Get notified on Discord",
+      tag: "Next event",
+      title: "Vibe Coding, Showcase & Portfolio Day: Fri, Nov 13",
+      body: "Room M215, 11:30 AM to 1:30 PM. Vibe code a project with AI, put it on GitHub and show it off. Details on the event page.",
+      href: "/events/vibe-coding",
+      cta: "See the plan",
     },
     {
       tag: "Showcase",
-      title: "Showcase sign-ups open in November",
+      title: "Want to present at the showcase?",
       body: "Building something, or sitting on a startup idea? You'll get a few minutes to show it off and get feedback from fellow students.",
     },
   ],

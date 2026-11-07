@@ -1,7 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
 
-export const TOTAL_SECTIONS = 9;
-
 /** Rounded full-width card that every landing-style page section sits in. */
 export const panel = "relative scroll-mt-24 overflow-clip rounded-[2rem] lg:rounded-[2.5rem]";
 
@@ -79,14 +77,6 @@ export function SectionBlock({
       </div>
       <div className="p-5 leading-relaxed">{children}</div>
     </div>
-  );
-}
-
-export function SectionCounter({ n, className = "" }: { n: number; className?: string }) {
-  return (
-    <p className={`font-mono text-xs font-medium tracking-wider ${className}`} aria-hidden>
-      {String(n).padStart(2, "0")} / {String(TOTAL_SECTIONS).padStart(2, "0")}
-    </p>
   );
 }
 
