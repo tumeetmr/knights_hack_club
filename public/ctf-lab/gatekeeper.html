@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><title>The Gatekeeper</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<style>body{font-family:system-ui,sans-serif;background:#0b1020;color:#fff;display:grid;place-items:center;min-height:100vh;margin:0;padding:24px 16px;box-sizing:border-box;text-align:center;line-height:1.5}main{max-width:480px;width:100%}input{font:inherit;font-size:16px;border:0;border-radius:999px;padding:14px 20px;min-height:48px;width:100%;box-sizing:border-box;text-align:center;margin-top:8px}button{font:inherit;font-weight:700;border:0;border-radius:999px;background:#fff;color:#0b1020;padding:14px 28px;min-height:48px;margin-top:12px;cursor:pointer}code{background:#ffffff1f;padding:2px 8px;border-radius:8px;word-break:break-all}.muted{color:#ffffff99;font-size:.9rem}#out{margin-top:16px}</style></head>
+<body><main>
+<h1>🧙 The Gatekeeper</h1>
+<p>"Say the secret word and I'll hand over the flag."</p>
+<p class="muted">The gatekeeper checks your answer right here in your browser. All of its thinking is in the page.</p>
+<input id="w" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="secret word">
+<button id="go">Speak</button>
+<div id="out"></div>
+</main>
+<script>
+// "Obfuscated" on purpose: it only looks scary. Read it slowly, one line at a time.
+var _k = [103,117,100,106,114,113,105,111,124];
+var _f = [47,58,26,21,10,15,2,51,13,12,23,62,20,0,27,20,15,28,59,30,20,12,10,19];
+function _s() { return _k.map(function (n) { return String.fromCharCode(n - 3); }).join(""); }
+function _d(word) {
+  return _f.map(function (n, i) { return String.fromCharCode(n ^ word.charCodeAt(i % word.length)); }).join("");
+}
+document.getElementById("go").onclick = function () {
+  var w = document.getElementById("w").value.trim();
+  var o = document.getElementById("out");
+  if (w === _s()) {
+    var f = _d(w);
+    o.innerHTML = "<p>The gates swing open!</p><p><code>" + f + "</code></p><button onclick=\"navigator.clipboard.writeText('" + f + "').then(()=>this.textContent='Copied ✓')\">Copy flag</button>";
+  } else {
+    o.textContent = "\"That is not the word.\"";
+  }
+};
+</script>
+</body></html>

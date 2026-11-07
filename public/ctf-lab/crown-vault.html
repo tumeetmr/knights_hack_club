@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><title>The Crown Vault</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<style>body{font-family:system-ui,sans-serif;background:#0b1020;color:#fff;display:grid;place-items:center;min-height:100vh;margin:0;padding:24px 16px;box-sizing:border-box;text-align:center;line-height:1.5}main{max-width:480px;width:100%}code{background:#ffffff1f;padding:2px 8px;border-radius:8px;word-break:break-all}button{font:inherit;font-weight:700;border:0;border-radius:999px;background:#fff;color:#0b1020;padding:14px 28px;min-height:48px;margin-top:12px;cursor:pointer}.muted{color:#ffffff99;font-size:.9rem}</style></head>
+<body><main>
+<h1>👑 The Crown Vault</h1>
+<p id="status">🔒 Locked.</p>
+<p class="muted">This page has no buttons and no text boxes. Pages like this are controlled by code, and you can talk to that code directly. Developers have a place for that.</p>
+<div id="prize"></div>
+</main>
+<script>
+(function () {
+  // The vault generates its key when you first arrive and keeps it in your browser.
+  try { if (!localStorage.getItem("royal_key")) localStorage.setItem("royal_key", "ember-falcon-77"); } catch (e) {}
+
+  // Stored backwards so it isn't just sitting there. The vault un-reverses it when you open it.
+  var sealed = "}tluav_nworc_eht_denepo{HK";
+
+  window.crown = {
+    open: function (key) {
+      if (key !== localStorage.getItem("royal_key")) {
+        console.warn("The vault stays shut. That's not the right key.");
+        return "denied";
+      }
+      var flag = sealed.split("").reverse().join("");
+      document.getElementById("status").textContent = "🔓 The vault is open!";
+      document.getElementById("prize").innerHTML = "<p><code>" + flag + "</code></p><button onclick=\"navigator.clipboard.writeText('" + flag + "').then(()=>this.textContent='Copied ✓')\">Copy flag</button>";
+      return "granted";
+    }
+  };
+
+  console.log("%cWelcome, curious knight.", "font-size:18px;font-weight:bold;color:#fb923c");
+  console.log("This vault listens for one command: crown.open(key)");
+  console.log("The key is something this site has stored in your browser. Look in the Application (Chrome) or Storage (Firefox) tab.");
+})();
+</script>
+</body></html>

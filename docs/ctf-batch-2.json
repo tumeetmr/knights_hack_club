@@ -1,0 +1,111 @@
+[
+  {
+    "title": "Cookie Jar",
+    "category": "Web",
+    "points": 150,
+    "description": "The royal guard hands you a pass and says only the king may enter the throne room. The pass is stored in your browser. Could you... become the king?",
+    "hint": "Open DevTools > Application (Chrome) or Storage (Firefox) > Cookies. The value looks like gibberish, but it ends in = and uses only letters and numbers. That's Base64. Decode it, change one word, encode it again, and paste it back.",
+    "url": "/ctf-lab/cookie-jar",
+    "location": "Cookie 'knight_pass' (Base64 JSON). Set role to king. Flag shown on page.",
+    "flag": "KH{cookies_are_not_secrets}",
+    "published": false
+  },
+  {
+    "title": "Blink and You'll Miss It",
+    "category": "Web",
+    "points": 200,
+    "description": "This page sends you to the lobby so fast you can't see anything else. The lobby is empty. But something happened on the way there.",
+    "hint": "Open DevTools > Network and tick 'Preserve log' BEFORE you load the page. Click the first request and read its Response Headers. Terminal users: curl -i does the same.",
+    "url": "/ctf-lab/blink",
+    "location": "x-secret-flag response header on the 302 from /ctf-lab/blink",
+    "flag": "KH{redirects_hide_things}",
+    "published": false
+  },
+  {
+    "title": "Russian Dolls",
+    "category": "Crypto",
+    "points": 250,
+    "description": "A message has been wrapped in layer after layer of encoding, like nesting dolls. Unwrap them all.\n\n5746563765573573636d566d5832686a596d466665573573636d566d66513d3d\n\nNo password needed, just patience.",
+    "hint": "Each layer looks different. Only 0-9 and a-f? That's hex (try CyberChef's 'From Hex'). Letters and numbers ending in = ? Base64. Once you have something that almost looks like a flag but the letters are off, it's ROT13.",
+    "location": "hex > Base64 > ROT13 > flag",
+    "flag": "KH{layers_upon_layers}",
+    "published": false
+  },
+  {
+    "title": "The Gatekeeper",
+    "category": "Reverse",
+    "points": 250,
+    "description": "The gatekeeper will hand over the flag if you say the secret word. It checks your answer inside your own browser, so everything it knows is on your screen. You just have to read its mind.",
+    "hint": "Right-click > View Page Source and scroll to the <script>. Find the function that builds the secret word: each number has 3 taken away before it becomes a letter. 'String.fromCharCode' turns a number into a letter, and you can run it in the Console.",
+    "url": "/ctf-lab/gatekeeper.html",
+    "location": "Password 'dragonfly' (char codes +3 in the script). Flag is XOR-encoded with the password.",
+    "flag": "KH{read_the_source_luke}",
+    "published": false
+  },
+  {
+    "title": "Knight Login",
+    "category": "Web",
+    "points": 300,
+    "description": "The staff portal checks your name and password against its database. The page even shows you the exact question it asks the database. You don't have the password. But what you type goes straight into that question...",
+    "hint": "The text in the boxes is pasted between single quotes in the query. What if your text contained a single quote to end the string early, then added something that is always true, like  OR 1=1  ? In SQL, -- starts a comment that ignores the rest of the line.",
+    "url": "/ctf-lab/knight-login",
+    "location": "Simulated SQL injection. e.g. password: ' OR '1'='1  or  username: admin'--",
+    "flag": "KH{quotes_break_queries}",
+    "published": false
+  },
+  {
+    "title": "Night Watch",
+    "category": "Forensics",
+    "points": 250,
+    "description": "Someone broke into the club's admin panel last night, and the web server wrote down everything it saw. Somewhere in these 400 lines is the attacker. Find who got in, then follow what they did next.\n\nOne clue: a real attacker needs many tries before they succeed.",
+    "hint": "Each line starts with an IP address. Use Ctrl/Cmd+F for 'admin/login' and look for an IP that appears again and again with status 401 (failed), followed by a 302 (success). Then search for that IP and read everything it did after getting in. Characters like %7B are URL-encoded; %7B is { and %7D is }.",
+    "url": "/ctf-lab/access.log",
+    "location": "185.220.101.47 brute-forces /admin/login then requests /admin/export?token=KH%7B...%7D",
+    "flag": "KH{secrets_end_up_in_logs}",
+    "published": false
+  },
+  {
+    "title": "Knight-Bot",
+    "category": "AI",
+    "points": 250,
+    "description": "Meet Knight-Bot, the club's help-desk assistant. It's been told to guard a secret and never share it. Real AI assistants are controlled by hidden instructions written in plain English, and you talk to them in plain English too. Can you get it to break its rules?",
+    "hint": "Asking for the secret directly won't work. Try telling it to ignore or forget what it was told, ask it to pretend to be someone else, or ask it to repeat its instructions. This is called prompt injection and it's a real problem for AI products.",
+    "url": "/ctf-lab/knightbot",
+    "location": "Simulated chatbot. Any classic prompt-injection phrasing works.",
+    "flag": "KH{ignore_previous_instructions}",
+    "published": false
+  },
+  {
+    "title": "Spot the Phish",
+    "category": "Security",
+    "points": 200,
+    "description": "Four emails are sitting in a student's inbox. Exactly one is a phishing attempt. Report it to the IT team. Careful: not every urgent email is fake, and not every calm one is real.",
+    "hint": "Ignore the tone. Look at where the sender's address and the link actually go. The real part of a web address is the end of the domain, just before the first single slash. Read it from right to left.",
+    "url": "/ctf-lab/inbox",
+    "location": "Third email: northgate.edu.share-docs.com is really share-docs.com",
+    "flag": "KH{read_domains_right_to_left}",
+    "published": false
+  },
+  {
+    "title": "Oops, I Committed It",
+    "category": "Forensics",
+    "points": 250,
+    "description": "A teammate accidentally put a secret API key into the Weather Bot's code, then deleted it in a later commit and said 'all clean!'. But version control remembers everything. Dig it back up.",
+    "hint": "Read the commit messages. One of them was the oops, and one was the cleanup. Open the one that ADDED the config file. The key is encoded with Base64 (it ends in = or just looks like random letters and numbers), so decode it.",
+    "url": "/ctf-lab/oops-repo",
+    "location": "Commit c3d82e9, API_KEY value is Base64 of the flag",
+    "flag": "KH{secrets_live_in_history}",
+    "published": false
+  },
+  {
+    "title": "The Crown Vault",
+    "category": "Web",
+    "points": 300,
+    "description": "The vault page has no buttons and no text boxes, just a locked door. Every web page is run by code, and your browser lets you talk to that code directly. The vault is listening, if you know how to speak to it.",
+    "hint": "Press F12 and open the Console tab. The page left you a message. It says what command to type and where to find the key your browser is holding for this site (look in Application or Storage > Local Storage). Then type the command with the key in quotes.",
+    "url": "/ctf-lab/crown-vault.html",
+    "location": "Console: crown.open(localStorage.getItem('royal_key')). Key is 'ember-falcon-77'.",
+    "flag": "KH{opened_the_crown_vault}",
+    "published": false
+  }
+]
