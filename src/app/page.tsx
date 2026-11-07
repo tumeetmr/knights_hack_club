@@ -355,10 +355,10 @@ export default function Home() {
 
         {/* FAQ */}
         <section id="faq" className={`${panel} bg-paper`}>
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[22rem_1fr] lg:gap-20">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[minmax(24rem,32rem)_1fr] lg:gap-16">
             <div>
               <p className="font-mono text-xs font-medium tracking-wider text-knight-600">{"> faq"}</p>
-              <Headline lines={["Good", "questions."]} className="mt-6 text-[clamp(3.5rem,9vw,6.5rem)]" />
+              <Headline lines={["Good", "questions."]} className="mt-6 text-[clamp(3.5rem,8vw,6rem)]" />
             </div>
 
             <div className="max-w-4xl">
