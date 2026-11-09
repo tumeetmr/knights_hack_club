@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "CTF Admin | Knights Hack",
+  title: "Admin | Knights Hack",
   robots: { index: false, follow: false },
 };
 

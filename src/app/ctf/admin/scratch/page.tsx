@@ -6,7 +6,7 @@ import { listAllProjects } from "@/lib/scratch/queries";
 import { ConfirmButton } from "../_components/confirm-button";
 import { shortDate } from "../_components/format";
 import { AdminShell, PageHeader } from "../_components/shell";
-import { btnDanger, btnGhost, btnPrimary, btnSmall, card } from "../_components/styles";
+import { badgeOk, badgeWarn, btnDanger, btnGhost, btnPrimary, btnSmall, card, table, tableWrap, td, th, toolbar } from "../_components/styles";
 
 export default async function ScratchAdminPage() {
   await requireAdmin();
@@ -32,50 +32,64 @@ export default async function ScratchAdminPage() {
         }
       />
 
-      <section className={`${card} !p-0`}>
-        <p className="border-b border-ink/10 px-5 py-2.5 font-mono text-xs text-ink/55">
-          {projects.length} submitted · {waiting} waiting
-        </p>
+      <section className={`${card} !p-0 overflow-hidden`}>
+        <div className={toolbar}>
+          <p className="font-mono text-xs text-ink/55">{projects.length} submitted · {waiting} waiting</p>
+        </div>
         {projects.length === 0 ? (
-          <p className="px-5 py-12 text-center text-ink/60">Nothing submitted yet.</p>
+          <p className="border-t border-ink/10 px-5 py-12 text-center text-ink/60">Nothing submitted yet.</p>
         ) : (
-          <ul className="divide-y divide-ink/10">
-            {projects.map((p) => (
-              <li key={p.id} className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3.5 sm:px-5">
-                <div className="min-w-0 flex-1 basis-56">
-                  <p className="truncate font-bold">
-                    {p.title}
-                    {!p.approved && (
-                      <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 align-middle font-mono text-[0.625rem] font-bold uppercase text-amber-900">
-                        Waiting
-                      </span>
-                    )}
-                  </p>
-                  <p className="truncate text-sm text-ink/60">
-                    {p.maker}
-                    {p.scratchAuthor && ` · Scratch: ${p.scratchAuthor}`} · {shortDate(p.createdAt)}
-                  </p>
-                  {p.description && <p className="truncate text-sm text-ink/50">{p.description}</p>}
-                </div>
-                <a href={scratchUrl(p.scratchId)} target="_blank" rel="noreferrer" className={`${btnGhost} ${btnSmall}`}>
-                  Open ↗
-                </a>
-                <form action={setProjectApprovedAction}>
-                  <input type="hidden" name="id" value={p.id} />
-                  <input type="hidden" name="approved" value={String(!p.approved)} />
-                  <button type="submit" className={`${p.approved ? btnGhost : btnPrimary} ${btnSmall}`}>
-                    {p.approved ? "Hide" : "Approve"}
-                  </button>
-                </form>
-                <form action={deleteProjectAction}>
-                  <input type="hidden" name="id" value={p.id} />
-                  <ConfirmButton message={`Delete “${p.title}”?`} className={`${btnDanger} ${btnSmall}`}>
-                    Delete
-                  </ConfirmButton>
-                </form>
-              </li>
-            ))}
-          </ul>
+          <div className={tableWrap}>
+            <table className={`${table} min-w-[48rem]`}>
+              <thead>
+                <tr>
+                  <th className={th}>Project</th>
+                  <th className={th}>Maker</th>
+                  <th className={th}>Status</th>
+                  <th className={th}>Submitted</th>
+                  <th className={th}><span className="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {projects.map((p) => (
+                  <tr key={p.id} className="hover:bg-mist/40">
+                    <td className={`${td} max-w-64`}>
+                      <p className="truncate font-bold">{p.title}</p>
+                      {p.description && <p className="truncate text-ink/55">{p.description}</p>}
+                    </td>
+                    <td className={td}>
+                      {p.maker}
+                      {p.scratchAuthor && <p className="text-ink/55">Scratch: {p.scratchAuthor}</p>}
+                    </td>
+                    <td className={td}>
+                      <span className={p.approved ? badgeOk : badgeWarn}>{p.approved ? "Approved" : "Waiting"}</span>
+                    </td>
+                    <td className={`${td} whitespace-nowrap font-mono text-ink/70`}>{shortDate(p.createdAt)}</td>
+                    <td className={td}>
+                      <div className="flex justify-end gap-2">
+                        <a href={scratchUrl(p.scratchId)} target="_blank" rel="noreferrer" className={`${btnGhost} ${btnSmall}`}>
+                          Open ↗
+                        </a>
+                        <form action={setProjectApprovedAction}>
+                          <input type="hidden" name="id" value={p.id} />
+                          <input type="hidden" name="approved" value={String(!p.approved)} />
+                          <button type="submit" className={`${p.approved ? btnGhost : btnPrimary} ${btnSmall}`}>
+                            {p.approved ? "Hide" : "Approve"}
+                          </button>
+                        </form>
+                        <form action={deleteProjectAction}>
+                          <input type="hidden" name="id" value={p.id} />
+                          <ConfirmButton message={`Delete “${p.title}”?`} className={`${btnDanger} ${btnSmall}`}>
+                            Delete
+                          </ConfirmButton>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
     </AdminShell>

@@ -15,7 +15,7 @@ import { AutoRefresh } from "../(player)/_components/auto-refresh";
 import { timeAgo } from "./_components/format";
 import { AdminShell, PageHeader } from "./_components/shell";
 import { describeStatus } from "./_components/status";
-import { btnDanger, btnGhost, btnPrimary, card } from "./_components/styles";
+import { btnDanger, btnGhost, btnPrimary, btnSmall, card } from "./_components/styles";
 
 export default async function AdminOverview() {
   await requireAdmin();
@@ -35,7 +35,16 @@ export default async function AdminOverview() {
   return (
     <AdminShell>
       {status === "live" && <AutoRefresh every={30_000} />}
-      <PageHeader title="Overview" />
+      <PageHeader
+        title="Overview"
+        description="How the CTF is doing right now."
+        actions={
+          <>
+            <Link href="/ctf/admin/challenges/new" className={`${btnPrimary} ${btnSmall}`}>+ Add challenge</Link>
+            <Link href="/ctf/admin/players" className={`${btnGhost} ${btnSmall}`}>Players</Link>
+          </>
+        }
+      />
 
       {/* Status: the one thing an organizer needs to know at a glance. */}
       <section className={`${card} flex flex-wrap items-center justify-between gap-5`}>
