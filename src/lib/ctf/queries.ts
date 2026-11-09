@@ -126,7 +126,7 @@ export type LeaderboardRow = {
   lastSolveAt: Date;
 };
 
-/** Ranked by current score, then by who reached it first. Players with no solves are left off. */
+/** Ranked by current score, then by who reached it first. Players with no solves, and admins, are left off. */
 export async function getLeaderboard(limit = 100): Promise<LeaderboardRow[]> {
   const db = await getDb();
   const score = sql<number>`sum(${challengeValue})::int`;
@@ -142,6 +142,7 @@ export async function getLeaderboard(limit = 100): Promise<LeaderboardRow[]> {
     .from(solves)
     .innerJoin(players, eq(players.id, solves.playerId))
     .innerJoin(challenges, eq(challenges.id, solves.challengeId))
+    .where(eq(players.isAdmin, false))
     .groupBy(players.id, players.name)
     .orderBy(desc(score), asc(last), asc(players.id))
     .limit(limit);
@@ -153,7 +154,10 @@ export async function getPlayerRank(playerId: number): Promise<number | null> {
   const rows = await db.execute<{ rank: number }>(sql`
     with t as (
       select ${solves.playerId} as player_id, sum(${challengeValue}) as score, max(${solves.solvedAt}) as last
-      from ${solves} join ${challenges} on ${challenges.id} = ${solves.challengeId}
+      from ${solves}
+      join ${challenges} on ${challenges.id} = ${solves.challengeId}
+      join ${players} on ${players.id} = ${solves.playerId}
+      where ${players.isAdmin} = false
       group by ${solves.playerId}
     )
     select (
