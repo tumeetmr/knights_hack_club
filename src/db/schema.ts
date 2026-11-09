@@ -164,3 +164,24 @@ export const scratchProjects = pgTable(
     index("scratch_projects_approved_idx").on(t.approved, t.createdAt),
   ],
 );
+
+/** Final hackathon sign-ups, one per student account. Name and email come from the account. */
+export const hackathonRegistrations = pgTable(
+  "hackathon_registrations",
+  {
+    id: serial("id").primaryKey(),
+    playerId: integer("player_id")
+      .notNull()
+      .references(() => players.id, { onDelete: "cascade" }),
+    program: text("program").notNull(),
+    year: text("year").notNull(),
+    /** One of EXPERIENCE in lib/hackathon/config. */
+    experience: text("experience").notNull(),
+    /** Ids from INTERESTS in lib/hackathon/config. */
+    interests: jsonb("interests").$type<string[]>().notNull().default([]),
+    dietary: text("dietary").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("hackathon_registrations_player_idx").on(t.playerId)],
+);

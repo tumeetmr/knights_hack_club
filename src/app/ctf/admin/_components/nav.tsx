@@ -13,6 +13,7 @@ const tabs = [
   { href: "/ctf/admin/players", label: "Players", match: (p: string) => p.startsWith("/ctf/admin/players") },
   { href: "/ctf/admin/newsletter", label: "Newsletter", match: (p: string) => p.startsWith("/ctf/admin/newsletter") },
   { href: "/ctf/admin/scratch", label: "Scratch", match: (p: string) => p.startsWith("/ctf/admin/scratch") },
+  { href: "/ctf/admin/hackathon", label: "Hackathon", match: (p: string) => p.startsWith("/ctf/admin/hackathon") },
   {
     href: "/ctf/admin/availability",
     label: "Availability",

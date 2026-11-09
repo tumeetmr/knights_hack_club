@@ -64,6 +64,13 @@
       "when": 1793633280568,
       "tag": "0008_scratch_projects",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794257782449,
+      "tag": "0009_hackathon_registrations",
+      "breakpoints": true
     }
   ]
 }

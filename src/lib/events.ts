@@ -16,6 +16,8 @@ export type EventLink = {
 export type ClubEvent = {
   /** Gives the event its own detail page at /events/[slug]. */
   slug?: string;
+  /** Custom page for events that need more than the standard detail page, e.g. /hackathon. */
+  path?: string;
   month: string;
   /** Set once the exact day is confirmed; otherwise the card shows the month. */
   date?: string;
@@ -206,24 +208,14 @@ export const events: ClubEvent[] = [
   },
   {
     month: "Nov",
-    time: "Date & time TBA",
-    title: "Build Something for Campus",
-    body: "Brainstorm and prototype a small solution to a real student or campus problem, together.",
-    kind: "Build",
-  },
-  {
-    month: "Dec",
-    time: "Date & time TBA",
-    title: "Project & Startup Showcase #2",
-    body: "Round two: share what you've built and connect with students who have different skills.",
-    kind: "Showcase",
-  },
-  {
-    month: "Dec",
-    time: "Date & time TBA",
-    title: "Mini Hackathon: End of Term",
-    body: "Form a team, apply everything you learned and ship a small project against the clock.",
+    date: "Nov 30",
+    time: "Mon · 8:30 AM – 9:30 PM",
+    start: "2026-11-30T08:30:00-05:00",
+    end: "2026-11-30T21:30:00-05:00",
+    title: "Knights Hack Final Hackathon",
+    body: "Our last event of the term, with everything in one: build something for campus, ship it against the clock, then show it off at the closing showcase. Apply by Nov 20 to save your spot.",
     kind: "Hackathon",
+    path: "/hackathon",
   },
 ];
 
@@ -232,11 +224,11 @@ export const scheduled = events.filter(
   (e): e is ClubEvent & { start: string; end: string } => Boolean(e.start && e.end),
 );
 
-export const eventPath = (e: ClubEvent) => (e.slug ? `/events/${e.slug}` : undefined);
+export const eventPath = (e: ClubEvent) => e.path ?? (e.slug ? `/events/${e.slug}` : undefined);
 
 /** The next event with its own page that hasn't finished yet, for the landing banner. */
 export const upcomingEvent = (now = Date.now()) =>
-  events.find((e) => e.slug && (!e.end || new Date(e.end).getTime() > now));
+  events.find((e) => eventPath(e) && (!e.end || new Date(e.end).getTime() > now));
 
 /** UTC timestamp in iCalendar / Google Calendar form, e.g. 20261008T180000Z. */
 export const calStamp = (iso: string) =>

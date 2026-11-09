@@ -271,3 +271,9 @@ body {
     transition: none;
   }
 }
+
+/* Form screens slide up as each question appears. */
+@keyframes step-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
