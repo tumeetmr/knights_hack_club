@@ -13,7 +13,7 @@ export async function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh bg-mist">
       <header className="sticky top-0 z-20 border-b border-ink/10 bg-paper/95 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="flex h-16 items-center justify-between gap-3">
             <Link href="/ctf/admin" className="flex items-center gap-2.5">
               <Image src="/logo-light.png" alt="" width={43} height={40} className="h-9 w-auto shrink-0" />
@@ -40,7 +40,7 @@ export async function AdminShell({ children }: { children: ReactNode }) {
           {signedIn && <AdminNav />}
         </div>
       </header>
-      <main className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-6 pb-16 sm:px-6 sm:py-8">{children}</main>
+      <main className="mx-auto flex max-w-5xl flex-col gap-5 px-4 py-6 pb-16 sm:px-6 sm:py-8">{children}</main>
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function PageHeader({
             ← {back.label}
           </Link>
         )}
-        <h1 className="headline text-4xl sm:text-5xl">{title}</h1>
+        <h1 className="headline text-3xl sm:text-4xl">{title}</h1>
         {description && <p className="mt-2 max-w-2xl text-ink/60">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}

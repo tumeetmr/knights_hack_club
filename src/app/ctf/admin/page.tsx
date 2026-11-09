@@ -15,7 +15,7 @@ import { AutoRefresh } from "../(player)/_components/auto-refresh";
 import { timeAgo } from "./_components/format";
 import { AdminShell, PageHeader } from "./_components/shell";
 import { describeStatus } from "./_components/status";
-import { btnDanger, btnGhost, btnPrimary, btnSmall, card } from "./_components/styles";
+import { btnDanger, btnGhost, btnPrimary, card } from "./_components/styles";
 
 export default async function AdminOverview() {
   await requireAdmin();
@@ -31,12 +31,11 @@ export default async function AdminOverview() {
   const status = contestStatus(contest);
   const info = describeStatus(status, contest);
   const published = list.filter((c) => c.published);
-  const livePoints = published.reduce((sum, c) => sum + c.points, 0);
 
   return (
     <AdminShell>
       {status === "live" && <AutoRefresh every={30_000} />}
-      <PageHeader title="Overview" description="How the CTF is going right now." />
+      <PageHeader title="Overview" />
 
       {/* Status: the one thing an organizer needs to know at a glance. */}
       <section className={`${card} flex flex-wrap items-center justify-between gap-5`}>
@@ -75,11 +74,10 @@ export default async function AdminOverview() {
         </p>
       )}
 
-      <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Stat label="Players registered" value={players} />
         <Stat label="Flags captured" value={solveTotal} />
         <Stat label="Challenges live" value={published.length} sub={`of ${list.length}`} />
-        <Stat label="Points available" value={livePoints} />
       </dl>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -125,14 +123,6 @@ export default async function AdminOverview() {
         </Panel>
       </div>
 
-      <section className={`${card} flex flex-wrap items-center justify-between gap-3`}>
-        <p className="font-bold">Quick actions</p>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/ctf/admin/challenges/new" className={`${btnPrimary} ${btnSmall}`}>+ Add challenge</Link>
-          <Link href="/ctf/admin/players" className={`${btnGhost} ${btnSmall}`}>Reset a password</Link>
-          <a href="/ctf/admin/export" className={`${btnGhost} ${btnSmall}`}>Download backup</a>
-        </div>
-      </section>
     </AdminShell>
   );
 }
@@ -142,7 +132,7 @@ function Stat({ label, value, sub }: { label: string; value: number; sub?: strin
     <div className="rounded-2xl bg-paper p-4 ring-1 ring-ink/10 sm:p-5">
       <dt className="font-mono text-xs uppercase tracking-wider text-ink/55">{label}</dt>
       <dd className="mt-1 flex items-baseline gap-1.5">
-        <span className="headline text-5xl tabular-nums">{value}</span>
+        <span className="headline text-4xl tabular-nums">{value}</span>
         {sub && <span className="font-mono text-sm text-ink/50">{sub}</span>}
       </dd>
     </div>
