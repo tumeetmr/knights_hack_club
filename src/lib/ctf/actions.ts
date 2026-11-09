@@ -1,6 +1,5 @@
 "use server";
 
-import { createHash, timingSafeEqual } from "node:crypto";
 import { asc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -11,38 +10,11 @@ import { fromLocalInput } from "./contest";
 import { generateFlag } from "./flag";
 import { hashPassword } from "@/lib/auth/password";
 import { rawValues, toId, type FormState } from "@/lib/form";
-import { clearAttempts, clientIp, tooMany } from "@/lib/rate-limit";
-import { createAdminSession, deleteAdminSession, requireAdmin } from "./session";
+import { clearAttempts } from "@/lib/rate-limit";
+import { requireAdmin } from "./session";
 
 // Every admin tab shows contest and challenge data, so refresh them all.
 const refresh = () => revalidatePath("/ctf/admin", "layout");
-
-// --- Sign in / out -------------------------------------------------------
-
-const digest = (s: string) => createHash("sha256").update(s).digest();
-
-export async function loginAction(_prev: FormState, fd: FormData): Promise<FormState> {
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) return { error: "ADMIN_PASSWORD is not configured on the server." };
-
-  const key = `admin:${await clientIp()}`;
-  if (tooMany(key, 8, 600_000)) return { error: "Too many attempts. Try again in a few minutes." };
-
-  const given = String(fd.get("password") ?? "");
-  if (!timingSafeEqual(digest(given), digest(expected))) {
-    await new Promise((r) => setTimeout(r, 700));
-    return { error: "Wrong password." };
-  }
-
-  clearAttempts(key);
-  await createAdminSession();
-  redirect("/ctf/admin");
-}
-
-export async function logoutAction() {
-  await deleteAdminSession();
-  redirect("/ctf/admin/login");
-}
 
 // --- Contest settings ----------------------------------------------------
 

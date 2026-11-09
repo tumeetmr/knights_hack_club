@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { logoutAction } from "@/lib/ctf/actions";
+import { logoutAction } from "@/lib/auth/actions";
 import { isAdmin } from "@/lib/ctf/session";
 import { AdminNav } from "./nav";
 import { btnGhost, btnSmall } from "./styles";

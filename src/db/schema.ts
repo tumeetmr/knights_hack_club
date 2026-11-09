@@ -48,6 +48,8 @@ export const players = pgTable(
     unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
     /** Last password change or reset. Sessions signed before it are rejected, signing out other devices. */
     passwordChangedAt: timestamp("password_changed_at", { withTimezone: true }),
+    /** Grants access to /ctf/admin. Set by hand in the database. */
+    isAdmin: boolean("is_admin").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
