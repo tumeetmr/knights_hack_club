@@ -13,6 +13,17 @@ export type EventLink = {
   group?: string;
 };
 
+export type Sponsor = {
+  name: string;
+  href: string;
+  /** Logo under /public, e.g. /sponsors/lovable.svg. */
+  logo?: string;
+  /** What they're giving the event, shown under the name. */
+  blurb: string;
+  /** Short call to action on the card, e.g. "Ask us for the code on the day". */
+  perk?: string;
+};
+
 export type ClubEvent = {
   /** Gives the event its own detail page at /events/[slug]. */
   slug?: string;
@@ -32,6 +43,7 @@ export type ClubEvent = {
   kind: string;
   agenda?: AgendaItem[];
   links?: EventLink[];
+  sponsors?: Sponsor[];
 };
 
 export const events: ClubEvent[] = [
@@ -161,6 +173,16 @@ export const events: ClubEvent[] = [
     body: "Three events in one afternoon. Vibe code a small project with AI, put your GitHub and portfolio online, then show off what you made to fellow students. No experience needed.",
     kind: "Workshop",
     slug: "vibe-coding",
+    sponsors: [
+      {
+        name: "Lovable",
+        logo: "/sponsors/lovable.svg",
+        href: "https://lovable.dev",
+        blurb: "The AI app builder. Describe what you want and Lovable builds it, no setup needed.",
+        // The discount code is for attendees only, so it's handed out at the event, never published here.
+        perk: "Attendees get free Lovable Pro for the workshop. Ask the exec team for the code on the day.",
+      },
+    ],
     agenda: [
       {
         time: "11:30 AM",

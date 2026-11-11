@@ -71,7 +71,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
   const event = findEvent((await params).slug);
   if (!event) notFound();
 
-  const { agenda = [], links = [] } = event;
+  const { agenda = [], links = [], sponsors = [] } = event;
   const groups = groupLinks(links);
 
   const facts = [
@@ -198,6 +198,50 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
                   </div>
                 </aside>
               )}
+            </div>
+          </section>
+        )}
+
+        {/* Sponsors */}
+        {sponsors.length > 0 && (
+          <section id="sponsors" className={`${panel} bg-white`}>
+            <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                {sponsors.length > 1 ? "Sponsors" : "Sponsor"}
+              </h2>
+              <p className="mt-1 text-ink/60">This event is made possible by the people below. Thank you!</p>
+
+              <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {sponsors.map((s, i) => (
+                  <li key={s.name} data-reveal="up" style={{ "--d": `${i * 50}ms` } as CSSProperties}>
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex h-full flex-col rounded-2xl bg-paper p-5 ring-1 ring-ink/10 transition hover:ring-knight-600 sm:p-6"
+                    >
+                      <span className="flex items-center justify-between gap-3">
+                        <span className="flex min-w-0 items-center gap-3">
+                          {s.logo && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={s.logo} alt="" className="size-10 shrink-0" />
+                          )}
+                          <span className="text-2xl font-bold tracking-tight">{s.name}</span>
+                        </span>
+                        <span className="text-lg text-knight-600 transition group-hover:translate-x-0.5" aria-hidden>
+                          ↗
+                        </span>
+                      </span>
+                      <span className="mt-2 text-ink/70">{s.blurb}</span>
+                      {s.perk && (
+                        <span className="mt-4 rounded-xl bg-knight-50 px-3 py-2 text-sm font-semibold text-knight-600">
+                          {s.perk}
+                        </span>
+                      )}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </section>
         )}
