@@ -216,6 +216,7 @@ export const events: ClubEvent[] = [
       },
     ],
     links: [
+      { group: "Workshop resources", label: "AI Prompt Toolkit (PDF)", href: "/vibe-code-workshop/ai-prompt-toolkit.pdf", note: "Prompt templates and tips to use during the workshop" },
       { group: "Get ready", label: "Create a GitHub account", href: "https://github.com/signup", note: "Free, do it before you arrive to save time" },
       { group: "Get ready", label: "Pitch your project", href: `mailto:${CONTACT_EMAIL}?subject=Knights%20Hack%20Showcase`, note: "Want to present? Email us and we'll save you a spot" },
       { group: "Free AI tools for students", label: "GitHub Student Developer Pack", href: "https://education.github.com/pack", note: "Verify with your college email. Includes free GitHub Copilot" },

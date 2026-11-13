@@ -38,7 +38,8 @@ function groupLinks(links: EventLink[]) {
 }
 
 function ResourceLink({ link }: { link: EventLink }) {
-  const internal = link.href.startsWith("/");
+  // Files under /public (PDFs) open in a new tab like external links.
+  const internal = link.href.startsWith("/") && !link.href.endsWith(".pdf");
   const body = (
     <>
       <span className="min-w-0">
