@@ -7,6 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import { Headline, RollLink, icons, panel } from "@/components/ui";
 import { CAMPUS, CAMPUS_ADDRESS } from "@/lib/events";
 import { DISCORD_URL } from "@/lib/links";
+import { getStudent } from "@/lib/auth/session";
+import { getRegistration } from "@/lib/hackathon/queries";
 import { DEADLINE_LABEL, EVENT_DATE, REGISTER_PATH } from "@/lib/hackathon/config";
 
 const title = "Final Hackathon | Knights Hack Club";
@@ -46,7 +48,9 @@ const faqs = [
   { q: "When is it?", a: `${EVENT_DATE}. Applications close ${DEADLINE_LABEL}. The room is emailed to everyone who registered.` },
 ];
 
-export default function HackathonPage() {
+export default async function HackathonPage() {
+  const student = await getStudent();
+  const registered = student ? !!(await getRegistration(student.id)) : false;
   return (
     <>
       <SiteHeader base="/" />
@@ -71,7 +75,9 @@ export default function HackathonPage() {
               club. Beginners welcome.
             </p>
             <div className="rise mt-7 flex flex-wrap gap-3" style={{ "--d": "500ms" } as CSSProperties}>
-              <RollLink href={REGISTER_PATH} className="bg-white text-ink hover:bg-knight-600 hover:text-white">Register now</RollLink>
+              <RollLink href={REGISTER_PATH} className="bg-white text-ink hover:bg-knight-600 hover:text-white">
+                {registered ? "✓ Registered · view" : "Register now"}
+              </RollLink>
               <RollLink href={DISCORD_URL} external className="border-2 border-white/25 hover:bg-white hover:text-ink">Join Discord</RollLink>
             </div>
 
@@ -120,11 +126,25 @@ export default function HackathonPage() {
             <div className="lg:sticky lg:top-24 lg:self-start">
               <p className="font-mono text-xs font-medium tracking-wider text-knight-600">{"> register"}</p>
               <Headline lines={["Save", "your spot."]} className="mt-5 text-[clamp(2.75rem,7vw,4.5rem)]" />
+              {registered && (
+                <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-sm font-semibold text-green-800">
+                  <span aria-hidden>✓</span> You&apos;re registered
+                </p>
+              )}
               <p className="mt-4 text-ink/70">
                 Uses your Knights Hack student account. Apply by Nov 20. We&apos;ll email you the room and what to prepare.
               </p>
             </div>
-            <div className="rounded-3xl bg-mist p-6 ring-1 ring-ink/10 sm:p-8">
+            {registered ? (
+              <div className="rounded-3xl bg-mist p-6 ring-1 ring-ink/10 sm:p-8">
+                <p className="headline text-3xl sm:text-4xl">You&apos;re all set</p>
+                <p className="mt-4 text-ink/75">
+                  Your spot is saved. We&apos;ll email you the room and what to prepare. You can review or change your answers any time before {DEADLINE_LABEL}.
+                </p>
+                <RollLink href={REGISTER_PATH} className="mt-6 bg-ink text-white hover:bg-knight-600">View my registration</RollLink>
+              </div>
+            ) : (
+              <div className="rounded-3xl bg-mist p-6 ring-1 ring-ink/10 sm:p-8">
               <p className="headline text-3xl sm:text-4xl">Ready in a minute</p>
               <ol className="mt-4 grid gap-2 text-ink/75">
                 <li>1. Sign in with your club account (or create one, it&apos;s free) by Nov 20.</li>
@@ -132,7 +152,8 @@ export default function HackathonPage() {
                 <li>3. We email you the room once they&apos;re confirmed.</li>
               </ol>
               <RollLink href={REGISTER_PATH} className="mt-6 bg-ink text-white hover:bg-knight-600">Register now</RollLink>
-            </div>
+              </div>
+            )}
           </div>
         </section>
 

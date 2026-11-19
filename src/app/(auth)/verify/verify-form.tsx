@@ -19,6 +19,12 @@ export function VerifyForm({ next, sent, wait }: { next: string; sent: boolean; 
 
   return (
     <div className="grid gap-5">
+      {(sent || resent.ok) && (
+        <p role="note" className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-amber-700/20">
+          <strong>The email can take 1 to 3 minutes to arrive.</strong> Check your spam or junk folder too. Please wait
+          before asking for another code: a new code cancels the old one, so an earlier email still on its way will stop working.
+        </p>
+      )}
       <form action={action} className="grid gap-4">
         <input type="hidden" name="next" value={next} />
         <div>

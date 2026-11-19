@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
 import type { FormState } from "@/lib/form";
 import { cancelRegistrationAction, registerHackathonAction } from "@/lib/hackathon/actions";
-import { EXPERIENCE, INTERESTS, YEARS } from "@/lib/hackathon/config";
+import { EXPERIENCE, INTERESTS, REGISTER_PATH, YEARS } from "@/lib/hackathon/config";
+import { RegistrationSummary } from "./registration-summary";
 
 /** Values already saved for this student, so the form doubles as the edit screen. */
 export type Saved = {
@@ -76,12 +77,18 @@ export function RegisterForm({ saved, name }: { saved: Saved | null; name: strin
   if (state.ok) {
     return (
       <Screen progress={100}>
-        <div className="grid gap-6">
-          <p className="font-mono text-sm text-knight-600">✓ Done</p>
-          <h1 className="headline text-[clamp(3.5rem,12vw,8rem)]">{saved ? "Updated" : "You're in"}</h1>
-          <p className="max-w-lg text-lg text-ink/70">{state.ok}</p>
+        <div className="grid gap-6 py-6">
+          <p className="inline-flex w-fit items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-sm font-semibold text-green-800">
+            <span aria-hidden>✓</span> Successfully registered
+          </p>
+          <h1 className="headline text-[clamp(3rem,11vw,7rem)]">{saved ? "Updated" : "You're in"}</h1>
+          <p role="status" className="max-w-lg text-lg text-ink/70">{state.ok}</p>
+          <RegistrationSummary data={{ program: program.trim(), year, experience, interests, dietary: dietary.trim(), notes: notes.trim() }} />
           <div className="flex flex-wrap gap-3">
             <Link href="/hackathon" className={primaryBtn}>Back to the event</Link>
+            <Link href={REGISTER_PATH} className="inline-flex min-h-12 items-center rounded-full px-5 font-semibold text-ink ring-1 ring-ink/15 hover:bg-mist">
+              View my registration
+            </Link>
           </div>
         </div>
       </Screen>
