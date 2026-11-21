@@ -236,7 +236,7 @@ export const events: ClubEvent[] = [
     start: "2026-11-30T08:30:00-05:00",
     end: "2026-11-30T21:30:00-05:00",
     title: "Knights Hack Final Hackathon",
-    body: "Our last event of the term, with everything in one: build something for campus, ship it against the clock, then show it off at the closing showcase. Apply by Nov 20 to save your spot.",
+    body: "Our last event of the term, with everything in one: build something for campus, ship it against the clock, then show it off at the closing showcase. Apply by Nov 22, 11:59 PM to save your spot.",
     kind: "Hackathon",
     path: "/hackathon",
   },

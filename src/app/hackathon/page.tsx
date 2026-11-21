@@ -132,7 +132,7 @@ export default async function HackathonPage() {
                 </p>
               )}
               <p className="mt-4 text-ink/70">
-                Uses your Knights Hack student account. Apply by Nov 20. We&apos;ll email you the room and what to prepare.
+                Uses your Knights Hack student account. Apply by {DEADLINE_LABEL}. We&apos;ll email you the room and what to prepare.
               </p>
             </div>
             {registered ? (
@@ -147,7 +147,7 @@ export default async function HackathonPage() {
               <div className="rounded-3xl bg-mist p-6 ring-1 ring-ink/10 sm:p-8">
               <p className="headline text-3xl sm:text-4xl">Ready in a minute</p>
               <ol className="mt-4 grid gap-2 text-ink/75">
-                <li>1. Sign in with your club account (or create one, it&apos;s free) by Nov 20.</li>
+                <li>1. Sign in with your club account (or create one, it&apos;s free) by {DEADLINE_LABEL}.</li>
                 <li>2. Tell us your program, experience and interests.</li>
                 <li>3. We email you the room once they&apos;re confirmed.</li>
               </ol>

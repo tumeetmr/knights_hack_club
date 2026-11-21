@@ -1,9 +1,9 @@
 export const REGISTER_PATH = "/hackathon/register";
 
 export const EVENT_DATE = "Nov 30";
-export const DEADLINE_LABEL = "Nov 20";
-/** Applications close at the end of Nov 20 (Eastern, EST = UTC-5). */
-export const DEADLINE = "2026-11-20T23:59:59-05:00";
+export const DEADLINE_LABEL = "Nov 22, 11:59 PM";
+/** Applications close at the end of Nov 22 (Eastern, EST = UTC-5). */
+export const DEADLINE = "2026-11-22T23:59:59-05:00";
 export const registrationOpen = (now = Date.now()) => now <= new Date(DEADLINE).getTime();
 
 export const EXPERIENCE = [
